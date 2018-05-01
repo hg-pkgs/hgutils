@@ -10,14 +10,14 @@ get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE)
 \item{limits}{The limits of the axis. May be a list of 2 elements with lower and upper bounds, or a
 single digit (the upperbound, the lowerbound is then assumed to be 0).}
 
-\item{N}{The `unit` stepsize; The eventual interval size will be multiples of the divisors of N.}
+\item{N}{The unit stepsize; The eventual interval size will be multiples of the divisors of N.}
 
 \item{max_breaks}{Maximum amount of steps}
 
 \item{int_only}{Whether only integer divisors of N may be used for interval sizes}
 }
 \value{
-A list of maximum `max_breaks` elements with break elements.
+A list of maximum max_breaks elements with break elements.
 }
 \description{
 Set the breaks for a graph in nice positions

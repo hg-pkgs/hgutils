@@ -10,7 +10,7 @@ get_cr(N)
 \item{N}{Number of objects}
 }
 \value{
-A named list with elements `rows` and `columns` specifying the size of the optimal grid.
+A named list with elements rows and columns specifying the size of the optimal grid.
 }
 \description{
 Specifies the size of a grid which is as square as possible to fit N objects
