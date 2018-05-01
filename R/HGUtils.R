@@ -22,7 +22,7 @@ install_load_packages = function(packages,install = TRUE){
 }
 install_load_packages(c("devtools","ggplot2","dplyr","numbers","roxygen2"))
 
-#' Sets the working directory automatically to Dropbox folder
+#' Clears the workspace and sets the working directory automatically to the Dropbox folder
 #'
 #' @param folder String to specify subfolder name
 #'

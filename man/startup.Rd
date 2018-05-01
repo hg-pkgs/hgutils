@@ -2,7 +2,7 @@
 % Please edit documentation in R/HGUtils.R
 \name{startup}
 \alias{startup}
-\title{Sets the working directory automatically to Dropbox folder}
+\title{Clears the workspace and sets the working directory automatically to the Dropbox folder}
 \usage{
 startup(folder = "source_webinterface/")
 }
@@ -10,7 +10,7 @@ startup(folder = "source_webinterface/")
 \item{folder}{String to specify subfolder name}
 }
 \description{
-Sets the working directory automatically to Dropbox folder
+Clears the workspace and sets the working directory automatically to the Dropbox folder
 }
 \examples{
 startup("source_webinterface/")
