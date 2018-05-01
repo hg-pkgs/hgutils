@@ -35,7 +35,7 @@ install_load_packages = function(packages,install = TRUE){
 #' @export
 load_common_packages = function(install = T){
 install_load_packages(c("numbers","magrittr","colorspace","RColorBrewer","grid","gridExtra","readxl","writexl","shinydashboard","shinyBS",
-                        "shiny","shinyjs","ggplot2","shinyWidgets","shinydashboard","shinyBS","shiny","shinyjs","rms","devtools",
+                        "shiny","shinyjs","shinyWidgets","shinydashboard","shinyBS","shiny","shinyjs","rms","devtools",
                         "ggthemes","stringr","reshape2","gridGraphics","tidyverse"),install = install)
 }
 
@@ -52,8 +52,10 @@ startup = function(folder = "source_webinterface/"){
   gc()
   if (Sys.info()["user"]=="hgvandenboorn"){
     setwd(paste0("C:/Users/hgvandenboorn/Dropbox/",folder))
+    Sys.setenv(JAVA_HOME="C:\\Program Files (x86)\\Java\\jre1.8.0_161")
   } else if (Sys.info()["user"]=="H.G. van den Boorn") {
     setwd(paste0("S:/Dropbox/Dropbox/",folder))
+    Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk1.8.0_66/")
   }
 }
 
@@ -69,9 +71,10 @@ startup = function(folder = "source_webinterface/"){
 #'
 #' @examples get_breaks(24, N=12, max_breaks=15)
 #' @export
-get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE) #checken van 181-600, N=12, 10 max
+get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, ...) #checken van 181-600, N=12, 10 max
 {
   if(length(limits)==1) {xmin=0;xmax=limits} else {xmin=limits[1]; xmax=limits[2]}
+  if("print" %in% list(...)) print(paste0("[",xmin," - ",xmax,"]"))
   xmax = xmax-xmin
   lower_powers = function(x) (xmax/(max_breaks*x)) %>% log10 %>% ceiling %>% ifelse(int_only,0,.)
   upper_powers = function(x) (xmax/x) %>% log10 %>% floor

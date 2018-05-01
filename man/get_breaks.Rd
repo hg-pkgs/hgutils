@@ -4,7 +4,7 @@
 \alias{get_breaks}
 \title{Set the breaks for a graph in nice positions}
 \usage{
-get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE)
+get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE, ...)
 }
 \arguments{
 \item{limits}{The limits of the axis. May be a list of 2 elements with lower and upper bounds, or a
