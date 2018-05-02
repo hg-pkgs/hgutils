@@ -59,20 +59,21 @@ startup = function(folder = "source_webinterface/"){
   }
 }
 
-#' Set the breaks for a graph in nice positions
+#' Set the breaks for a graph in nice positions.
 #'
 #' @param limits The limits of the axis. May be a list of 2 elements with lower and upper bounds, or a
 #'               single digit (the upperbound, the lowerbound is then assumed to be 0).
-#' @param N The unit stepsize; The eventual interval size will be multiples of the divisors of N.
-#' @param max_breaks Maximum amount of steps
-#' @param int_only Whether only integer divisors of N may be used for interval sizes
+#' @param N The unit stepsize; The eventual interval size will be multiples of the divisors of N. Defaults to 10
+#' @param max_breaks Maximum amount of steps, defaults to 10
+#' @param int_only Whether only integer divisors of N may be used for interval sizes, default to TRUE
+#' @param strict Whether only multiples of N can be used, defaults to FALSE
 #' @param ... Additional parameters, use "prnt=TRUE" to print to limits
 #'
 #' @return A list of maximum max_breaks elements with break elements.
 #'
 #' @examples get_breaks(24, N=12, max_breaks=15)
 #' @export
-get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, ...) #checken van 181-600, N=12, 10 max
+get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, strict=FALSE, ...) #checken van 181-600, N=12, 10 max
 {
   args = list(...)
   if(length(limits)==1) {xmin=0;xmax=limits} else {xmin=limits[1]; xmax=limits[2]}
@@ -80,7 +81,8 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, ...) #checken 
   xmax = xmax-xmin
   lower_powers = function(x) (xmax/(max_breaks*x)) %>% log10 %>% ceiling %>% ifelse(int_only,0,.)
   upper_powers = function(x) (xmax/x) %>% log10 %>% floor
-  intervals = sapply(divisors(N), function(x) x*10**(lower_powers(x) : upper_powers(x))) %>% unlist %>% unique %>% sort
+  intervals = sapply(if(!strict) divisors(N) else N*1:(xmax/N),
+                     function(x) x*10**(lower_powers(x) : upper_powers(x))) %>% unlist %>% unique %>% sort
   selected = intervals[xmax/intervals <= max_breaks][1]
   seq(0,floor(xmax/selected)*selected,selected)+ceiling(xmin/selected)*selected
 }
