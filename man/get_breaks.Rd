@@ -15,6 +15,8 @@ single digit (the upperbound, the lowerbound is then assumed to be 0).}
 \item{max_breaks}{Maximum amount of steps}
 
 \item{int_only}{Whether only integer divisors of N may be used for interval sizes}
+
+\item{...}{Additional parameters, use "prnt=TRUE" to print to limits}
 }
 \value{
 A list of maximum max_breaks elements with break elements.

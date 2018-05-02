@@ -66,6 +66,7 @@ startup = function(folder = "source_webinterface/"){
 #' @param N The unit stepsize; The eventual interval size will be multiples of the divisors of N.
 #' @param max_breaks Maximum amount of steps
 #' @param int_only Whether only integer divisors of N may be used for interval sizes
+#' @param ... Additional parameters, use "prnt=TRUE" to print to limits
 #'
 #' @return A list of maximum max_breaks elements with break elements.
 #'
@@ -73,8 +74,9 @@ startup = function(folder = "source_webinterface/"){
 #' @export
 get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, ...) #checken van 181-600, N=12, 10 max
 {
+  args = list(...)
   if(length(limits)==1) {xmin=0;xmax=limits} else {xmin=limits[1]; xmax=limits[2]}
-  if("print" %in% list(...)) print(paste0("[",xmin," - ",xmax,"]"))
+  if("prnt" %in% names(args) && args$prnt==T) print(paste0("Range: [",xmin," - ",xmax,"]"))
   xmax = xmax-xmin
   lower_powers = function(x) (xmax/(max_breaks*x)) %>% log10 %>% ceiling %>% ifelse(int_only,0,.)
   upper_powers = function(x) (xmax/x) %>% log10 %>% floor
@@ -89,9 +91,9 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, ...) #checken 
 #'
 #' @return A named list with elements rows and columns specifying the size of the optimal grid.
 #'
-#' @examples get_cr(5)
+#' @examples get_square_grid(5)
 #' @export
-get_cr = function(N) {N %>% sqrt %>% ceiling %>% c((N/.) %>% ceiling, .) %>% setNames(c("rows","columns"))}
+get_square_grid = function(N) {N %>% sqrt %>% ceiling %>% c((N/.) %>% ceiling, .) %>% setNames(c("rows","columns"))}
 
 #' Removes any NA from a list
 #'
