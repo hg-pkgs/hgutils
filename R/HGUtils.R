@@ -109,7 +109,7 @@ get_survival_estimate = function(sfit, survival=0.5)
 
   d = dim(sfit$surv)[2]
   results = if (is.null(d)){
-    sfit %>% {sapply(c("surv","lower","upper"), function(x) .$time[.[[x]] < survival][1])}
+    sfit %>% {sapply(c("surv","lower","upper"), function(x) .$time[.[[x]] < survival][1])} %>% as.list
   } else {
     sfit %>% {sapply(1:d, function(i) sapply(c("surv","lower","upper"), function(x) .$time[.[[x]][,i] < survival][1]))} %>% t
   }
