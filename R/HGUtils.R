@@ -119,14 +119,17 @@ get_survival_estimate = function(sfit, survival=0.5)
 
 #' Specifies the size of a grid which is as square as possible to fit N objects.
 #'
-#' @description It will always have "x" rows and "x" columns or "x" rows and "(x+1)" colums
+#' @description It will always be a square or or have one row/column more than columns/rows
+#'
 #' @param N Number of objects
+#' @param moreRows Whether there should be more rows than columns if the grid is not square.
 #'
 #' @return A named list with elements rows and columns specifying the size of the optimal grid.
 #'
 #' @examples get_square_grid(5)
 #' @export
-get_square_grid = function(N) {N %>% sqrt %>% ceiling %>% list(rows=., columns=(N/.) %>% ceiling)}
+get_square_grid = function(N, moreRows=TRUE) {N %>% sqrt %>% ceiling %>% {list(rows=ifelse(moreRows,.,(N/.) %>% ceiling),
+                                                                           columns=ifelse(moreRows,(N/.) %>% ceiling,.))}}
 
 #' Removes any NA from a list
 #'

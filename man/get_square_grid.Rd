@@ -4,16 +4,18 @@
 \alias{get_square_grid}
 \title{Specifies the size of a grid which is as square as possible to fit N objects.}
 \usage{
-get_square_grid(N)
+get_square_grid(N, moreRows = TRUE)
 }
 \arguments{
 \item{N}{Number of objects}
+
+\item{moreRows}{Whether there should be more rows than columns if the grid is not square.}
 }
 \value{
 A named list with elements rows and columns specifying the size of the optimal grid.
 }
 \description{
-It will always have "x" rows and "x" columns or "x" rows and "(x+1)" colums
+It will always be a square or or have one row/column more than columns/rows
 }
 \examples{
 get_square_grid(5)
