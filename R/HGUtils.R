@@ -4,9 +4,9 @@
 #   Check Package:             'Ctrl + Shift + E'
 #   Test Package:              'Ctrl + Shift + T'
 
-devtools::use_package("dplyr","Depends")
-devtools::use_package("numbers","Depends")
-devtools::use_package("magrittr","Depends")
+devtools::use_package("dplyr","Imports")
+devtools::use_package("numbers","Imports")
+devtools::use_package("magrittr","Imports")
 
 #' Installs and loads specified packages
 #'
@@ -85,7 +85,8 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, ...) #checken 
   seq(0,floor(xmax/selected)*selected,selected)+ceiling(xmin/selected)*selected
 }
 
-#' Specifies the size of a grid which is as square as possible to fit N objects
+#' Specifies the size of a grid which is as square as possible to fit N objects. It will always have "x" rows and "x" columns or
+#' "x" rows and "(x+1)" colums
 #'
 #' @param N Number of objects
 #'
@@ -93,7 +94,7 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, ...) #checken 
 #'
 #' @examples get_square_grid(5)
 #' @export
-get_square_grid = function(N) {N %>% sqrt %>% ceiling %>% c((N/.) %>% ceiling, .) %>% setNames(c("rows","columns"))}
+get_square_grid = function(N) {N %>% sqrt %>% ceiling %>% list(rows=(N/.) %>% ceiling, columns=.)}
 
 #' Removes any NA from a list
 #'
