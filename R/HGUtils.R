@@ -36,7 +36,7 @@ install_load_packages = function(packages,install = TRUE){
 load_common_packages = function(install = T){
 install_load_packages(c("numbers","magrittr","colorspace","RColorBrewer","grid","gridExtra","readxl","writexl","shinydashboard","shinyBS",
                         "shiny","shinyjs","shinyWidgets","shinydashboard","shinyBS","shiny","shinyjs","rms","devtools",
-                        "ggthemes","stringr","reshape2","gridGraphics","tidyverse"),install = install)
+                        "ggthemes","stringr","reshape2","gridGraphics","tidyverse", "scales"),install = install)
 }
 
 #' Clears the workspace and sets the working directory automatically to the Dropbox folder
@@ -85,6 +85,36 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, strict=FALSE, 
                      function(x) x*10**(lower_powers(x) : upper_powers(x))) %>% unlist %>% unique %>% sort
   selected = intervals[xmax/intervals <= max_breaks][1]
   seq(0,floor(xmax/selected)*selected,selected)+ceiling(xmin/selected)*selected
+}
+
+#' Get estimate of timepoints for a given survival probability
+#'
+#' @param sfit A survfit object
+#' @param survival The survival probability for which a timepoint estimate is needed. Default is 0.5 (median survival)
+#'
+#' @return A named list or matrix with elements surv (estimate), lower and upper (confidence interval). The attribute "survival" is set
+#' to the argument survival
+#' @export
+#'
+#' @examples fit = cph(Surv(time=time, event = status==2) ~ age + sex, data=lung, x = T, y=T, surv=T)
+#' sfit = survfit(fit)
+#' sfit2 = survfit(fit, newdata=lung[1:20,])
+#'
+#' get_survival_estimate(sfit) #get median survival for all data point
+#' get_survival_estimate(sfit2) #get median survival for patients 1-20 seperately
+get_survival_estimate = function(sfit, survival=0.5)
+{
+  if ("survfit" %nin% class(sfit))
+    stop("sfit must be a survfit object")
+
+  d = dim(sfit$surv)[2]
+  results = if (is.null(d)){
+    sfit %>% {sapply(c("surv","lower","upper"), function(x) .$time[.[[x]] < survival][1])}
+  } else {
+    sfit %>% {sapply(1:d, function(i) sapply(c("surv","lower","upper"), function(x) .$time[.[[x]][,i] < survival][1]))} %>% t
+  }
+  attr(results,"survival") = survival
+  results
 }
 
 #' Specifies the size of a grid which is as square as possible to fit N objects.

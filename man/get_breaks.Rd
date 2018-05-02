@@ -2,19 +2,22 @@
 % Please edit documentation in R/HGUtils.R
 \name{get_breaks}
 \alias{get_breaks}
-\title{Set the breaks for a graph in nice positions}
+\title{Set the breaks for a graph in nice positions.}
 \usage{
-get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE, ...)
+get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE,
+  strict = FALSE, ...)
 }
 \arguments{
 \item{limits}{The limits of the axis. May be a list of 2 elements with lower and upper bounds, or a
 single digit (the upperbound, the lowerbound is then assumed to be 0).}
 
-\item{N}{The unit stepsize; The eventual interval size will be multiples of the divisors of N.}
+\item{N}{The unit stepsize; The eventual interval size will be multiples of the divisors of N. Defaults to 10}
 
-\item{max_breaks}{Maximum amount of steps}
+\item{max_breaks}{Maximum amount of steps, defaults to 10}
 
-\item{int_only}{Whether only integer divisors of N may be used for interval sizes}
+\item{int_only}{Whether only integer divisors of N may be used for interval sizes, default to TRUE}
+
+\item{strict}{Whether only multiples of N can be used, defaults to FALSE}
 
 \item{...}{Additional parameters, use "prnt=TRUE" to print to limits}
 }
@@ -22,7 +25,7 @@ single digit (the upperbound, the lowerbound is then assumed to be 0).}
 A list of maximum max_breaks elements with break elements.
 }
 \description{
-Set the breaks for a graph in nice positions
+Set the breaks for a graph in nice positions.
 }
 \examples{
 get_breaks(24, N=12, max_breaks=15)

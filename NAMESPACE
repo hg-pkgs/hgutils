@@ -2,6 +2,7 @@
 
 export(get_breaks)
 export(get_square_grid)
+export(get_survival_estimate)
 export(install_load_packages)
 export(load_common_packages)
 export(rmNA)
