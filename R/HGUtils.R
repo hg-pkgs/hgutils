@@ -85,16 +85,16 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, ...) #checken 
   seq(0,floor(xmax/selected)*selected,selected)+ceiling(xmin/selected)*selected
 }
 
-#' Specifies the size of a grid which is as square as possible to fit N objects. It will always have "x" rows and "x" columns or
-#' "x" rows and "(x+1)" colums
+#' Specifies the size of a grid which is as square as possible to fit N objects.
 #'
+#' @description It will always have "x" rows and "x" columns or "x" rows and "(x+1)" colums
 #' @param N Number of objects
 #'
 #' @return A named list with elements rows and columns specifying the size of the optimal grid.
 #'
 #' @examples get_square_grid(5)
 #' @export
-get_square_grid = function(N) {N %>% sqrt %>% ceiling %>% list(rows=(N/.) %>% ceiling, columns=.)}
+get_square_grid = function(N) {N %>% sqrt %>% ceiling %>% list(rows=., columns=(N/.) %>% ceiling)}
 
 #' Removes any NA from a list
 #'

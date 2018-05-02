@@ -2,7 +2,7 @@
 % Please edit documentation in R/HGUtils.R
 \name{get_square_grid}
 \alias{get_square_grid}
-\title{Specifies the size of a grid which is as square as possible to fit N objects}
+\title{Specifies the size of a grid which is as square as possible to fit N objects.}
 \usage{
 get_square_grid(N)
 }
@@ -13,7 +13,7 @@ get_square_grid(N)
 A named list with elements rows and columns specifying the size of the optimal grid.
 }
 \description{
-Specifies the size of a grid which is as square as possible to fit N objects
+It will always have "x" rows and "x" columns or "x" rows and "(x+1)" colums
 }
 \examples{
 get_square_grid(5)
