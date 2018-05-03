@@ -101,7 +101,7 @@ startup = function(folder = NULL)
       warning(paste0("[UNREGISTERED] Directory does not not exist: '",ifelse(is.null(folder),"NULL",folder),"'"))
   } else
   {
-    dir = paste0(results$location,folder)
+    dir = ifelse(dir.exists(folder), folder, paste0(results$location,folder))
     if (dir.exists(dir)) {setwd(dir); print(paste0("Setting the working directory at: '",dir,"'"),quote = F)} else
       warning(paste0("[REGISTERED] Directory does not not exist: '",dir,"'"))
   }
