@@ -40,34 +40,70 @@ install_load_packages(c("numbers","magrittr","colorspace","RColorBrewer","grid",
                         "ggthemes","stringr","reshape2","gridGraphics","tidyverse", "scales"),install = install)
 }
 
-#' Clears the workspace and sets the working directory automatically to the Dropbox folder
+#' Internal functio to check whether the current user has the working directory registered.
 #'
-#' @param folder String to specify subfolder name
+#' @param verbose Whether to print the user name and registered working directory.
+#' @param return_data Whether to return a boolean or a tibble containing the found user.
+#'
+#' @return Either a boolean (if return_data is FALSE) or a tibble containing fields "desc" (computer description), "usr" (computer user name)
+#' and "location" (working directory base).
+#'
+#' @examples
+.is_registered = function(verbose = FALSE, return_data = TRUE)
+{
+  current_usr = Sys.info()["user"]
+  results = working_dirs %>% filter(usr == current_usr)
+  registered = nrow(results) == 1
+
+  if(verbose)
+  {
+    if(!registered) print(paste0("User '",current_usr,"' is not registered."),quote = F) else
+      print(paste0("User '",current_usr,"' is registered. Default working directory is '",results$location[1],"'"),quote = F)
+  }
+
+  if(return_data) return(results) else return(registered)
+}
+
+#' Checks whether the current user has the working directory registered.
+#'
+#' @param verbose Whether to print the user name and registered working directory.
+#'
+#' @return Boolean indicating whether the user is registered or not.
+#' @export
+#'
+#' @examples is_registered()
+is_registered = function(verbose = FALSE)
+{
+  .is_registered(verbose = verbose, return_data = FALSE)
+}
+
+#' Clears the workspace and sets the working directory to specified folder.
+#'
+#' @param folder String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
+#' working directory paths. Use \code{is_registered()} to check whether user registration is enabled
 #'
 #' @return NULL
 #'
 #' @examples startup("source_webinterface/")
 #' @export
-startup = function(folder = "source_webinterface/")
+startup = function(folder = NULL)
 {
   rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
   gc()
   graphics.off()
 
-  if (grepl("^[A-z]:[\\/][^\\.]*$", folder))
+  results = .is_registered()
+  has_results = results %>% nrow == 1
+
+  if (!has_results)
   {
-    if (dir.exists(folder)) setwd(folder) else warning(paste0("Working directory not set, cannot find ",folder))
+    if (!is.null(folder) && dir.exists(folder)) {setwd(folder); print(paste0("Setting the working directory at: '",folder,"'"),quote = F)} else
+      warning(paste0("[UNREGISTERED] Directory does not not exist: '",ifelse(is.null(folder),"NULL",folder),"'"))
   } else
   {
-    results = working_dirs %>% filter(usr == Sys.info()["user"])
-    if (results %>% nrow == 1){
-      d = paste0(results$location,folder)
-      if (dir.exists(d)) {setwd(d); print(paste0("Setting the working directory at: ",d))} else
-        {warning("Could not find the working directory")}
-    } else {
-      warning("Could not find the working directory")
-    }
-
+    dir = paste0(results$location,folder)
+    if (dir.exists(dir)) {setwd(dir); print(paste0("Setting the working directory at: '",dir,"'"),quote = F)} else
+      warning(paste0("[REGISTERED] Directory does not not exist: '",dir,"'"))
   }
 }
 

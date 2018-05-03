@@ -2,15 +2,16 @@
 % Please edit documentation in R/HGUtils.R
 \name{startup}
 \alias{startup}
-\title{Clears the workspace and sets the working directory automatically to the Dropbox folder}
+\title{Clears the workspace and sets the working directory to specified folder.}
 \usage{
-startup(folder = "source_webinterface/")
+startup(folder = NULL)
 }
 \arguments{
-\item{folder}{String to specify subfolder name}
+\item{folder}{String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
+working directory paths. Use \code{is_registered()} to check whether user registration is enabled}
 }
 \description{
-Clears the workspace and sets the working directory automatically to the Dropbox folder
+Clears the workspace and sets the working directory to specified folder.
 }
 \examples{
 startup("source_webinterface/")
