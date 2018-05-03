@@ -7,6 +7,7 @@
 devtools::use_package("dplyr","Imports")
 devtools::use_package("numbers","Imports")
 devtools::use_package("magrittr","Imports")
+devtools::use_package("tibble","Imports")
 
 #' Installs and loads specified packages
 #'
@@ -34,8 +35,8 @@ install_load_packages = function(packages,install = TRUE){
 #'
 #' @export
 load_common_packages = function(install = T){
-install_load_packages(c("numbers","magrittr","colorspace","RColorBrewer","grid","gridExtra","readxl","writexl","shinydashboard","shinyBS",
-                        "shiny","shinyjs","shinyWidgets","shinydashboard","shinyBS","shiny","shinyjs","rms","devtools",
+install_load_packages(c("numbers","magrittr","colorspace","RColorBrewer","grid","gridExtra","readxl","writexl","shinydashboard",
+                        "shinyBS","shiny","shinyjs","shinyWidgets","shinydashboard","shinyBS","shiny","shinyjs","rms","devtools",
                         "ggthemes","stringr","reshape2","gridGraphics","tidyverse", "scales"),install = install)
 }
 
@@ -50,12 +51,26 @@ install_load_packages(c("numbers","magrittr","colorspace","RColorBrewer","grid",
 startup = function(folder = "source_webinterface/"){
   rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
   gc()
-  if (Sys.info()["user"]=="hgvandenboorn"){
-    setwd(paste0("C:/Users/hgvandenboorn/Dropbox/",folder))
-    Sys.setenv(JAVA_HOME="C:\\Program Files (x86)\\Java\\jre1.8.0_161")
-  } else if (Sys.info()["user"]=="H.G. van den Boorn") {
-    setwd(paste0("S:/Dropbox/Dropbox/",folder))
-    Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk1.8.0_66/")
+  graphics.off()
+
+  # working_dirs = matrix(c(c("Héctor AMC","hgvandenboorn","C:/Users/hgvandenboorn/Dropbox/"),
+  #            c("Héctor Home","H.G. van den Boorn","S:/Dropbox/Dropbox/")),ncol =  3,byrow = T) %>%
+  #   as_tibble %>% setNames(c("desc","usr","location"))
+  # devtools::use_data(working_dirs, internal = T, overwrite = T)
+  if (grepl("^[A-z]:[\\/][^\\.]*$", folder))
+  {
+    if (dir.exists(folder)) setwd(folder) else warning(paste0("Working directory not set, cannot find ",folder))
+  } else
+  {
+    results = working_dirs %>% filter(usr == Sys.info()["user"])
+    if (results %>% nrow == 1){
+      d = paste0(results$location,folder)
+      if (dir.exists(d)) {setwd(d); print(paste0("Setting the working directory at: ",d))} else
+        {warning("Could not find the working directory")}
+    } else {
+      warning("Could not find the working directory")
+    }
+
   }
 }
 

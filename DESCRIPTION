@@ -12,7 +12,8 @@ LazyData: true
 RoxygenNote: 6.0.1.9000
 Imports: dplyr,
     numbers,
-    magrittr
+    magrittr,
+    tibble
 Depends: dplyr,
     numbers,
     magrittr
