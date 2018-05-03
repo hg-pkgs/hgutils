@@ -23,6 +23,6 @@ fit = cph(Surv(time=time, event = status==2) ~ age + sex, data=lung, x = T, y=T,
 sfit = survfit(fit)
 sfit2 = survfit(fit, newdata=lung[1:20,])
 
-get_survival_estimate(sfit) #get median survival for all data point
+get_survival_estimate(sfit) #get median survival for all data points in the dataset.
 get_survival_estimate(sfit2) #get median survival for patients 1-20 seperately
 }

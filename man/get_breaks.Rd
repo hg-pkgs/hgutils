@@ -22,7 +22,7 @@ single digit (the upperbound, the lowerbound is then assumed to be 0).}
 \item{...}{Additional parameters, use "prnt=TRUE" to print to limits}
 }
 \value{
-A list of maximum max_breaks elements with break elements.
+A list of maximum max_breaks+1 elements with break elements.
 }
 \description{
 Set the breaks for a graph in nice positions.

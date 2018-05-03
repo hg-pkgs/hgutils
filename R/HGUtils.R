@@ -48,15 +48,12 @@ install_load_packages(c("numbers","magrittr","colorspace","RColorBrewer","grid",
 #'
 #' @examples startup("source_webinterface/")
 #' @export
-startup = function(folder = "source_webinterface/"){
+startup = function(folder = "source_webinterface/")
+{
   rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
   gc()
   graphics.off()
 
-  # working_dirs = matrix(c(c("Héctor AMC","hgvandenboorn","C:/Users/hgvandenboorn/Dropbox/"),
-  #            c("Héctor Home","H.G. van den Boorn","S:/Dropbox/Dropbox/")),ncol =  3,byrow = T) %>%
-  #   as_tibble %>% setNames(c("desc","usr","location"))
-  # devtools::use_data(working_dirs, internal = T, overwrite = T)
   if (grepl("^[A-z]:[\\/][^\\.]*$", folder))
   {
     if (dir.exists(folder)) setwd(folder) else warning(paste0("Working directory not set, cannot find ",folder))
@@ -84,7 +81,7 @@ startup = function(folder = "source_webinterface/"){
 #' @param strict Whether only multiples of N can be used, defaults to FALSE
 #' @param ... Additional parameters, use "prnt=TRUE" to print to limits
 #'
-#' @return A list of maximum max_breaks elements with break elements.
+#' @return A list of maximum max_breaks+1 elements with break elements.
 #'
 #' @examples get_breaks(24, N=12, max_breaks=15)
 #' @export
@@ -115,7 +112,7 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, strict=FALSE, 
 #' sfit = survfit(fit)
 #' sfit2 = survfit(fit, newdata=lung[1:20,])
 #'
-#' get_survival_estimate(sfit) #get median survival for all data point
+#' get_survival_estimate(sfit) #get median survival for all data points in the dataset.
 #' get_survival_estimate(sfit2) #get median survival for patients 1-20 seperately
 get_survival_estimate = function(sfit, survival=0.5)
 {
