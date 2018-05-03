@@ -4,10 +4,10 @@
 #   Check Package:             'Ctrl + Shift + E'
 #   Test Package:              'Ctrl + Shift + T'
 
-devtools::use_package("dplyr","Imports")
-devtools::use_package("numbers","Imports")
-devtools::use_package("magrittr","Imports")
-devtools::use_package("tibble","Imports")
+devtools::use_package("dplyr","Depends")
+devtools::use_package("numbers","Depends")
+devtools::use_package("magrittr","Depends")
+devtools::use_package("tibble","Depends")
 
 #' Installs and loads specified packages
 #'
