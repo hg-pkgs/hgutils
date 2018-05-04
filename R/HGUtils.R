@@ -4,7 +4,7 @@
 #   Check Package:             'Ctrl + Shift + E'
 #   Test Package:              'Ctrl + Shift + T'
 
-devtools::use_package("dplyr","Depends")
+devtools::use_package("tidyverse","Depends")
 devtools::use_package("numbers","Depends")
 devtools::use_package("magrittr","Depends")
 devtools::use_package("tibble","Depends")
@@ -35,9 +35,9 @@ install_load_packages = function(packages,install = TRUE){
 #'
 #' @export
 load_common_packages = function(install = T){
-install_load_packages(c("numbers","magrittr","colorspace","RColorBrewer","grid","gridExtra","readxl","writexl","shinydashboard",
+install_load_packages(c("tidyverse","numbers","magrittr","colorspace","RColorBrewer","grid","gridExtra","readxl","writexl","shinydashboard",
                         "shinyBS","shiny","shinyjs","shinyWidgets","shinydashboard","shinyBS","shiny","shinyjs","rms","devtools",
-                        "ggthemes","stringr","reshape2","gridGraphics","tidyverse", "scales"),install = install)
+                        "ggthemes","stringr","reshape2","gridGraphics", "scales"),install = install)
 }
 
 #' Internal functio to check whether the current user has the working directory registered.
@@ -133,6 +133,19 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, strict=FALSE, 
                      function(x) x*10**(lower_powers(x) : upper_powers(x))) %>% unlist %>% unique %>% sort
   selected = intervals[xmax/intervals <= max_breaks][1]
   seq(0,floor(xmax/selected)*selected,selected)+ceiling(xmin/selected)*selected
+}
+
+#' Convenience wrapper for plotting breaks
+#' @description this makes usage easier in plot functions as the limits may not be always be known before plotting.
+#' @param ... See \code{\link{get_breaks}} for possible parameters.
+#'
+#' @return A get_breaks function with filled-in parameters which expects limits.
+#' @export
+#'
+#' @examples ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))
+plot_breaks = function(...)
+{
+  function(x, ...) get_breaks(x, ...)
 }
 
 #' Get estimate of timepoints for a given survival probability
