@@ -8,11 +8,17 @@ startup(folder = NULL)
 }
 \arguments{
 \item{folder}{String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
-working directory paths. Use \code{is_registered()} to check whether user registration is enabled}
+working directory paths. Use \code{\link{is_registered()}} to check whether user registration is enabled}
 }
 \description{
 Clears the workspace and sets the working directory to specified folder.
 }
 \examples{
-startup("source_webinterface/")
+\dontrun{startup('project_folder/')}
 }
+\seealso{
+Other initialization functions: \code{\link{install_load_packages}},
+  \code{\link{is_registered}},
+  \code{\link{load_common_packages}}
+}
+\concept{initialization functions}

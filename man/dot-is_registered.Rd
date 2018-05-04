@@ -12,8 +12,8 @@
 \item{return_data}{Whether to return a boolean or a tibble containing the found user.}
 }
 \value{
-Either a boolean (if return_data is FALSE) or a tibble containing fields "desc" (computer description), "usr" (computer user name)
-and "location" (working directory base).
+Either a boolean (if return_data is FALSE) or a tibble containing fields 'desc' (computer description), 'usr' (computer user name)
+and 'location' (working directory base).
 }
 \description{
 Internal functio to check whether the current user has the working directory registered.

@@ -12,7 +12,7 @@ get_survival_estimate(sfit, survival = 0.5)
 \item{survival}{The survival probability for which a timepoint estimate is needed. Default is 0.5 (median survival)}
 }
 \value{
-A named list or matrix with elements surv (estimate), lower and upper (confidence interval). The attribute "survival" is set
+A named list or matrix with elements surv (estimate), lower and upper (confidence interval). The attribute 'survival' is set
 to the argument survival
 }
 \description{

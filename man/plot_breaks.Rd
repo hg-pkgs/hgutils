@@ -2,7 +2,7 @@
 % Please edit documentation in R/HGUtils.R
 \name{plot_breaks}
 \alias{plot_breaks}
-\title{Convenience wrapper for plotting breaks}
+\title{Nice plotting axis breaks}
 \usage{
 plot_breaks(...)
 }
@@ -10,11 +10,15 @@ plot_breaks(...)
 \item{...}{See \code{\link{get_breaks}} for possible parameters.}
 }
 \value{
-A get_breaks function with filled-in parameters which expects limits.
+A \code{\link{get_breaks}} function with filled-in parameters which expects limits.
 }
 \description{
-this makes usage easier in plot functions as the limits may not be always be known before plotting.
+This makes usage easier in plot functions as the limits may not be always be known before plotting.
 }
 \examples{
 ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))
 }
+\seealso{
+Other break functions: \code{\link{get_breaks}}
+}
+\concept{break functions}

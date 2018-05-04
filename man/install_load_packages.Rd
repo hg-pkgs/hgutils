@@ -4,10 +4,10 @@
 \alias{install_load_packages}
 \title{Installs and loads specified packages}
 \usage{
-install_load_packages(packages, install = TRUE)
+install_load_packages(..., install = TRUE)
 }
 \arguments{
-\item{packages}{A character list of package names}
+\item{...}{A list of package names}
 
 \item{install}{Whether to install packages when missing, defaults to TRUE}
 }
@@ -15,5 +15,12 @@ install_load_packages(packages, install = TRUE)
 Installs and loads specified packages
 }
 \examples{
-install_load_packages(c("ggplot2","dplyr"))
+\dontrun{
+install_load_packages(c('ggplot2','dplyr'))
+install_load_packages('ggplot2','dplyr',install=FALSE)}
 }
+\seealso{
+Other initialization functions: \code{\link{is_registered}},
+  \code{\link{load_common_packages}}, \code{\link{startup}}
+}
+\concept{initialization functions}

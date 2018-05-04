@@ -4,7 +4,7 @@
 \alias{load_common_packages}
 \title{Loads (and optionally install) commonly used packages}
 \usage{
-load_common_packages(install = T)
+load_common_packages(install = TRUE)
 }
 \arguments{
 \item{install}{Whether to install a package if missing}
@@ -12,3 +12,8 @@ load_common_packages(install = T)
 \description{
 Loads (and optionally install) commonly used packages
 }
+\seealso{
+Other initialization functions: \code{\link{install_load_packages}},
+  \code{\link{is_registered}}, \code{\link{startup}}
+}
+\concept{initialization functions}

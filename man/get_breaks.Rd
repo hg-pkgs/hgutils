@@ -2,7 +2,7 @@
 % Please edit documentation in R/HGUtils.R
 \name{get_breaks}
 \alias{get_breaks}
-\title{Set the breaks for a graph in nice positions.}
+\title{Nice plotting axis breaks}
 \usage{
 get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE,
   strict = FALSE, ...)
@@ -19,10 +19,10 @@ single digit (the upperbound, the lowerbound is then assumed to be 0).}
 
 \item{strict}{Whether only multiples of N can be used, defaults to FALSE}
 
-\item{...}{Additional parameters, use "prnt=TRUE" to print to limits}
+\item{...}{Additional parameters, use 'prnt=TRUE' to print to limits}
 }
 \value{
-A list of maximum max_breaks+1 elements with break elements.
+A list of maximum \code{max_breaks+1} elements with intervals.
 }
 \description{
 Set the breaks for a graph in nice positions.
@@ -30,3 +30,7 @@ Set the breaks for a graph in nice positions.
 \examples{
 get_breaks(24, N=12, max_breaks=15)
 }
+\seealso{
+Other break functions: \code{\link{plot_breaks}}
+}
+\concept{break functions}
