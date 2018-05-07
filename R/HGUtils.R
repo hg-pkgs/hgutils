@@ -4,7 +4,7 @@
 #' Clears the workspace and sets the working directory to specified folder.
 #'
 #' @param folder String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
-#' working directory paths. Use \code{\link{is_registered()}} to check whether user registration is enabled
+#' working directory paths. Use \code{is_registered()} to check whether user registration is enabled
 #'
 #' @return NULL
 #'
@@ -36,8 +36,9 @@ startup = function(folder = NULL) {
 
 #' Installs and loads specified packages
 #'
+#' @param load_packages Whether to load the selected packages
+#' @param install_packages Whether to install the selected packages
 #' @param ... A list of package names
-#' @param install Whether to install packages when missing, defaults to TRUE
 #'
 #' @return NULL
 #'
@@ -46,27 +47,30 @@ startup = function(folder = NULL) {
 #' install_load_packages('ggplot2','dplyr',install=FALSE)}
 #' @export
 #' @family initialization functions
-install_load_packages = function(..., install = TRUE) {
+install_load_packages = function(..., load_packages = TRUE, install_packages = TRUE) {
+    if (!load_packages & !install_packages)
+        warning("Function not executed: not installing or loading any packages. Please set 'load_packages=TRUE' or 'install_packages=TRUE'")
     packages = unlist(list(...))
     for (package in packages) {
-        if (!require(package, character.only = TRUE) & install) {
+        if (!require(package, character.only = TRUE) & install_packages) {
             install.packages(package, dependencies = TRUE)
-            library(package, character.only = TRUE)
+            if (load_packages)
+                library(package, character.only = TRUE)
         }
     }
 }
 
 #' Loads (and optionally install) commonly used packages
 #'
-#' @param install Whether to install a package if missing
+#' @param load_packages Whether to load the selected packages
+#' @param install_packages Whether to install the selected packages
 #'
 #' @return NULL
 #' @export
 #' @family initialization functions
-load_common_packages = function(install = TRUE) {
-    install_load_packages("tidyverse", "numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl", "writexl", "shinydashboard",
-        "shinyBS", "shiny", "shinyjs", "shinyWidgets", "shinydashboard", "shinyBS", "shiny", "shinyjs", "rms", "devtools", "ggthemes", "stringr", "reshape2",
-        "gridGraphics", "scales", install = install)
+load_common_packages = function(load_packages = TRUE, install_packages = TRUE) {
+    install_load_packages("tidyverse", "numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl", "writexl", "devtools", "ggthemes",
+        "stringr", "reshape2", "gridGraphics", "scales", "formatR", load_packages = load_packages, install_packages = install_packages)
 }
 
 

@@ -4,12 +4,14 @@
 \alias{install_load_packages}
 \title{Installs and loads specified packages}
 \usage{
-install_load_packages(..., install = TRUE)
+install_load_packages(..., load_packages = TRUE, install_packages = TRUE)
 }
 \arguments{
 \item{...}{A list of package names}
 
-\item{install}{Whether to install packages when missing, defaults to TRUE}
+\item{load_packages}{Whether to load the selected packages}
+
+\item{install_packages}{Whether to install the selected packages}
 }
 \description{
 Installs and loads specified packages

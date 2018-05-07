@@ -8,7 +8,7 @@ startup(folder = NULL)
 }
 \arguments{
 \item{folder}{String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
-working directory paths. Use \code{\link{is_registered()}} to check whether user registration is enabled}
+working directory paths. Use \code{is_registered()} to check whether user registration is enabled}
 }
 \description{
 Clears the workspace and sets the working directory to specified folder.

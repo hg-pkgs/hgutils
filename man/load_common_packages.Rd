@@ -4,10 +4,12 @@
 \alias{load_common_packages}
 \title{Loads (and optionally install) commonly used packages}
 \usage{
-load_common_packages(install = TRUE)
+load_common_packages(load_packages = TRUE, install_packages = TRUE)
 }
 \arguments{
-\item{install}{Whether to install a package if missing}
+\item{load_packages}{Whether to load the selected packages}
+
+\item{install_packages}{Whether to install the selected packages}
 }
 \description{
 Loads (and optionally install) commonly used packages
