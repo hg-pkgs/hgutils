@@ -1,6 +1,3 @@
-# Some useful keyboard shortcuts for package authoring: Build and Reload Package: 'Ctrl + Shift + B' Check Package: 'Ctrl + Shift + E' Test Package:
-# 'Ctrl + Shift + T'
-
 #' Clears the workspace and sets the working directory to specified folder.
 #'
 #' @param folder String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
@@ -69,8 +66,9 @@ install_load_packages = function(..., load_packages = TRUE, install_packages = T
 #' @export
 #' @family initialization functions
 load_common_packages = function(load_packages = TRUE, install_packages = TRUE) {
-    install_load_packages("tidyverse", "numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl", "writexl", "devtools", "ggthemes",
-        "stringr", "reshape2", "gridGraphics", "scales", "formatR", load_packages = load_packages, install_packages = install_packages)
+    install_load_packages("tidyverse", "numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl",
+                          "writexl", "devtools", "ggthemes", "stringr", "reshape2", "gridGraphics", "scales", "formatR",
+                          load_packages = load_packages, install_packages = install_packages)
 }
 
 
@@ -130,7 +128,13 @@ is_registered = function(verbose = FALSE) {
 #' @importFrom numbers divisors
 #' @family break functions
 get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict = FALSE, ...) {
+    OPT = list(PRINT="prnt")
     args = list(...)
+    if (OPT$PRINT %in% names(args) && args[OPT$PRINT] == T)
+      print(paste0("Range: [", xmin, " - ", xmax, "]"))
+
+    for (n in names(args)) {if (!n %in% OPT) warning(paste0("Argument ",i," = ",args[[n]]," is not valid."))}
+
     if (length(limits) == 1) {
         xmin = 0
         xmax = limits
@@ -138,8 +142,6 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
         xmin = limits[1]
         xmax = limits[2]
     }
-    if ("prnt" %in% names(args) && args$prnt == T)
-        print(paste0("Range: [", xmin, " - ", xmax, "]"))
     xmax = xmax - xmin
     lower_powers = function(x) (xmax/(max_breaks * x)) %>% log10 %>% ceiling %>% ifelse(int_only, 0, .)
     upper_powers = function(x) (xmax/x) %>% log10 %>% floor
@@ -150,14 +152,15 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
 }
 
 #' Nice plotting axis breaks
+#'
 #' @description This makes usage easier in plot functions as the limits may not be always be known before plotting.
-#' @param ... See \code{\link{get_breaks}} for possible parameters.
 #'
 #' @return A \code{\link{get_breaks}} function with filled-in parameters which expects limits.
 #'
 #' @export
 #' @examples ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))
 #' @family break functions
+#' @inheritDotParams get_breaks
 plot_breaks = function(...) {
     function(x) get_breaks(x, ...)
 }
@@ -185,15 +188,51 @@ get_survival_estimate = function(sfit, survival = 0.5) {
     d = dim(sfit$surv)[2]
     results = if (is.null(d)) {
         sfit %>% {
-            sapply(c("surv", "lower", "upper"), function(x) .$time[.[[x]] < survival][1])
+            sapply(c("time", "lower", "upper"), function(x) .$time[.[[x]] < survival][1])
         } %>% as.list
     } else {
         sfit %>% {
-            sapply(1:d, function(i) sapply(c("surv", "lower", "upper"), function(x) .$time[.[[x]][, i] < survival][1]))
+            sapply(1:d, function(i) sapply(c("time", "lower", "upper"), function(x) .$time[.[[x]][, i] < survival][1]))
         } %>% t
     }
     attr(results, "survival") = survival
     results
+}
+
+#' Seperate values
+#' Seperates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
+#' close as possible to their original values.
+#'
+#' @param x A sorted numerical vector of real numbers.
+#' @param distance The minimum distance between subsequent numbers
+#' @param min The minimum value of a number
+#' @param max The maximum value of a number
+#'
+#' @return A numerical vector with the same length as x, with numbers bounded by min and max, close to their original values and
+#'         with the minimum allowed distance between subsequent values.
+#' @export
+#'
+#' @examples seperates_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
+#' @importFrom limSolve lsei
+seperate_values = function(x, distance=0.05, min=0, max=1)
+{
+  if (!is.vector(x) || !is.numeric(x) || length(x) <= 1)
+    stop("x must be a numerical vector of real numbers.")
+  if (max < min)
+    stop("max < min")
+  if ((max-min)/distance < length(x))
+    stop(paste0("With the specified distance, there is space between min and max of ",(max-min)/dist," elements",
+                ", however x contains ",length(x)," elements. Choose a larger distance or a wider range."))
+  if (is.unsorted(x))
+    stop("x must be sorted.")
+
+  N = length(x)
+  upper = matrix(nrow=2*N,ncol=N,0); for(i in 1:N) {upper[(i*2-1):(i*2),i] = c(1,-1)} #constraint for limits [min-max]
+  lower = matrix(nrow=N-1,ncol=N,0); for(i in 1:(N-1)) {lower[i, i:(i+1)]= c(-1,1)} #constraint for distances between elements
+  H = c(rep(c(0,-1),N),rep(distance,N-1)) #solution vectors
+
+  #constraint on limits, spacing and distance to original value
+  return(lsei(A=diag(N), B=x, G=rbind(upper,lower), H=H, type=2)$X)
 }
 
 #' Specifies the size of a grid which is as square as possible to fit N objects.

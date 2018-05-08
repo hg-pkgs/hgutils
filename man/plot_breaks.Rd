@@ -7,7 +7,17 @@
 plot_breaks(...)
 }
 \arguments{
-\item{...}{See \code{\link{get_breaks}} for possible parameters.}
+\item{...}{}
+
+\item{...}{Arguments passed on to \code{get_breaks}
+\describe{
+  \item{limits}{The limits of the axis. May be a list of 2 elements with lower and upper bounds, or a
+single digit (the upperbound, the lowerbound is then assumed to be 0).}
+  \item{N}{The unit stepsize; The eventual interval size will be multiples of the divisors of N. Defaults to 10}
+  \item{max_breaks}{Maximum amount of steps, defaults to 10}
+  \item{int_only}{Whether only integer divisors of N may be used for interval sizes, default to TRUE}
+  \item{strict}{Whether only multiples of N can be used, defaults to FALSE}
+}}
 }
 \value{
 A \code{\link{get_breaks}} function with filled-in parameters which expects limits.
@@ -21,4 +31,3 @@ ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))
 \seealso{
 Other break functions: \code{\link{get_breaks}}
 }
-\concept{break functions}

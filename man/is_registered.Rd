@@ -22,4 +22,3 @@ is_registered()
 Other initialization functions: \code{\link{install_load_packages}},
   \code{\link{load_common_packages}}, \code{\link{startup}}
 }
-\concept{initialization functions}

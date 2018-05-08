@@ -21,4 +21,3 @@ Other initialization functions: \code{\link{install_load_packages}},
   \code{\link{is_registered}},
   \code{\link{load_common_packages}}
 }
-\concept{initialization functions}
