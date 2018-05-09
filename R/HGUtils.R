@@ -14,10 +14,10 @@ startup = function(folder = NULL) {
     rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
     gc()
     graphics.off()
-    
+
     results = .is_registered()
     has_results = results %>% nrow == 1
-    
+
     if (!has_results) {
         if (!is.null(folder) && dir.exists(folder)) {
             setwd(folder)
@@ -47,13 +47,13 @@ startup = function(folder = NULL) {
 #' @family initialization functions
 #' @importFrom utils install.packages
 install_load_packages = function(..., load_packages = TRUE, install_packages = TRUE) {
-    if (!load_packages & !install_packages) 
+    if (!load_packages & !install_packages)
         warning("Function not executed: not installing or loading any packages. Set load_packages=TRUE or install_packages=TRUE")
     packages = unlist(list(...))
     for (package in packages) {
         if (!require(package, character.only = TRUE) & install_packages) {
             install.packages(package, dependencies = TRUE)
-            if (load_packages) 
+            if (load_packages)
                 library(package, character.only = TRUE)
         }
     }
@@ -68,7 +68,7 @@ install_load_packages = function(..., load_packages = TRUE, install_packages = T
 #' @export
 #' @family initialization functions
 load_common_packages = function(load_packages = TRUE, install_packages = TRUE) {
-    install_load_packages("tidyverse", "numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl", "writexl", "devtools", "ggthemes", 
+    install_load_packages("numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl", "writexl", "devtools", "ggthemes",
         "stringr", "reshape2", "gridGraphics", "scales", "formatR", load_packages = load_packages, install_packages = install_packages)
 }
 
@@ -87,13 +87,13 @@ load_common_packages = function(load_packages = TRUE, install_packages = TRUE) {
     current_usr = Sys.info()["user"]
     results = working_dirs %>% filter(usr == current_usr)
     registered = nrow(results) == 1
-    
+
     if (verbose) {
-        if (!registered) 
+        if (!registered)
             print(paste0("User '", current_usr, "' is not registered."), quote = F) else print(paste0("User '", current_usr, "' is registered. Default working directory is '", results$location[1], "'"), quote = F)
     }
-    
-    if (return_data) 
+
+    if (return_data)
         return(results) else return(registered)
 }
 
@@ -136,31 +136,31 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
         xmin = limits[1]
         xmax = limits[2]
     }
-    
+
     OPT = list(PRINT = "prnt")
     args = list(...)
-    if (OPT$PRINT %in% names(args) && args[OPT$PRINT] == T) 
+    if (OPT$PRINT %in% names(args) && args[OPT$PRINT] == T)
         print(paste0("input range: [", xmin, " - ", xmax, "]"))
-    
+
     for (n in names(args)) {
         print(n)
-        if (!n %in% OPT) 
+        if (!n %in% OPT)
             warning(paste0("Argument ", n, " is not valid."))
     }
-    
+
     xmax = xmax - xmin
     lower_powers = function(x) (xmax/(max_breaks * x)) %>% log10 %>% ceiling %>% ifelse(int_only, 0, .)
     upper_powers = function(x) (xmax/x) %>% log10 %>% floor
-    intervals = sapply(if (!strict) 
+    intervals = sapply(if (!strict)
         divisors(N) else N * 1:(xmax/N), function(x) x * 10^(lower_powers(x):upper_powers(x))) %>% unlist %>% unique %>% sort
     selected = intervals[xmax/intervals <= max_breaks][1]
     sq = seq(0, floor(xmax/selected) * selected, selected) + ceiling(xmin/selected) * selected
-    
+
     if (OPT$PRINT %in% names(args) && args[OPT$PRINT] == T) {
         print(paste0("Selected: ", selected, ". Sequence: "))
         print(sq)
     }
-    
+
     return(sq)
 }
 
@@ -194,16 +194,16 @@ plot_breaks = function(...) {
 #' @examples seperate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
 #' @importFrom limSolve lsei
 seperate_values = function(x, distance = 0.05, min = 0, max = 1) {
-    if (!is.vector(x) || !is.numeric(x) || length(x) <= 1) 
+    if (!is.vector(x) || !is.numeric(x) || length(x) <= 1)
         stop("x must be a numerical vector of real numbers.")
-    if (max < min) 
+    if (max < min)
         stop("max < min")
-    if ((max - min)/distance < length(x)) 
-        stop(paste0("With the specified distance, there is space between min and max of ", (max - min)/distance, " elements", ", however x contains ", 
+    if ((max - min)/distance < length(x))
+        stop(paste0("With the specified distance, there is space between min and max of ", (max - min)/distance, " elements", ", however x contains ",
             length(x), " elements. Choose a larger distance or a wider range."))
-    if (is.unsorted(x)) 
+    if (is.unsorted(x))
         stop("x must be sorted.")
-    
+
     N = length(x)
     upper = matrix(nrow = 2 * N, ncol = N, 0)
     for (i in 1:N) {
@@ -214,7 +214,7 @@ seperate_values = function(x, distance = 0.05, min = 0, max = 1) {
         lower[i, i:(i + 1)] = c(-1, 1)
     }  #constraint for distances between elements
     H = c(rep(c(0, -1), N), rep(distance, N - 1))  #solution vectors
-    
+
     # constraint on limits, spacing and distance to original value
     return(lsei(A = diag(N), B = x, G = rbind(upper, lower), H = H, type = 2)$X)
 }
