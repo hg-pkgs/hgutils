@@ -2,9 +2,7 @@
 % Please edit documentation in R/HGUtils.R
 \name{seperate_values}
 \alias{seperate_values}
-\title{Seperate values
-Seperates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
-close as possible to their original values.}
+\title{Seperate values}
 \usage{
 seperate_values(x, distance = 0.05, min = 0, max = 1)
 }
@@ -22,10 +20,9 @@ A numerical vector with the same length as x, with numbers bounded by min and ma
         with the minimum allowed distance between subsequent values.
 }
 \description{
-Seperate values
 Seperates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
 close as possible to their original values.
 }
 \examples{
-seperates_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
+seperate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
 }

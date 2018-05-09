@@ -8,15 +8,16 @@
 #' @examples \dontrun{startup('project_folder/')}
 #' @export
 #' @importFrom magrittr %>%
+#' @importFrom grDevices graphics.off
 #' @family initialization functions
 startup = function(folder = NULL) {
     rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
     gc()
     graphics.off()
-
+    
     results = .is_registered()
     has_results = results %>% nrow == 1
-
+    
     if (!has_results) {
         if (!is.null(folder) && dir.exists(folder)) {
             setwd(folder)
@@ -44,14 +45,15 @@ startup = function(folder = NULL) {
 #' install_load_packages('ggplot2','dplyr',install=FALSE)}
 #' @export
 #' @family initialization functions
+#' @importFrom utils install.packages
 install_load_packages = function(..., load_packages = TRUE, install_packages = TRUE) {
-    if (!load_packages & !install_packages)
-        warning("Function not executed: not installing or loading any packages. Please set 'load_packages=TRUE' or 'install_packages=TRUE'")
+    if (!load_packages & !install_packages) 
+        warning("Function not executed: not installing or loading any packages. Set load_packages=TRUE or install_packages=TRUE")
     packages = unlist(list(...))
     for (package in packages) {
         if (!require(package, character.only = TRUE) & install_packages) {
             install.packages(package, dependencies = TRUE)
-            if (load_packages)
+            if (load_packages) 
                 library(package, character.only = TRUE)
         }
     }
@@ -66,9 +68,8 @@ install_load_packages = function(..., load_packages = TRUE, install_packages = T
 #' @export
 #' @family initialization functions
 load_common_packages = function(load_packages = TRUE, install_packages = TRUE) {
-    install_load_packages("tidyverse", "numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl",
-                          "writexl", "devtools", "ggthemes", "stringr", "reshape2", "gridGraphics", "scales", "formatR",
-                          load_packages = load_packages, install_packages = install_packages)
+    install_load_packages("tidyverse", "numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl", "writexl", "devtools", "ggthemes", 
+        "stringr", "reshape2", "gridGraphics", "scales", "formatR", load_packages = load_packages, install_packages = install_packages)
 }
 
 
@@ -77,8 +78,8 @@ load_common_packages = function(load_packages = TRUE, install_packages = TRUE) {
 #' @param verbose Whether to print the user name and registered working directory.
 #' @param return_data Whether to return a boolean or a tibble containing the found user.
 #'
-#' @return Either a boolean (if return_data is FALSE) or a tibble containing fields 'desc' (computer description), 'usr' (computer user name)
-#' and 'location' (working directory base).
+#' @return Either a boolean (if return_data is FALSE) or a tibble containing fields 'desc' (computer description),
+#' 'usr' (computer user name) and 'location' (working directory base).
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter
@@ -86,13 +87,13 @@ load_common_packages = function(load_packages = TRUE, install_packages = TRUE) {
     current_usr = Sys.info()["user"]
     results = working_dirs %>% filter(usr == current_usr)
     registered = nrow(results) == 1
-
+    
     if (verbose) {
-        if (!registered)
+        if (!registered) 
             print(paste0("User '", current_usr, "' is not registered."), quote = F) else print(paste0("User '", current_usr, "' is registered. Default working directory is '", results$location[1], "'"), quote = F)
     }
-
-    if (return_data)
+    
+    if (return_data) 
         return(results) else return(registered)
 }
 
@@ -128,13 +129,6 @@ is_registered = function(verbose = FALSE) {
 #' @importFrom numbers divisors
 #' @family break functions
 get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict = FALSE, ...) {
-    OPT = list(PRINT="prnt")
-    args = list(...)
-    if (OPT$PRINT %in% names(args) && args[OPT$PRINT] == T)
-      print(paste0("Range: [", xmin, " - ", xmax, "]"))
-
-    for (n in names(args)) {if (!n %in% OPT) warning(paste0("Argument ",i," = ",args[[n]]," is not valid."))}
-
     if (length(limits) == 1) {
         xmin = 0
         xmax = limits
@@ -142,13 +136,32 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
         xmin = limits[1]
         xmax = limits[2]
     }
+    
+    OPT = list(PRINT = "prnt")
+    args = list(...)
+    if (OPT$PRINT %in% names(args) && args[OPT$PRINT] == T) 
+        print(paste0("input range: [", xmin, " - ", xmax, "]"))
+    
+    for (n in names(args)) {
+        print(n)
+        if (!n %in% OPT) 
+            warning(paste0("Argument ", n, " is not valid."))
+    }
+    
     xmax = xmax - xmin
     lower_powers = function(x) (xmax/(max_breaks * x)) %>% log10 %>% ceiling %>% ifelse(int_only, 0, .)
     upper_powers = function(x) (xmax/x) %>% log10 %>% floor
-    intervals = sapply(if (!strict)
+    intervals = sapply(if (!strict) 
         divisors(N) else N * 1:(xmax/N), function(x) x * 10^(lower_powers(x):upper_powers(x))) %>% unlist %>% unique %>% sort
     selected = intervals[xmax/intervals <= max_breaks][1]
-    seq(0, floor(xmax/selected) * selected, selected) + ceiling(xmin/selected) * selected
+    sq = seq(0, floor(xmax/selected) * selected, selected) + ceiling(xmin/selected) * selected
+    
+    if (OPT$PRINT %in% names(args) && args[OPT$PRINT] == T) {
+        print(paste0("Selected: ", selected, ". Sequence: "))
+        print(sq)
+    }
+    
+    return(sq)
 }
 
 #' Nice plotting axis breaks
@@ -158,49 +171,15 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
 #' @return A \code{\link{get_breaks}} function with filled-in parameters which expects limits.
 #'
 #' @export
-#' @examples ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))
+#' @examples  \dontrun{ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))}
 #' @family break functions
 #' @inheritDotParams get_breaks
 plot_breaks = function(...) {
     function(x) get_breaks(x, ...)
 }
 
-#' Get estimate of timepoints for a given survival probability
-#'
-#' @param sfit A survfit object
-#' @param survival The survival probability for which a timepoint estimate is needed. Default is 0.5 (median survival)
-#'
-#' @return A named list or matrix with elements surv (estimate), lower and upper (confidence interval). The attribute 'survival' is set
-#' to the argument survival
-#' @export
-#'
-#' @examples fit = cph(Surv(time=time, event = status==2) ~ age + sex, data=lung, x = T, y=T, surv=T)
-#' sfit = survfit(fit)
-#' sfit2 = survfit(fit, newdata=lung[1:20,])
-#'
-#' get_survival_estimate(sfit) #get median survival for all data points in the dataset.
-#' get_survival_estimate(sfit2) #get median survival for patients 1-20 seperately
-#' @importFrom magrittr %>%
-get_survival_estimate = function(sfit, survival = 0.5) {
-    if ("survfit" %nin% class(sfit))
-        stop("sfit must be a survfit object")
-
-    d = dim(sfit$surv)[2]
-    results = if (is.null(d)) {
-        sfit %>% {
-            sapply(c("time", "lower", "upper"), function(x) .$time[.[[x]] < survival][1])
-        } %>% as.list
-    } else {
-        sfit %>% {
-            sapply(1:d, function(i) sapply(c("time", "lower", "upper"), function(x) .$time[.[[x]][, i] < survival][1]))
-        } %>% t
-    }
-    attr(results, "survival") = survival
-    results
-}
-
 #' Seperate values
-#' Seperates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
+#' @description Seperates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
 #' close as possible to their original values.
 #'
 #' @param x A sorted numerical vector of real numbers.
@@ -212,27 +191,32 @@ get_survival_estimate = function(sfit, survival = 0.5) {
 #'         with the minimum allowed distance between subsequent values.
 #' @export
 #'
-#' @examples seperates_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
+#' @examples seperate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
 #' @importFrom limSolve lsei
-seperate_values = function(x, distance=0.05, min=0, max=1)
-{
-  if (!is.vector(x) || !is.numeric(x) || length(x) <= 1)
-    stop("x must be a numerical vector of real numbers.")
-  if (max < min)
-    stop("max < min")
-  if ((max-min)/distance < length(x))
-    stop(paste0("With the specified distance, there is space between min and max of ",(max-min)/dist," elements",
-                ", however x contains ",length(x)," elements. Choose a larger distance or a wider range."))
-  if (is.unsorted(x))
-    stop("x must be sorted.")
-
-  N = length(x)
-  upper = matrix(nrow=2*N,ncol=N,0); for(i in 1:N) {upper[(i*2-1):(i*2),i] = c(1,-1)} #constraint for limits [min-max]
-  lower = matrix(nrow=N-1,ncol=N,0); for(i in 1:(N-1)) {lower[i, i:(i+1)]= c(-1,1)} #constraint for distances between elements
-  H = c(rep(c(0,-1),N),rep(distance,N-1)) #solution vectors
-
-  #constraint on limits, spacing and distance to original value
-  return(lsei(A=diag(N), B=x, G=rbind(upper,lower), H=H, type=2)$X)
+seperate_values = function(x, distance = 0.05, min = 0, max = 1) {
+    if (!is.vector(x) || !is.numeric(x) || length(x) <= 1) 
+        stop("x must be a numerical vector of real numbers.")
+    if (max < min) 
+        stop("max < min")
+    if ((max - min)/distance < length(x)) 
+        stop(paste0("With the specified distance, there is space between min and max of ", (max - min)/distance, " elements", ", however x contains ", 
+            length(x), " elements. Choose a larger distance or a wider range."))
+    if (is.unsorted(x)) 
+        stop("x must be sorted.")
+    
+    N = length(x)
+    upper = matrix(nrow = 2 * N, ncol = N, 0)
+    for (i in 1:N) {
+        upper[(i * 2 - 1):(i * 2), i] = c(1, -1)
+    }  #constraint for limits [min-max]
+    lower = matrix(nrow = N - 1, ncol = N, 0)
+    for (i in 1:(N - 1)) {
+        lower[i, i:(i + 1)] = c(-1, 1)
+    }  #constraint for distances between elements
+    H = c(rep(c(0, -1), N), rep(distance, N - 1))  #solution vectors
+    
+    # constraint on limits, spacing and distance to original value
+    return(lsei(A = diag(N), B = x, G = rbind(upper, lower), H = H, type = 2)$X)
 }
 
 #' Specifies the size of a grid which is as square as possible to fit N objects.

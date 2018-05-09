@@ -33,3 +33,4 @@ get_breaks(24, N=12, max_breaks=15)
 \seealso{
 Other break functions: \code{\link{plot_breaks}}
 }
+\concept{break functions}

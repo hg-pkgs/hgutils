@@ -7,8 +7,6 @@
 plot_breaks(...)
 }
 \arguments{
-\item{...}{}
-
 \item{...}{Arguments passed on to \code{get_breaks}
 \describe{
   \item{limits}{The limits of the axis. May be a list of 2 elements with lower and upper bounds, or a
@@ -26,8 +24,9 @@ A \code{\link{get_breaks}} function with filled-in parameters which expects limi
 This makes usage easier in plot functions as the limits may not be always be known before plotting.
 }
 \examples{
-ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))
+ \dontrun{ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))}
 }
 \seealso{
 Other break functions: \code{\link{get_breaks}}
 }
+\concept{break functions}

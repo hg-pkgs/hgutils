@@ -1,5 +1,4 @@
-# print.HGUser = function (x, ...) print(paste0('Hello ',x$user_name)) A = list(user_name = 'a',wd_locations = list('b')) class(A) =
-# 'HGUser'
+# print.HGUser = function (x, ...) print(paste0('Hello ',x$user_name)) A = list(user_name = 'a',wd_locations = list('b')) class(A) = 'HGUser'
 library(HGUtils)
 type_sum.HGUser <- function(x) {
     "HGUser"

@@ -26,7 +26,6 @@ diamond = cbind(x = diamond_x, y = diamond_y) %>% as_tibble
 ind$y = nrow(ind):1 + 1
 
 # geom_point(aes(size=1/vi, shape=type), fill='black')
-ggplot(ind, aes(x = est, y = y, xmin = lb, xmax = ub)) + geom_vline(aes(xintercept = pooled), linetype = "dashed") + geom_errorbarh(height = 0.2) + 
-    geom_point(aes(size = size), fill = "black", shape = 22) + geom_polygon(data = diamond, mapping = aes(x = x, y = y), inherit.aes = F) + 
-    scale_x_continuous(breaks = plot_breaks(max_breaks = 10)) + # scale_y_continuous(limits = c(0,NA)) +
-theme_classic()
+ggplot(ind, aes(x = est, y = y, xmin = lb, xmax = ub)) + geom_vline(aes(xintercept = pooled), linetype = "dashed") + geom_errorbarh(height = 0.2) + geom_point(aes(size = size), 
+    fill = "black", shape = 22) + geom_polygon(data = diamond, mapping = aes(x = x, y = y), inherit.aes = F) + scale_x_continuous(breaks = plot_breaks(max_breaks = 10)) + 
+    theme_classic()
