@@ -1,7 +1,4 @@
-#' HGUtils.
+#' Collection of utility functions
 #'
-#' @name HGUtils
-#' @docType package
-NULL
-# devtools::use_package('dplyr') devtools::use_package('limSolve') devtools::use_package('magrittr') devtools::use_package('numbers')
-# devtools::use_package('tibble') devtools::use_package('rms') devtools::use_package('survival')
+#' A collection of some useful utility functions for plotting, project management and survival.
+"_PACKAGE"
