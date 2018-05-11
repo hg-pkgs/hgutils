@@ -213,7 +213,7 @@ seperate_values = function(x, distance = 0.05, min = 0, max = 1) {
     for (i in 1:(N - 1)) {
         lower[i, i:(i + 1)] = c(-1, 1)
     }  #constraint for distances between elements
-    H = c(rep(c(0, -1), N), rep(distance, N - 1))  #solution vectors
+    H = c(rep(c(min, -max), N), rep(distance, N - 1))  #solution vectors
 
     # constraint on limits, spacing and distance to original value
     return(lsei(A = diag(N), B = x, G = rbind(upper, lower), H = H, type = 2)$X)
