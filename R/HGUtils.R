@@ -261,3 +261,25 @@ rmNA = function(LIST) {
 rndDbl = function(dbl, digits = 3) {
     sprintf(paste0("%.", digits, "f"), round(dbl, digits))
 }
+
+#' Update default parameters with ellipsis
+#'
+#' @param default A named list of default values for parameters
+#' @param ... Optional parameters to override the default parameters. A warning is shown if the names do not match.
+#'
+#' @return The updated list of parameters with possible new values.
+#' @export
+#'
+#' @examples foo = function(...) {
+#' default = list(a=1)
+#' updated_args = update_additional_args(default, ...)
+#' }
+update_additional_args = function(default, ...)
+{
+  supplied = list(...)
+  match = intersect(names(default), names(supplied))
+  default[match] = supplied[match]
+  nonmatch = setdiff(names(supplied), names(default))
+  if(length(nonmatch) > 0) warning(paste("The following arguments are ignored: ", nonmatch))
+  invisible(default)
+}

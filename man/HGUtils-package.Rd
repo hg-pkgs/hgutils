@@ -9,6 +9,6 @@
 A collection of some useful utility functions for plotting, project management and survival.
 }
 \author{
-\strong{Maintainer}: HÃ©ctor van den Boorn \email{h.g.vandenboorn@amc.uva.nl}
+\strong{Maintainer}: Héctor van den Boorn \email{h.g.vandenboorn@amc.uva.nl}
 
 }

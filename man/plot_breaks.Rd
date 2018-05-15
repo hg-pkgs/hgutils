@@ -29,4 +29,3 @@ This makes usage easier in plot functions as the limits may not be always be kno
 \seealso{
 Other break functions: \code{\link{get_breaks}}
 }
-\concept{break functions}
