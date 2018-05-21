@@ -45,8 +45,8 @@ startup = function(folder = NULL, rm=TRUE) {
 #' @return NULL
 #'
 #' @examples \dontrun{
-#' install_load_packages(c('ggplot2','dplyr'))
-#' install_load_packages('ggplot2','dplyr',install=FALSE)}
+#' install_load_packages(c('magrittr','dplyr'))
+#' install_load_packages('magrittr','dplyr',install=FALSE)}
 #' @export
 #' @family initialization functions
 #' @importFrom utils install.packages
@@ -350,7 +350,7 @@ createDescImports = function()
                       "^.* ([a-zA-Z0-9\\.]*?)::[:]?.*$|",
                       "^.*install_load_packages\\((?:c\\()?(.*?)\\).*$"))[,-1]} %>%
     rmNA) %>% unlist %>% sapply(. %>% str_split(",")) %>% unlist %>% trimws %>% str_replace_all("\\'","") %>% unique %>% sort
-  depen = depen[sapply(depen, function(x) require(x, character.only = TRUE, warn.conflicts = FALSE)) %>% unname]
+  depen = depen[sapply(depen, function(x) suppressWarnings(require(x, character.only = TRUE, warn.conflicts = FALSE,quietly = TRUE))) %>% unname]
 
   cat(sprintf("The following packages have been found in the source code:\n%s\n\n",
         paste0("* ",depen,collapse = "\n")))
