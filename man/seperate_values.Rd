@@ -4,10 +4,10 @@
 \alias{seperate_values}
 \title{Seperate values}
 \usage{
-seperate_values(x, distance = 0.05, min = 0, max = 1)
+seperate_values(X, distance = 0.05, min = 0, max = 1)
 }
 \arguments{
-\item{x}{A sorted numerical vector of real numbers.}
+\item{X}{A sorted numerical vector of real numbers.}
 
 \item{distance}{The minimum distance between subsequent numbers}
 

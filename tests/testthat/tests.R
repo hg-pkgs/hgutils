@@ -8,7 +8,7 @@ test_that("Same estimates in survEstimateTime for survest and survfit with no ne
 
     for (i in 1:100) {
         surv = runif(1)
-        expect_identical(survEstimateTime(fit1, surv), survEstimateTime(fit2, surv))
+        expect_identical(survEstimateTime(fit1, surv)$time, survEstimateTime(fit2, surv)$time)
     }
 })
 

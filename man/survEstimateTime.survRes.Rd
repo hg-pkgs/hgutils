@@ -7,7 +7,7 @@
 \method{survEstimateTime}{survRes}(sRes, survival = 0.5)
 }
 \arguments{
-\item{sRes}{An \code{sRes} object}
+\item{sRes}{A \code{sRes} object}
 
 \item{survival}{the survival probability for which the timepoint is estimated.}
 }

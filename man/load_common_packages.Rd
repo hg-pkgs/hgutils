@@ -4,12 +4,15 @@
 \alias{load_common_packages}
 \title{Loads (and optionally install) commonly used packages}
 \usage{
-load_common_packages(load_packages = TRUE, install_packages = TRUE)
+load_common_packages(load_packages = TRUE, install_packages = TRUE,
+  force_install = FALSE)
 }
 \arguments{
 \item{load_packages}{Whether to load the selected packages}
 
 \item{install_packages}{Whether to install the selected packages}
+
+\item{force_install}{Whether to install packages even if they are installed already}
 }
 \description{
 Loads (and optionally install) commonly used packages
@@ -18,3 +21,4 @@ Loads (and optionally install) commonly used packages
 Other initialization functions: \code{\link{install_load_packages}},
   \code{\link{is_registered}}, \code{\link{startup}}
 }
+\concept{initialization functions}

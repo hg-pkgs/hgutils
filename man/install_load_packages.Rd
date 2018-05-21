@@ -4,14 +4,17 @@
 \alias{install_load_packages}
 \title{Installs and loads specified packages}
 \usage{
-install_load_packages(..., load_packages = TRUE, install_packages = TRUE)
+install_load_packages(..., install_packages = TRUE, load_packages = TRUE,
+  force_install = FALSE)
 }
 \arguments{
 \item{...}{A list of package names}
 
+\item{install_packages}{Whether to install the selected packages}
+
 \item{load_packages}{Whether to load the selected packages}
 
-\item{install_packages}{Whether to install the selected packages}
+\item{force_install}{Whether to install packages even if they are installed already}
 }
 \description{
 Installs and loads specified packages
@@ -25,3 +28,4 @@ install_load_packages('ggplot2','dplyr',install=FALSE)}
 Other initialization functions: \code{\link{is_registered}},
   \code{\link{load_common_packages}}, \code{\link{startup}}
 }
+\concept{initialization functions}

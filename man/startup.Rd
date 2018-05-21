@@ -4,11 +4,13 @@
 \alias{startup}
 \title{Clears the workspace and sets the working directory to specified folder.}
 \usage{
-startup(folder = NULL)
+startup(folder = NULL, rm = TRUE)
 }
 \arguments{
 \item{folder}{String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
 working directory paths. Use \code{is_registered()} to check whether user registration is enabled}
+
+\item{rm}{Whether to remove objects in the current environment. Defaults to TRUE.}
 }
 \description{
 Clears the workspace and sets the working directory to specified folder.
@@ -21,3 +23,4 @@ Other initialization functions: \code{\link{install_load_packages}},
   \code{\link{is_registered}},
   \code{\link{load_common_packages}}
 }
+\concept{initialization functions}

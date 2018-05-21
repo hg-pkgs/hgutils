@@ -2,6 +2,7 @@
 #'
 #' @param folder String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
 #' working directory paths. Use \code{is_registered()} to check whether user registration is enabled
+#' @param rm Whether to remove objects in the current environment. Defaults to TRUE.
 #'
 #' @return NULL
 #'
@@ -10,10 +11,12 @@
 #' @importFrom magrittr %>%
 #' @importFrom grDevices graphics.off
 #' @family initialization functions
-startup = function(folder = NULL) {
-    rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
-    gc()
-    graphics.off()
+startup = function(folder = NULL, rm=TRUE) {
+    if (rm){
+      rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
+      gc()
+      graphics.off()
+    }
 
     results = .is_registered()
     has_results = results %>% nrow == 1
@@ -21,7 +24,7 @@ startup = function(folder = NULL) {
     if (!has_results) {
         if (!is.null(folder) && dir.exists(folder)) {
             setwd(folder)
-            print(paste0("Setting the working directory at: '", folder, "'"), quote = F)
+            message(paste0("Setting the working directory at: '", folder, "'"), quote = F)
         } else warning(paste0("[UNREGISTERED] Directory does not exist: '", ifelse(is.null(folder), "NULL", folder), "'"))
     } else {
         dir = ifelse(!is.null(folder) && dir.exists(folder), folder, paste0(results$location, folder))
@@ -36,6 +39,7 @@ startup = function(folder = NULL) {
 #'
 #' @param load_packages Whether to load the selected packages
 #' @param install_packages Whether to install the selected packages
+#' @param force_install Whether to install packages even if they are installed already
 #' @param ... A list of package names
 #'
 #' @return NULL
@@ -46,15 +50,21 @@ startup = function(folder = NULL) {
 #' @export
 #' @family initialization functions
 #' @importFrom utils install.packages
-install_load_packages = function(..., load_packages = TRUE, install_packages = TRUE) {
+install_load_packages = function(..., install_packages = TRUE, load_packages = TRUE, force_install = FALSE) {
     if (!load_packages & !install_packages)
         warning("Function not executed: not installing or loading any packages. Set load_packages=TRUE or install_packages=TRUE")
     packages = unlist(list(...))
     for (package in packages) {
-        if (!require(package, character.only = TRUE) & install_packages) {
-            install.packages(package, dependencies = TRUE)
-            if (load_packages)
-                library(package, character.only = TRUE)
+        package_exists = suppressWarnings(require(package, character.only = TRUE, quietly = TRUE))
+
+        if (!package_exists && install.packages() || force_install){
+          install.packages(package, dependencies = TRUE, verbose = FALSE, quiet = TRUE)
+          message(sprintf("- Installed '%s'",package))
+        }
+
+        if (load_packages){
+          library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)
+          message(sprintf("Loaded '%s'",package))
         }
     }
 }
@@ -63,34 +73,34 @@ install_load_packages = function(..., load_packages = TRUE, install_packages = T
 #'
 #' @param load_packages Whether to load the selected packages
 #' @param install_packages Whether to install the selected packages
+#' @param force_install Whether to install packages even if they are installed already
 #'
 #' @return NULL
 #' @export
 #' @family initialization functions
-load_common_packages = function(load_packages = TRUE, install_packages = TRUE) {
+load_common_packages = function(load_packages = TRUE, install_packages = TRUE, force_install = FALSE) {
     install_load_packages("numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl", "writexl", "devtools", "ggthemes",
-        "stringr", "reshape2", "gridGraphics", "scales", "formatR", load_packages = load_packages, install_packages = install_packages)
+        "stringr", "reshape2", "gridGraphics", "scales", "formatR","tibble",
+        load_packages = load_packages, install_packages = install_packages, force_install = force_install)
 }
 
 
-#' Internal functio to check whether the current user has the working directory registered.
+#' Internal function to check whether the current user has the working directory registered.
 #'
 #' @param verbose Whether to print the user name and registered working directory.
 #' @param return_data Whether to return a boolean or a tibble containing the found user.
 #'
 #' @return Either a boolean (if return_data is FALSE) or a tibble containing fields 'desc' (computer description),
 #' 'usr' (computer user name) and 'location' (working directory base).
-#'
-#' @importFrom magrittr %>%
-#' @importFrom dplyr filter
 .is_registered = function(verbose = FALSE, return_data = TRUE) {
     current_usr = Sys.info()["user"]
-    results = working_dirs %>% filter(usr == current_usr)
+    results = working_dirs[working_dirs$usr == current_usr]
     registered = nrow(results) == 1
 
     if (verbose) {
         if (!registered)
-            print(paste0("User '", current_usr, "' is not registered."), quote = F) else print(paste0("User '", current_usr, "' is registered. Default working directory is '", results$location[1], "'"), quote = F)
+            print(paste0("User '", current_usr, "' is not registered."), quote = F) else
+              print(paste0("User '", current_usr, "' is registered. Default working directory is '", results$location[1], "'"), quote = F)
     }
 
     if (return_data)
@@ -129,39 +139,33 @@ is_registered = function(verbose = FALSE) {
 #' @importFrom numbers divisors
 #' @family break functions
 get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict = FALSE, ...) {
-    if (length(limits) == 1) {
-        xmin = 0
-        xmax = limits
-    } else {
-        xmin = limits[1]
-        xmax = limits[2]
-    }
+  if (length(limits) == 1) {
+      xmin = 0
+      xmax = limits
+  } else {
+      xmin = limits[1]
+      xmax = limits[2]
+  }
 
-    OPT = list(PRINT = "prnt")
-    args = list(...)
-    if (OPT$PRINT %in% names(args) && args[OPT$PRINT] == T)
-        print(paste0("input range: [", xmin, " - ", xmax, "]"))
+  options = list(prnt=FALSE) %>% retrieve_ellipsis(...)
+  if (options$prnt)
+    print(paste0("input range: [", xmin, " - ", xmax, "]"))
 
-    for (n in names(args)) {
-        print(n)
-        if (!n %in% OPT)
-            warning(paste0("Argument ", n, " is not valid."))
-    }
 
-    xmax = xmax - xmin
-    lower_powers = function(x) (xmax/(max_breaks * x)) %>% log10 %>% ceiling %>% ifelse(int_only, 0, .)
-    upper_powers = function(x) (xmax/x) %>% log10 %>% floor
-    intervals = sapply(if (!strict)
-        divisors(N) else N * 1:(xmax/N), function(x) x * 10^(lower_powers(x):upper_powers(x))) %>% unlist %>% unique %>% sort
-    selected = intervals[xmax/intervals <= max_breaks][1]
-    sq = seq(0, floor(xmax/selected) * selected, selected) + ceiling(xmin/selected) * selected
+  xmax = xmax - xmin
+  lower_powers = function(X) (xmax/(max_breaks * X)) %>% log10 %>% ceiling %>% ifelse(int_only, 0, .)
+  upper_powers = function(X) (xmax/X) %>% log10 %>% floor
+  intervals = sapply(if (!strict)
+      divisors(N) else N * 1:(xmax/N), function(X) X * 10^(lower_powers(X):upper_powers(X))) %>% unlist %>% unique %>% sort
+  selected = intervals[xmax/intervals <= max_breaks][1]
+  sq = seq(0, floor(xmax/selected) * selected, selected) + ceiling(xmin/selected) * selected
 
-    if (OPT$PRINT %in% names(args) && args[OPT$PRINT] == T) {
-        print(paste0("Selected: ", selected, ". Sequence: "))
-        print(sq)
-    }
+  if (options$prnt) {
+      print(paste0("Selected: ", selected, ". Sequence: "))
+      print(sq)
+  }
 
-    return(sq)
+  return(sq)
 }
 
 #' Nice plotting axis breaks
@@ -175,14 +179,14 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
 #' @family break functions
 #' @inheritDotParams get_breaks
 plot_breaks = function(...) {
-    function(x) get_breaks(x, ...)
+    function(X) get_breaks(X, ...)
 }
 
 #' Seperate values
 #' @description Seperates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
 #' close as possible to their original values.
 #'
-#' @param x A sorted numerical vector of real numbers.
+#' @param X A sorted numerical vector of real numbers.
 #' @param distance The minimum distance between subsequent numbers
 #' @param min The minimum value of a number
 #' @param max The maximum value of a number
@@ -193,18 +197,18 @@ plot_breaks = function(...) {
 #'
 #' @examples seperate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
 #' @importFrom limSolve lsei
-seperate_values = function(x, distance = 0.05, min = 0, max = 1) {
-    if (!is.vector(x) || !is.numeric(x) || length(x) <= 1)
-        stop("x must be a numerical vector of real numbers.")
+seperate_values = function(X, distance = 0.05, min = 0, max = 1) {
+    if (!is.vector(X) || !is.numeric(X) || length(X) <= 1)
+        stop("Argument 'X' must be a numerical vector of real numbers with |X| > 1.")
     if (max < min)
-        stop("max < min")
-    if ((max - min)/distance < length(x))
+        stop("Argument 'max' must be larger than 'min', but 'min'=%s and 'max'=%s.",.value_str(min),.value_str(max))
+    if ((max - min)/distance < length(X))
         stop(paste0("With the specified distance, there is space between min and max of ", (max - min)/distance, " elements", ", however x contains ",
-            length(x), " elements. Choose a larger distance or a wider range."))
-    if (is.unsorted(x))
+            length(X), " elements. Choose a larger distance or a wider range."))
+    if (is.unsorted(X))
         stop("x must be sorted.")
 
-    N = length(x)
+    N = length(X)
     upper = matrix(nrow = 2 * N, ncol = N, 0)
     for (i in 1:N) {
         upper[(i * 2 - 1):(i * 2), i] = c(1, -1)
@@ -216,7 +220,7 @@ seperate_values = function(x, distance = 0.05, min = 0, max = 1) {
     H = c(rep(c(min, -max), N), rep(distance, N - 1))  #solution vectors
 
     # constraint on limits, spacing and distance to original value
-    return(lsei(A = diag(N), B = x, G = rbind(upper, lower), H = H, type = 2)$X)
+    return(lsei(A = diag(N), B = X, G = rbind(upper, lower), H = H, type = 2)$X)
 }
 
 #' Specifies the size of a grid which is as square as possible to fit N objects.
@@ -272,9 +276,9 @@ rndDbl = function(dbl, digits = 3) {
 #'
 #' @examples foo = function(...) {
 #' default = list(a=1)
-#' updated_args = update_additional_args(default, ...)
+#' updated_args = retrieve_ellipsis(default, ...)
 #' }
-update_additional_args = function(default, ...)
+retrieve_ellipsis = function(default, ...)
 {
   supplied = list(...)
   match = intersect(names(default), names(supplied))
@@ -282,4 +286,24 @@ update_additional_args = function(default, ...)
   nonmatch = setdiff(names(supplied), names(default))
   if(length(nonmatch) > 0) warning(paste("The following arguments are ignored: ", nonmatch))
   invisible(default)
+}
+
+#' Creates a nice string representation of a variable.
+#'
+#' @param x The variable for which a string representation is created.
+#' @param show_class Whether to show the class of 'x'. Defaults to FALSE.
+#'
+#' @return A character vector with the string representation of 'x'.
+#' @note Example: \code{.value_str(c(1,2,3))}
+.value_str = function(x, show_class = FALSE) {
+  text = if (length(x) == 0L) {
+    "{}"
+  } else if (length(x) == 1) {
+    sprintf("'%s'", x)
+  } else {
+    sprintf("['%s']", paste0(sort(x), collapse = "','"))
+  }
+
+  if (show_class)
+    sprintf("%s (class: %s)", text, class(x)) else text
 }
