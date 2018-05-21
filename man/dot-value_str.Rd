@@ -17,6 +17,6 @@ A character vector with the string representation of 'x'.
 \description{
 Creates a nice string representation of a variable.
 }
-\note{
-Example: \code{.value_str(c(1,2,3))}
+\examples{
+.value_str(c(1,2,3))
 }

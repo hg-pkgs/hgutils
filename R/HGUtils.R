@@ -288,22 +288,78 @@ retrieve_ellipsis = function(default, ...)
   invisible(default)
 }
 
+#' Retrieves generic function implementation
+#'
+#' @param generic A string with the name of the generic function.
+#'
+#' @return A vector of class names for which argument 'generic' provides an implementation.
+#' @export
+#'
+#' @examples .impls("print")
+#' @importFrom magrittr %>%
+#' @importFrom stringr str_match
+#' @importFrom utils methods
+.impls = function(generic)
+{
+  methods(generic) %>% sapply(. %>% {str_match(.,"^.*\\.(.*)$")[,2]}) %>% unname %>% .[.!="default"]
+}
+
 #' Creates a nice string representation of a variable.
 #'
 #' @param x The variable for which a string representation is created.
 #' @param show_class Whether to show the class of 'x'. Defaults to FALSE.
 #'
 #' @return A character vector with the string representation of 'x'.
-#' @note Example: \code{.value_str(c(1,2,3))}
+#' @export
+#' @examples .value_str(c(1,2,3))
 .value_str = function(x, show_class = FALSE) {
   text = if (length(x) == 0L) {
     "{}"
   } else if (length(x) == 1) {
     sprintf("'%s'", x)
-  } else {
+  } else if (is.atomic(x)) {
     sprintf("['%s']", paste0(sort(x), collapse = "','"))
+  } else {
+    sprintf("{'%s'}", paste0(x,collapse = "','"))
   }
 
   if (show_class)
     sprintf("%s (class: %s)", text, class(x)) else text
+}
+
+#' Creates a list of necessary imports for the DESCRIPTION file.s
+#'
+#' @return NULL
+#' @export
+#'
+#' @examples createDescImports()
+#' @importFrom magrittr %>%
+#' @importFrom stringr str_match str_replace str_replace_all str_split
+#' @importFrom utils read.delim
+createDescImports = function()
+{
+  if(!dir.exists("R/") || !file.exists("DESCRIPTION")){
+    warning("Working directory not set to an R project folder.")
+    return()
+  }
+
+  files = list.files("R/",".*\\.[rR]$",full.names = TRUE, recursive = TRUE)
+  depen = files %>% sapply(. %>% read.delim(sep = "\n",stringsAsFactors=FALSE) %>% unlist %>%
+  {str_match(.,paste0("^.*@import(?:From)? ([a-zA-Z0-9\\.]*?) .*$|",
+                      "^.*library\\(([a-zA-Z0-9\\.]*?)[,\\)].*$|",
+                      "^.* ([a-zA-Z0-9\\.]*?)::[:]?.*$|",
+                      "^.*install_load_packages\\((?:c\\()?(.*?)\\).*$"))[,-1]} %>%
+    rmNA) %>% unlist %>% sapply(. %>% str_split(",")) %>% unlist %>% trimws %>% str_replace_all("\\'","") %>% unique %>% sort
+  depen = depen[sapply(depen, function(x) require(x, character.only = TRUE, warn.conflicts = FALSE)) %>% unname]
+
+  cat(sprintf("The following packages have been found in the source code:\n%s\n\n",
+        paste0("* ",depen,collapse = "\n")))
+  resp = readline("Replace DESCRIPTION imports (Y/N)? ")
+
+  if(resp=="Y"){
+  readLines("DESCRIPTION") %>% paste0("\n",collapse = "") %>%  str_replace("(?<=\nImports:[ ])(.*?)(?=\n)", paste0(depen,collapse = ", ")) %>%
+    writeLines("DESCRIPTION")
+  } else {
+    warning("DESCRIPTION was not adjusted.")
+  }
 }
