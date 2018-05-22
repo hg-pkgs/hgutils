@@ -16,5 +16,5 @@ A vector of class names for which argument 'generic' provides an implementation.
 Retrieves generic function implementation
 }
 \examples{
-.impls("print")
+.impls('print')
 }
