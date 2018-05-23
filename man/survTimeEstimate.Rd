@@ -33,6 +33,8 @@ result and set to the argument survival probability
 }
 \description{
 Get estimate of timepoints for a given survival probability.
+
+Survival time estimation for survRes objects
 }
 \section{Methods (by class)}{
 \itemize{

@@ -58,12 +58,12 @@ install_load_packages = function(..., install_packages = TRUE, load_packages = T
         package_exists = suppressWarnings(require(package, character.only = TRUE, quietly = TRUE))
 
         if (!package_exists && install_packages || force_install) {
-            install.packages(package, dependencies = TRUE, verbose = FALSE, quiet = TRUE)
+            suppressWarnings(install.packages(package, dependencies = TRUE, verbose = FALSE, quiet = TRUE))
             message(sprintf("- Installed '%s'", package))
         }
 
         if (load_packages) {
-            library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)
+            suppressWarnings(library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE))
             message(sprintf("Loaded '%s'", package))
         }
     }

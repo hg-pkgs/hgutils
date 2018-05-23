@@ -1,4 +1,4 @@
-Package: HGUtils
+Package: hgutils
 Title: Collection of utility functions
 Version: 0.0.0.9300
 Authors@R: person("Héctor", "van den Boorn", email = "h.g.vandenboorn@amc.uva.nl", role = c("aut", "cre"))
