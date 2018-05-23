@@ -128,6 +128,7 @@ is_registered = function(verbose = FALSE) {
 #' @param int_only Whether only integer divisors of N may be used for interval sizes, default to TRUE
 #' @param strict Whether only multiples of N can be used, defaults to FALSE
 #' @param ... Additional parameters, use 'prnt=TRUE' to print to limits
+#' @param include_upper Whether the resulting upperbound should go past the upper limit. Defaults to TRUE.
 #'
 #' @return A list of maximum \code{max_breaks+1} elements with intervals.
 #'
@@ -136,7 +137,7 @@ is_registered = function(verbose = FALSE) {
 #' @importFrom magrittr %>%
 #' @importFrom numbers divisors
 #' @family break functions
-get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict = FALSE, ...) {
+get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict = FALSE, include_upper=TRUE, ...) {
     if (length(limits) == 1) {
         xmin = 0
         xmax = limits
@@ -156,7 +157,7 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
     intervals = sapply(if (!strict)
         divisors(N) else N * 1:(xmax/N), function(X) X * 10^(lower_powers(X):upper_powers(X))) %>% unlist %>% unique %>% sort
     selected = intervals[xmax/intervals <= max_breaks][1]
-    sq = seq(0, floor(xmax/selected) * selected, selected) + ceiling(xmin/selected) * selected
+    sq = seq(0, ifelse(include_upper,ceiling(xmax/selected),floor(xmax/selected)) * selected, selected) + ceiling(xmin/selected) * selected
 
     if (options$prnt) {
         print(paste0("Selected: ", selected, ". Sequence: "))

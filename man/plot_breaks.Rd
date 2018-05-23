@@ -15,6 +15,7 @@ single digit (the upperbound, the lowerbound is then assumed to be 0).}
   \item{max_breaks}{Maximum amount of steps, defaults to 10}
   \item{int_only}{Whether only integer divisors of N may be used for interval sizes, default to TRUE}
   \item{strict}{Whether only multiples of N can be used, defaults to FALSE}
+  \item{include_upper}{Whether the resulting upperbound should go past the upper limit. Defaults to TRUE.}
 }}
 }
 \value{

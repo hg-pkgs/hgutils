@@ -1,4 +1,4 @@
 library(testthat)
-library(HGUtils)
+library(hgutils)
 
-test_check("HGUtils")
+test_check("hgutils")

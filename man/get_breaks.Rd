@@ -5,7 +5,7 @@
 \title{Nice plotting axis breaks}
 \usage{
 get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE,
-  strict = FALSE, ...)
+  strict = FALSE, include_upper = TRUE, ...)
 }
 \arguments{
 \item{limits}{The limits of the axis. May be a list of 2 elements with lower and upper bounds, or a
@@ -18,6 +18,8 @@ single digit (the upperbound, the lowerbound is then assumed to be 0).}
 \item{int_only}{Whether only integer divisors of N may be used for interval sizes, default to TRUE}
 
 \item{strict}{Whether only multiples of N can be used, defaults to FALSE}
+
+\item{include_upper}{Whether the resulting upperbound should go past the upper limit. Defaults to TRUE.}
 
 \item{...}{Additional parameters, use 'prnt=TRUE' to print to limits}
 }
