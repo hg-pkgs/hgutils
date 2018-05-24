@@ -28,3 +28,4 @@ install_load_packages('magrittr','dplyr',install=FALSE)}
 Other initialization functions: \code{\link{is_registered}},
   \code{\link{load_common_packages}}, \code{\link{startup}}
 }
+\concept{initialization functions}

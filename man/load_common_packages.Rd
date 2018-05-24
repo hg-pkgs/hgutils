@@ -21,3 +21,4 @@ Loads (and optionally install) commonly used packages
 Other initialization functions: \code{\link{install_load_packages}},
   \code{\link{is_registered}}, \code{\link{startup}}
 }
+\concept{initialization functions}

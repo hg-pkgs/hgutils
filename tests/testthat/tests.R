@@ -1,26 +1,26 @@
-context("survTimeEstimate - NO NEWDATA")
+context("time_estimate - NO NEWDATA")
 suppressWarnings(library(rms))
 library(hgutils)
 
-test_that("Same estimates in survTimeEstimate for survest and survfit with no newdata", {
+test_that("Same estimates in time_estimate for survest and survfit with no newdata", {
     fit1 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = TRUE, y = TRUE, surv = TRUE)
     fit2 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = FALSE, y = FALSE, surv = TRUE)
 
     for (i in 1:100) {
         surv = runif(1)
-        expect_identical(survTimeEstimate(fit1, surv)$time, survTimeEstimate(fit2, surv)$time)
+        expect_identical(time_estimate(fit1, surv)$time, time_estimate(fit2, surv)$time)
     }
 })
 
-context("survTimeEstimate - NEWDATA")
-test_that("Same estimates in survTimeEstimate for survest and survfit with newdata", {
+context("time_estimate - NEWDATA")
+test_that("Same estimates in time_estimate for survest and survfit with newdata", {
     fit1 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = TRUE, y = TRUE, surv = TRUE)
     fit2 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = FALSE, y = FALSE, surv = TRUE)
 
     for (i in 1:100) {
         surv = runif(1)
         newdata = lung[sample(1:nrow(lung), 10 + round(runif(1) * (nrow(lung) - 10))), ]
-        expect_identical(survTimeEstimate(fit1, surv, newdata)$time, survTimeEstimate(fit2, surv, newdata)$time)
+        expect_identical(time_estimate(fit1, surv, newdata)$time, time_estimate(fit2, surv, newdata)$time)
     }
 })
 

@@ -79,8 +79,9 @@ install_load_packages = function(..., install_packages = TRUE, load_packages = T
 #' @export
 #' @family initialization functions
 load_common_packages = function(load_packages = TRUE, install_packages = TRUE, force_install = FALSE) {
-    install_load_packages("numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl", "writexl", "devtools", "ggthemes", "stringr",
-        "reshape2", "gridGraphics", "scales", "formatR", "tibble", load_packages = load_packages, install_packages = install_packages, force_install = force_install)
+    install_load_packages("numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl", "writexl",
+                          "devtools", "ggplot2","ggthemes", "stringr","reshape2", "gridGraphics", "scales", "formatR", "tibble",
+                          load_packages = load_packages, install_packages = install_packages, force_install = force_install)
 }
 
 
@@ -200,7 +201,7 @@ seperate_values = function(X, distance = 0.05, min = 0, max = 1) {
     if (!is.vector(X) || !is.numeric(X) || length(X) <= 1)
         stop("Argument 'X' must be a numerical vector of real numbers with |X| > 1.")
     if (max < min)
-        stop("Argument 'max' must be larger than 'min', but 'min'=%s and 'max'=%s.", .value_str(min), .value_str(max))
+        stop("Argument 'max' must be larger than 'min', but 'min'=%s and 'max'=%s.", val_str(min), val_str(max))
     if ((max - min)/distance < length(X))
         stop(paste0("With the specified distance, there is space between min and max of ", (max - min)/distance, " elements", ", however x contains ",
             length(X), " elements. Choose a larger distance or a wider range."))
@@ -259,9 +260,9 @@ rmNA = function(LIST) {
 #'
 #' @return A string value of the number rounded to the specified amount of digits.
 #'
-#' @examples rndDbl(1.26564,digits = 2)
+#' @examples rnd_dbl(1.26564,digits = 2)
 #' @export
-rndDbl = function(dbl, digits = 3) {
+rnd_dbl = function(dbl, digits = 3) {
     sprintf(paste0("%.", digits, "f"), round(dbl, digits))
 }
 
@@ -294,11 +295,11 @@ retrieve_ellipsis = function(default, ...) {
 #' @return A vector of class names for which argument 'generic' provides an implementation.
 #' @export
 #'
-#' @examples .impls('print')
+#' @examples impls('print')
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_match
 #' @importFrom utils methods
-.impls = function(generic) {
+impls = function(generic) {
     methods(generic) %>% sapply(. %>% {
         str_match(., "^.*\\.(.*)$")[, 2]
     }) %>% unname %>% .[. != "default"]
@@ -311,8 +312,8 @@ retrieve_ellipsis = function(default, ...) {
 #'
 #' @return A character vector with the string representation of 'x'.
 #' @export
-#' @examples .value_str(c(1,2,3))
-.value_str = function(x, show_class = FALSE) {
+#' @examples val_str(c(1,2,3))
+val_str = function(x, show_class = FALSE) {
     text = if (length(x) == 0L) {
         "{}"
     } else if (length(x) == 1) {
@@ -332,11 +333,11 @@ retrieve_ellipsis = function(default, ...) {
 #' @return NULL
 #' @export
 #'
-#' @examples createDescImports()
+#' @examples set_DESCRIPTION_imports()
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_match str_replace str_replace_all str_split
 #' @importFrom utils read.delim
-createDescImports = function() {
+set_DESCRIPTION_imports = function() {
     if (!dir.exists("R/") || !file.exists("DESCRIPTION")) {
         warning("Working directory not set to an R project folder.")
         return()
