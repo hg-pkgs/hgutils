@@ -335,27 +335,34 @@ val_str = function(x, show_class = FALSE) {
 #'
 #' @examples set_DESCRIPTION_imports()
 #' @importFrom magrittr %>%
-#' @importFrom stringr str_match str_replace str_replace_all str_split
-#' @importFrom utils read.delim
+#' @importFrom stringr str_match str_replace str_replace_all str_split str_subset
+#' @importFrom utils read.delim packageVersion
 set_DESCRIPTION_imports = function() {
     if (!dir.exists("R/") || !file.exists("DESCRIPTION")) {
         warning("Working directory not set to an R project folder.")
         return()
     }
 
-    files = list.files("R/", ".*\\.[rR]$", full.names = TRUE, recursive = TRUE)
-    depen = files %>% sapply(. %>% read.delim(sep = "\n", stringsAsFactors = FALSE) %>% unlist %>% {
-        str_match(., paste0("^.*@import(?:From)? ([a-zA-Z0-9\\.]*?) .*$|", "^.*library\\(([a-zA-Z0-9\\.]*?)[,\\)].*$|", "^.* ([a-zA-Z0-9\\.]*?)::[:]?.*$|",
-            "^.*install_load_packages\\((?:c\\()?(.*?)\\).*$"))[, -1]
-    } %>% rmNA) %>% unlist %>% sapply(. %>% str_split(",")) %>% unlist %>% trimws %>% str_replace_all("\\'", "") %>% unique %>% sort
-    depen = depen[sapply(depen, function(x) suppressWarnings(require(x, character.only = TRUE, warn.conflicts = FALSE, quietly = TRUE))) %>% unname]
+    depen = list.files("R/", ".*\\.[rR]$", full.names = TRUE, recursive = TRUE) %>%
+            sapply(. %>% read.delim(sep = "\n", stringsAsFactors = FALSE) %>% unlist %>%
+            str_match(., paste0("^#\'[ ]+@import(?:.*?From)? ([^ ]*).*$|",
+                                "^.*(?:library|require)\\((.*?) *[,\\)].*$|",
+                                "^.*?[^[:alpha:]](.*?)::[:]?.*$|",
+                                "^.*install_load_packages\\((?:c\\()?(.*?)\\).*$")) %>% .[, -1] %>% rmNA) %>%
+            unlist %>% str_split(",") %>% unlist %>% str_replace_all("[\\'[:space:]]","") %>%
+            str_subset("^[a-zA-Z0-9\\.]*$") %>% unique %>% sort
 
-    cat(sprintf("The following packages have been found in the source code:\n%s\n\n", paste0("* ", depen, collapse = "\n")))
+    depen = depen[sapply(depen, function(x) suppressWarnings(require(x, character.only = TRUE, warn.conflicts = FALSE, quietly = TRUE))) %>% unname]
+    pack_version = depen %>% sapply(. %>% packageVersion %>% format) %>% paste0(depen," (>= ",.,")")
+
+    cat(sprintf("The following packages have been found in the source code:\n%s\n\n", paste0("* ", pack_version, collapse = "\n")))
     resp = readline("Replace DESCRIPTION imports (Y/N)? ")
 
     if (resp == "Y") {
-        readLines("DESCRIPTION") %>% paste0(collapse = "\n") %>% str_replace("(?<=\nImports:[ ])(.*?)(?=\n)", paste0(depen, collapse = ", ")) %>%
-            writeLines("DESCRIPTION")
+      readLines("DESCRIPTION") %>% paste0(collapse = "\n") %>%
+        str_replace("(R \\(.*?\\))",sprintf("R (>= %s)",getRversion())) %>%
+        str_replace("(?s)(Imports: )(.*?)(\n[[:alpha:]]+:)",sprintf("\\1\n  %s\\3",paste0(pack_version,collapse=",\n  "))) %>%
+        writeLines("DESCRIPTION")
     } else {
         warning("DESCRIPTION was not adjusted.")
     }
