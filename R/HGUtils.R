@@ -63,8 +63,10 @@ install_load_packages = function(..., install_packages = TRUE, load_packages = T
         }
 
         if (load_packages) {
-            suppressWarnings(library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE))
-            message(sprintf("Loaded '%s'", package))
+          suppressPackageStartupMessages(
+            library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE, verbose = FALSE)
+            )
+          message(sprintf("Loaded '%s'", package))
         }
     }
 }
@@ -79,8 +81,8 @@ install_load_packages = function(..., install_packages = TRUE, load_packages = T
 #' @export
 #' @family initialization functions
 load_common_packages = function(load_packages = TRUE, install_packages = TRUE, force_install = FALSE) {
-    install_load_packages("numbers", "magrittr", "colorspace", "RColorBrewer", "grid", "gridExtra", "readxl", "writexl",
-                          "devtools", "ggplot2","ggthemes", "stringr","reshape2", "gridGraphics", "scales", "formatR", "tibble",
+    install_load_packages("devtools", "utils", "readxl", "writexl", "grid", "gridExtra", "gridGraphics",
+                          "reshape2", "scales", "ggplot2", "stringr", "formatR", "tibble", "magrittr","dplyr",
                           load_packages = load_packages, install_packages = install_packages, force_install = force_install)
 }
 
@@ -269,23 +271,21 @@ rnd_dbl = function(dbl, digits = 3) {
 #' Update default parameters with ellipsis
 #'
 #' @param default A named list of default values for parameters
-#' @param ... Optional parameters to override the default parameters. A warning is shown if the names do not match.
+#' @param ... Optional parameters to override the default parameters.
 #'
 #' @return The updated list of parameters with possible new values.
 #' @export
 #'
 #' @examples foo = function(...) {
-#' default = list(a=1)
-#' updated_args = retrieve_ellipsis(default, ...)
+#'   default = list(a=1)
+#'   retrieve_ellipsis(default, ...)
 #' }
 retrieve_ellipsis = function(default, ...) {
     supplied = list(...)
     match = intersect(names(default), names(supplied))
-    default[match] = supplied[match]
-    nonmatch = setdiff(names(supplied), names(default))
-    if (length(nonmatch) > 0)
-        warning(paste("The following arguments are ignored: ", nonmatch))
-    invisible(default)
+
+    default[names(supplied)] = supplied
+    default
 }
 
 #' Retrieves generic function implementation
@@ -354,7 +354,7 @@ set_DESCRIPTION_imports = function() {
     resp = readline("Replace DESCRIPTION imports (Y/N)? ")
 
     if (resp == "Y") {
-        readLines("DESCRIPTION") %>% paste0("\n", collapse = "") %>% str_replace("(?<=\nImports:[ ])(.*?)(?=\n)", paste0(depen, collapse = ", ")) %>%
+        readLines("DESCRIPTION") %>% paste0(collapse = "\n") %>% str_replace("(?<=\nImports:[ ])(.*?)(?=\n)", paste0(depen, collapse = ", ")) %>%
             writeLines("DESCRIPTION")
     } else {
         warning("DESCRIPTION was not adjusted.")

@@ -9,7 +9,7 @@ retrieve_ellipsis(default, ...)
 \arguments{
 \item{default}{A named list of default values for parameters}
 
-\item{...}{Optional parameters to override the default parameters. A warning is shown if the names do not match.}
+\item{...}{Optional parameters to override the default parameters.}
 }
 \value{
 The updated list of parameters with possible new values.
@@ -19,7 +19,7 @@ Update default parameters with ellipsis
 }
 \examples{
 foo = function(...) {
-default = list(a=1)
-updated_args = retrieve_ellipsis(default, ...)
+  default = list(a=1)
+  retrieve_ellipsis(default, ...)
 }
 }
