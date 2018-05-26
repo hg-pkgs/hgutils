@@ -2,12 +2,15 @@
 % Please edit documentation in R/hgutils.R
 \name{set_DESCRIPTION_imports}
 \alias{set_DESCRIPTION_imports}
-\title{Creates a list of necessary imports for the DESCRIPTION file.s}
+\title{Creates a list of necessary imports for the DESCRIPTION file.}
 \usage{
-set_DESCRIPTION_imports()
+set_DESCRIPTION_imports(skip_prompt = FALSE)
+}
+\arguments{
+\item{skip_prompt}{Whether to skip the prompt or to edit the DECRIPTION file directly.}
 }
 \description{
-Creates a list of necessary imports for the DESCRIPTION file.s
+Creates a list of necessary imports for the DESCRIPTION file.
 }
 \examples{
 set_DESCRIPTION_imports()

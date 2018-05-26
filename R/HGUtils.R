@@ -328,7 +328,9 @@ val_str = function(x, show_class = FALSE) {
         sprintf("%s (class: %s)", text, class(x)) else text
 }
 
-#' Creates a list of necessary imports for the DESCRIPTION file.s
+#' Creates a list of necessary imports for the DESCRIPTION file.
+#'
+#' @param skip_prompt Whether to skip the prompt or to edit the DECRIPTION file directly.
 #'
 #' @return NULL
 #' @export
@@ -337,7 +339,7 @@ val_str = function(x, show_class = FALSE) {
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_match str_replace str_replace_all str_split str_subset
 #' @importFrom utils read.delim packageVersion
-set_DESCRIPTION_imports = function() {
+set_DESCRIPTION_imports = function(skip_prompt = FALSE) {
     if (!dir.exists("R/") || !file.exists("DESCRIPTION")) {
         warning("Working directory not set to an R project folder.")
         return()
@@ -352,13 +354,14 @@ set_DESCRIPTION_imports = function() {
             unlist %>% str_split(",") %>% unlist %>% str_replace_all("[\\'[:space:]]","") %>%
             str_subset("^[a-zA-Z0-9\\.]*$") %>% unique %>% sort
 
-    depen = depen[sapply(depen, function(x) suppressWarnings(require(x, character.only = TRUE, warn.conflicts = FALSE, quietly = TRUE))) %>% unname]
+    depen = depen[sapply(depen, function(x) suppressWarnings(suppressPackageStartupMessages(
+      require(x, character.only = TRUE, warn.conflicts = FALSE, quietly = TRUE)))) %>% unname]
+
     pack_version = depen %>% sapply(. %>% packageVersion %>% format) %>% paste0(depen," (>= ",.,")")
 
-    cat(sprintf("The following packages have been found in the source code:\n%s\n\n", paste0("* ", pack_version, collapse = "\n")))
-    resp = readline("Replace DESCRIPTION imports (Y/N)? ")
+    message(sprintf("The following packages have been found in the source code:\n%s", paste0("* ", pack_version, collapse = "\n")))
 
-    if (resp == "Y") {
+    if (skip_prompt || readline("\n\nReplace DESCRIPTION imports (Y/N)? ") == "Y") {
       readLines("DESCRIPTION") %>% paste0(collapse = "\n") %>%
         str_replace("(R \\(.*?\\))",sprintf("R (>= %s)",getRversion())) %>%
         str_replace("(?s)(Imports: )(.*?)(\n[[:alpha:]]+:)",sprintf("\\1\n  %s\\3",paste0(pack_version,collapse=",\n  "))) %>%
