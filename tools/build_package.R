@@ -7,7 +7,12 @@ hgutils::startup("hgpackages/hgutils")
 roxygen2::roxygenise()
 hgutils::set_DESCRIPTION_imports(skip_prompt = TRUE)
 devtools::document()
-devtools::run_examples(fresh=TRUE)
-devtools::check(manual=TRUE,check_version=TRUE) #again!
+devtools::run_examples(fresh=TRUE, run = FALSE)
+devtools::check(check_version=FALSE) #again!
 
+installr::updateR(TRUE)
+devtools::spell_check()
+devtools::check_rhub()
+devtools::release()
 #devtools::build_manual()
+#cli?

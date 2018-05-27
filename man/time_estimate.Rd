@@ -47,11 +47,14 @@ Get estimate of timepoints for a given survival probability.
 
 \examples{
 library(rms)
-fit = cph(Surv(time=time, event=status) ~ age + sex, data=lung,
-  x=TRUE, y=TRUE, surv=TRUE)
-sFit = survfit(fit)
+fit = cph(Surv(time=time, event=status) ~ age + sex,
+  data=lung, x=TRUE, y=TRUE, surv=TRUE)
 sFit2 = survfit(fit, newdata=lung[1:20,])
 
-time_estimate(sFit) #get median survival for all data points in the dataset.
-time_estimate(sFit2) #get median survival for patients 1-20 seperately
+pop = time_estimate(fit,seq(0.1,0.9,0.01)) #get population time estimates
+sub = time_estimate(sFit2) #get median survival for patients 1-20 seperately.
+
+fit2 = cph(Surv(time=time, event=status) ~ age + sex,
+  data=lung, x=FALSE, y=FALSE, surv=TRUE) #no x nor y
+pop2 = time_estimate(fit2, survival=seq(0.1,0.9,0.01)) #get cox.ph estimate
 }

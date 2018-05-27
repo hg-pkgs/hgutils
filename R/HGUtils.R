@@ -177,18 +177,15 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
 #' @return A \code{\link{get_breaks}} function with filled-in parameters which expects limits.
 #'
 #' @export
-#' @examples
-#' \dontrun{library(ggplot2)
-#' ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))}
+#' @examples \dontrun{ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))}
 #' @family break functions
 #' @inheritDotParams get_breaks
-#' @importFrom ggplot2 ggplot scale_x_continuous
 plot_breaks = function(...) {
     function(X) get_breaks(X, ...)
 }
 
-#' Seperate values
-#' @description Seperates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
+#' Separate values
+#' @description Separates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
 #' close as possible to their original values.
 #'
 #' @param X A sorted numerical vector of real numbers.
@@ -200,9 +197,9 @@ plot_breaks = function(...) {
 #'         with the minimum allowed distance between subsequent values.
 #' @export
 #'
-#' @examples seperate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
+#' @examples separate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
 #' @importFrom limSolve lsei
-seperate_values = function(X, distance = 0.05, min = 0, max = 1) {
+separate_values = function(X, distance = 0.05, min = 0, max = 1) {
     if (!is.vector(X) || !is.numeric(X) || length(X) <= 1)
         stop("Argument 'X' must be a numerical vector of real numbers with |X| > 1.")
     if (max < min)
@@ -298,14 +295,14 @@ retrieve_ellipsis = function(default, ...) {
 #' @return A vector of class names for which argument 'generic' provides an implementation.
 #' @export
 #'
-#' @examples impls('print')
+#' @examples impls('plot')
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_match
 #' @importFrom utils methods
 impls = function(generic) {
     methods(generic) %>% sapply(. %>% {
         str_match(., "^.*\\.(.*)$")[, 2]
-    }) %>% unname %>% .[. != "default"]
+    }) %>% unname %>% rmNA %>% .[. != "default"]
 }
 
 #' Creates a nice string representation of a variable.
@@ -333,7 +330,7 @@ val_str = function(x, show_class = FALSE) {
 
 #' Creates a list of necessary imports for the DESCRIPTION file.
 #'
-#' @param skip_prompt Whether to skip the prompt or to edit the DECRIPTION file directly.
+#' @param skip_prompt Whether to skip the prompt or to edit the DESCRIPTION file directly.
 #'
 #' @return NULL
 #' @export

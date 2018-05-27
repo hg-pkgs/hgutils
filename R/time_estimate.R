@@ -17,13 +17,16 @@
 #' @export
 #' @examples
 #' library(rms)
-#' fit = cph(Surv(time=time, event=status) ~ age + sex, data=lung,
-#'   x=TRUE, y=TRUE, surv=TRUE)
-#' sFit = survfit(fit)
+#' fit = cph(Surv(time=time, event=status) ~ age + sex,
+#'   data=lung, x=TRUE, y=TRUE, surv=TRUE)
 #' sFit2 = survfit(fit, newdata=lung[1:20,])
 #'
-#' time_estimate(sFit) #get median survival for all data points in the dataset.
-#' time_estimate(sFit2) #get median survival for patients 1-20 seperately
+#' pop = time_estimate(fit,seq(0.1,0.9,0.01)) #get population time estimates
+#' sub = time_estimate(sFit2) #get median survival for patients 1-20 seperately.
+#'
+#' fit2 = cph(Surv(time=time, event=status) ~ age + sex,
+#'   data=lung, x=FALSE, y=FALSE, surv=TRUE) #no x nor y
+#' pop2 = time_estimate(fit2, survival=seq(0.1,0.9,0.01)) #get cox.ph estimate
 time_estimate = function(fit, survival, ...) {
     UseMethod("time_estimate")
 }
@@ -33,13 +36,13 @@ time_estimate = function(fit, survival, ...) {
 time_estimate.survRes = function(fit, survival = 0.5, ...) {
     d = dim(fit$surv)[2]
     results = if (is.null(d)) {
-        fit %>% {
-            sapply(c("surv", "lower", "upper"), function(x) .$time[.[[x]] < survival][1])
-        } %>% as.list
+        lapply(survival, function(s) c(survival=s,
+                         {sapply(c("surv", "lower", "upper"), function(x) fit$time[fit[[x]] < s][1])}
+                         )) %>% do.call(rbind,.)
     } else {
-        fit %>% {
-            sapply(1:d, function(i) sapply(c("surv", "lower", "upper"), function(x) .$time[.[[x]][, i] < survival][1]))
-        } %>% t
+      do.call(rbind, lapply(survival, function(s)
+       {lapply(1:d, function(i) c(index=i,survival=s,{sapply(c("surv", "lower", "upper"),
+                    function(x) fit$time[fit[[x]][, i] < s][1])})) %>% do.call(rbind,.)}))
     }
     results = data.frame(results) %>% rename(time = "surv")
     attr(results, "survival") = survival
@@ -56,7 +59,7 @@ time_estimate.survfit = function(fit, survival = 0.5, ...) {
 #' @describeIn time_estimate for \code{\link[rms]{survest.cph}} objects.
 #' @export
 time_estimate.list = function(fit, survival = 0.5, ...) {
-    if (!("list" %in% class(fit) && all(c("time", "surv", "lower", "upper") %in% names(fit))))
+    if (!all(c("time", "surv", "lower", "upper") %in% names(fit)))
         stop("fit must be a valid survest result.")
 
     class(fit) = c("survRes", class(fit))
@@ -66,21 +69,19 @@ time_estimate.list = function(fit, survival = 0.5, ...) {
 #' @describeIn time_estimate A \code{\link[survival]{coxph}} object.
 #' @export
 time_estimate.coxph = function(fit, survival = 0.5, newdata = NULL, ...) {
-    if (is.null(newdata)) {
-        newdata = fit$means
-    }
+    if (is.null(newdata)) newdata = fit$means
 
     SF = if ("x" %in% names(fit) && "y" %in% names(fit)) {
         survfit(fit, newdata = newdata)
     } else if ("surv" %in% names(fit)) {
         se = suppressWarnings(survest(fit, times = fit$time[-1], newdata = newdata))
         if (!is.null(dim(se$surv)))
-            {
-                for (n in c("surv", "lower", "upper")) se[[n]] = t(se[[n]])
-            }  #make it consistent with survfit by transposing data
+        {
+            for (n in c("surv", "lower", "upper")) se[[n]] = t(se[[n]])
+        }  #make it consistent with survfit by transposing data
         se
     } else {
-        stop("fit must specify either both x and y or surv. Rerun fit with x=TRUE and y=TRUE or surv=TRUE.")
+        stop("Argument 'fit' must specify either both x and y or surv. Rerun fit with x=TRUE and y=TRUE or surv=TRUE.")
     }
 
     time_estimate(SF, survival = survival)

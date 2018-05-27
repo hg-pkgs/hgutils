@@ -7,7 +7,7 @@
 set_DESCRIPTION_imports(skip_prompt = FALSE)
 }
 \arguments{
-\item{skip_prompt}{Whether to skip the prompt or to edit the DECRIPTION file directly.}
+\item{skip_prompt}{Whether to skip the prompt or to edit the DESCRIPTION file directly.}
 }
 \description{
 Creates a list of necessary imports for the DESCRIPTION file.

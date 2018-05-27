@@ -1,15 +1,15 @@
-# HGUtils
+# hgutils
 
-The goal of HGUtils is to provide the user with a selection of handy utility functions
+The goal of hgutils is to provide the user with a selection of handy utility functions
 
 ## Installation
 
-You can install HGUtils from github with:
+You can install hgutils from github with:
 
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("hvdboorn/HGUtils")
+devtools::install_github("hvdboorn/hgutils")
 ```
 
 ## Example

@@ -24,7 +24,7 @@ test_that("Same estimates in time_estimate for survest and survfit with newdata"
     }
 })
 
-context("seperate_values")
+context("separate_values")
 test_that("Values are nicely seperated and in range", {
     for (i in 1:100) {
         space = runif(1, 0, 0.49)
@@ -32,14 +32,14 @@ test_that("Values are nicely seperated and in range", {
         y0 = runif(2 + round(runif(1) * (max_n - 2)))
 
         if (is.unsorted(y0))
-            expect_error(seperate_values(y0, distance = space))
+            expect_error(separate_values(y0, distance = space))
 
         y0 = sort(y0)
-        res = seperate_values(y0, space)
+        res = separate_values(y0, space)
         expect_equal(res >= 0 && res <= 1, TRUE)
 
         expect_equal(all(sapply(1:length(res), function(x) abs(res[x] - res[-x])) >= space - 1e-04), TRUE)
 
-        expect_error(seperate_values(runif(max_n + 1), space))
+        expect_error(separate_values(runif(max_n + 1), space))
     }
 })
