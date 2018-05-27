@@ -22,7 +22,7 @@ Installs and loads specified packages
 \examples{
 \dontrun{
 install_load_packages(c('magrittr','dplyr'))
-install_load_packages('magrittr','dplyr',install=FALSE)}
+install_load_packages('magrittr','dplyr',install_packages=FALSE)}
 }
 \seealso{
 Other initialization functions: \code{\link{is_registered}},

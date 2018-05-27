@@ -1,14 +1,15 @@
 Package: hgutils
-Title: Collection of utility functions
-Version: 0.0.0.9300
+Title: Collection of Utility Functions
+Version: 0.3.4
 Authors@R: person("H.G.", "van den Boorn", email = "h.g.vandenboorn@amc.uva.nl", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 Depends: R (>= 3.4.3)
-License: GPL-3 + file LICENSE
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: 
   dplyr (>= 0.7.5),
+  ggplot2 (>= 2.2.1),
   grDevices (>= 3.4.3),
   limSolve (>= 1.5.5.3),
   magrittr (>= 1.5),

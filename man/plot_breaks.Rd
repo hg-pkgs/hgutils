@@ -25,7 +25,8 @@ A \code{\link{get_breaks}} function with filled-in parameters which expects limi
 This makes usage easier in plot functions as the limits may not be always be known before plotting.
 }
 \examples{
- \dontrun{ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))}
+\dontrun{library(ggplot2)
+ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))}
 }
 \seealso{
 Other break functions: \code{\link{get_breaks}}

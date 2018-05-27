@@ -46,7 +46,7 @@ startup = function(folder = NULL, rm = TRUE) {
 #'
 #' @examples \dontrun{
 #' install_load_packages(c('magrittr','dplyr'))
-#' install_load_packages('magrittr','dplyr',install=FALSE)}
+#' install_load_packages('magrittr','dplyr',install_packages=FALSE)}
 #' @export
 #' @family initialization functions
 #' @importFrom utils install.packages
@@ -177,9 +177,12 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
 #' @return A \code{\link{get_breaks}} function with filled-in parameters which expects limits.
 #'
 #' @export
-#' @examples  \dontrun{ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))}
+#' @examples
+#' \dontrun{library(ggplot2)
+#' ggplot() + scale_x_continuous(breaks = plot_breaks(N=12, max_breaks=15))}
 #' @family break functions
 #' @inheritDotParams get_breaks
+#' @importFrom ggplot2 ggplot scale_x_continuous
 plot_breaks = function(...) {
     function(X) get_breaks(X, ...)
 }
