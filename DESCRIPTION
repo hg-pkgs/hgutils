@@ -8,17 +8,17 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: 
-  cli (>= 1.0.0),
-  crayon (>= 1.3.4),
-  dplyr (>= 0.7.5),
-  grDevices (>= 3.4.3),
-  limSolve (>= 1.5.5.3),
-  magrittr (>= 1.5),
-  numbers (>= 0.7.1),
-  rms (>= 5.1.2),
-  stringr (>= 1.3.1),
-  survival (>= 2.41.3),
-  utils (>= 3.4.4)
+  cli,
+  crayon,
+  dplyr,
+  grDevices,
+  limSolve,
+  magrittr,
+  numbers,
+  rms,
+  stringr,
+  survival,
+  utils
 RoxygenNote: 6.0.1.9000
 Suggests: testthat
 Language: en-US
