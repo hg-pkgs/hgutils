@@ -2,18 +2,18 @@
 % Please edit documentation in R/hgutils.R
 \name{rmNA}
 \alias{rmNA}
-\title{Removes any NA from a list}
+\title{Removes any NA from a vector}
 \usage{
-rmNA(LIST)
+rmNA(vec)
 }
 \arguments{
-\item{LIST}{A list which may contain NA elements}
+\item{vec}{A vector which may contain NA elements}
 }
 \value{
-A list without NA elements
+A vector without NA elements
 }
 \description{
-Removes any NA from a list
+Removes any NA from a vector
 }
 \examples{
 rmNA(c(1,NA,5,6))

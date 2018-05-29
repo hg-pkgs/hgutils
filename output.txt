@@ -11,7 +11,7 @@
 #' result and set to the argument survival probability
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr rename
+____
 #' @importFrom survival survfit
 #' @importFrom rms survest
 #' @export

@@ -19,7 +19,8 @@ Checks whether the current user has the working directory registered.
 is_registered()
 }
 \seealso{
-Other initialization functions: \code{\link{install_load_packages}},
-  \code{\link{load_common_packages}}, \code{\link{startup}}
+Other initialization functions: \code{\link{is_valid_pkgname}},
+  \code{\link{startup}}, \code{\link{use_common_packages}},
+  \code{\link{use_packages}}
 }
 \concept{initialization functions}

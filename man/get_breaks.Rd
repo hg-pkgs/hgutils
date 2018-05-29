@@ -8,20 +8,20 @@ get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE,
   strict = FALSE, include_upper = TRUE, ...)
 }
 \arguments{
-\item{limits}{The limits of the axis. May be a list of 2 elements with lower and upper bounds, or a
+\item{limits}{The limits of the axis. May be a vector of 2 elements with lower and upper bounds, or a
 single digit (the upperbound, the lowerbound is then assumed to be 0).}
 
-\item{N}{The unit stepsize; The eventual interval size will be multiples of the divisors of N. Defaults to 10}
+\item{N}{The unit stepsize; The eventual interval size will be multiples of the divisors of N. Defaults to 10.}
 
-\item{max_breaks}{Maximum amount of steps, defaults to 10}
+\item{max_breaks}{Maximum amount of steps, defaults to 10.}
 
-\item{int_only}{Whether only integer divisors of N may be used for interval sizes, default to TRUE}
+\item{int_only}{Whether only integer divisors of 'N' may be used for interval sizes, defaults to TRUE.}
 
-\item{strict}{Whether only multiples of N can be used, defaults to FALSE}
+\item{strict}{Whether only multiples of N can be used, defaults to FALSE.}
 
 \item{include_upper}{Whether the resulting upperbound should go past the upper limit. Defaults to TRUE.}
 
-\item{...}{Additional parameters, use 'prnt=TRUE' to print to limits}
+\item{...}{Additional parameters.}
 }
 \value{
 A list of maximum \code{max_breaks+1} elements with intervals.
@@ -31,8 +31,5 @@ Set the breaks for a graph in nice positions.
 }
 \examples{
 get_breaks(24, N=12, max_breaks=15)
-}
-\seealso{
-Other break functions: \code{\link{plot_breaks}}
 }
 \concept{break functions}

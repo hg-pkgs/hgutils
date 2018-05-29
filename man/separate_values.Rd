@@ -7,21 +7,24 @@
 separate_values(X, distance = 0.05, min = 0, max = 1)
 }
 \arguments{
-\item{X}{A sorted numerical vector of real numbers.}
+\item{X}{A numerical vector of real numbers.}
 
-\item{distance}{The minimum distance between subsequent numbers}
+\item{distance}{The minimum distance between subsequent numbers. Must be a scalar or vector of size |X|.}
 
-\item{min}{The minimum value of a number}
-
-\item{max}{The maximum value of a number}
+\item{min, max}{The lower and upper bounds}
 }
 \value{
-A numerical vector with the same length as x, with numbers bounded by min and max, close to their original values and
+A numerical vector with the same length as \code{X}, with numbers bounded by min and max, close to their original values and
         with the minimum allowed distance between subsequent values.
 }
 \description{
 Separates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
 close as possible to their original values.
+}
+\details{
+The output vector has the following properties. For all elements \code{e_i}, \code{min <= e_i <= max}.
+For the distance \code{D} between \code{e_i} and \code{e_(i+1)}, \code{D >= max(d_i, d_(i+1))}. And finally, the distance
+between \code{e_i} and \code{X_i} is minimized for all \code{e_i}.
 }
 \examples{
 separate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)

@@ -2,20 +2,21 @@
 % Please edit documentation in R/hgutils.R
 \name{get_square_grid}
 \alias{get_square_grid}
-\title{Specifies the size of a grid which is as square as possible to fit N objects.}
+\title{Specifies a square grid which fits N objects.}
 \usage{
 get_square_grid(N, moreRows = TRUE)
 }
 \arguments{
 \item{N}{Number of objects}
 
-\item{moreRows}{Whether there should be more rows than columns if the grid is not square.}
+\item{moreRows}{Whether there should be more rows than columns if the grid is not square. Defaults to more rows.}
 }
 \value{
 A named list with elements rows and columns specifying the size of the optimal grid.
 }
 \description{
-It will always be a square or or have one row/column more than columns/rows
+The resulting grid will be of size \code{(a*a)} or \code{(a*(a+1))} where \code{a} is an integer.
+It will therefore always be a square or or have one row/column more than columns/rows
 }
 \examples{
 get_square_grid(5)
