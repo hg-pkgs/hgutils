@@ -58,10 +58,8 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
 
   #-- Check for extra arguments in '...' -------
   packages = list(...)
-  extra_args = packages[names(packages) != ""]
-  if(length(extra_args) > 0)
-    extra_args %>% paste0(names(.), "=", .) %>% frmt %>%
-    {stop(sprintf("The argument '...' must be an unnamed list of characters, but includes unused arguments (%s).", .))}
+  packages = setdiff(packages, packages[names(packages) != ""])
+  settings = update_settings(list(show_title=TRUE), ...)
 
   #-- Check for invalid package names in '...' -------
   packages = sort(unlist(packages))
@@ -69,6 +67,7 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
   if(length(invalid_names) > 0)
     stop(sprintf("The argument '...' contains the following invalid package names: %s.", invalid_names))
 
+  if(settings$show_title)
   cat(rule(left = "Loading packages", line = "bar4"),"\n")
 
   max_n = nchar(packages) %>% max
@@ -79,13 +78,11 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
 
     succesful = TRUE
     if (!package_exists && install_packages || force_install) {
-      cat(blue(symbol$continue, " Installing...","\t\t"), sep = "")
-      #cat_bullet("  Installing...", bullet = "continue", bullet_col = "dodgerblue4", col="dodgerblue4")
+      cat(blue(symbol$continue, " Installing...","\n"), sep = "")
       suppressMessages(install.packages(package, verbose = FALSE, quiet = TRUE))
 
       succesful = suppressWarnings(require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE))
-      #cat_bullet("  Succesfully installed.", bullet = "tick", bullet_col = "green", col="green")
-      if (succesful) cat(green(symbol$tick, " Succesfully installed.","\t\t"), sep = "") else
+      if (succesful) cat(green(symbol$tick, " Succesfully installed.","\n"), sep = "") else
         cat(red(symbol$cross, " Installation failed.","\n"), sep = "")
     }
 
@@ -135,7 +132,7 @@ use_common_packages = function(...) {
 list_common_packages = function()
 {
   c("devtools", "utils", "readxl", "writexl", "grid", "gridExtra", "gridGraphics", "cli",
-  "reshape2", "scales", "ggplot2", "stringi", "stringr", "formatR", "tibble", "magrittr","dplyr","roxygen")
+  "reshape2", "scales", "ggplot2", "stringi", "stringr", "formatR", "tibble", "magrittr","dplyr","roxygen2")
 }
 
 
@@ -203,7 +200,7 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
 
   options = list(prnt = FALSE) %>% update_settings(...)
   if (options$prnt)
-      print(paste0("input range: [", xmin, " - ", xmax, "]"))
+      cat(paste0("input range: [", xmin, " - ", xmax, "]"))
 
   xmax = xmax - xmin
   lower_powers = function(X) (xmax/(max_breaks * X)) %>% log10 %>% ceiling %>% ifelse(int_only, 0, .)
@@ -215,7 +212,7 @@ get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict =
   sq = seq(0, ifelse(include_upper,ceiling(xmax/selected),floor(xmax/selected)) * selected, selected) + ceiling(xmin/selected) * selected
 
   if (options$prnt)
-    cat(sprintf("Selected: %s. Sequence: %s", selected, sq))
+    cat(paste0(sprintf("\nSelected: %s.\nSequence: %s.",selected,frmt(sq))))
 
   sq
 }
@@ -353,6 +350,7 @@ rnd_dbl = function(dbl, digits = 3) {
 #' foo(a=2, b=3)
 update_settings = function(default, ...) {
   supplied = list(...)
+  supplied = supplied[names(supplied)!=""]
   match = intersect(names(default), names(supplied))
 
   default[names(supplied)] = supplied
@@ -370,6 +368,7 @@ update_settings = function(default, ...) {
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_match
 #' @importFrom utils methods
+#' @importFrom methods existsMethod
 generic_implementations = function(generic) {
   if (!is.character(generic) || !length(generic)==1 || !existsMethod(generic))
     stop(sprintf("Argument 'generic' is not a valid generic function."))
@@ -415,6 +414,10 @@ frmt = function(x, show_class = FALSE) {
 set_package_imports = function(skip_prompt = FALSE) {
   if (!dir.exists("R/") || !file.exists("DESCRIPTION"))
       stop("Working directory not set to an R project folder.")
+  desc = readLines("DESCRIPTION") %>% paste0(collapse = "\n")
+  package_name = desc %>% {str_match(., "Package:[ ]*(.*?)\n(?:.*\n)+Version:[ ]*(.*?)\n")[-1]} %>% paste(collapse = " ")
+  existing_imports = str_match(desc,"Imports: ((?:.*\n)+)RoxygenNote:")[,2] %>%
+    str_replace_all("[ \n]|(\\(.*?\\))","") %>% {strsplit(.,",")[[1]]}
 
   depen = list.files("R/", ".*\\.[rR]$", full.names = TRUE, recursive = TRUE) %>%
           sapply(. %>% read.delim(sep = "\n", stringsAsFactors = FALSE) %>% unlist %>%
@@ -431,19 +434,22 @@ set_package_imports = function(skip_prompt = FALSE) {
   pack_version = depen %>% sapply(. %>% packageVersion %>% format) %>% paste0(depen," (>= ",.,")")
   RVersion = sprintf("R (>= %s)",getRversion())
 
-  cat_rule(left = "Found packages", line = "bar4", col = "dodgerblue4",line_col = "black")
+  cat_rule(left = "Found packages", right=package_name, line = "bar4", col = "dodgerblue4",line_col = "black")
   cat("\n")
   cat_bullet(RVersion, background_col = "dodgerblue4", bullet_col = "white", col="white", bullet = "continue")
   cat_bullet(pack_version, col = "dodgerblue4", bullet_col = "black", bullet = "tick")
 
   if (skip_prompt || menu(c("Yes","No"),title="\nReplace DESCRIPTION imports?") == 1) {
-    readLines("DESCRIPTION") %>% paste0(collapse = "\n") %>%
+      desc %>%
       str_replace("(R \\(.*?\\))",RVersion) %>%
       str_replace("(?s)(Imports: )(.*?)(\n[[:alpha:]]+:)",sprintf("\\1\n  %s\\3",paste0(pack_version,collapse=",\n  "))) %>%
       writeLines("DESCRIPTION")
 
     cat("\n")
-    cat_rule()
-    cat_bullet("DESCRIPTION successfully updated.", bullet = "tick", bullet_col="dodgerblue4", col="dodgerblue4")
+    cat_rule(center="DESCRIPTION successfully updated.",line="bar1",
+               col="white", background_col = "green")
+    cat("\n")
+    cat_rule(left="Installing/loading dependencies", right=package_name, col="dodgerblue4", line="bar4")
+    use_packages(depen, show_title=FALSE)
   } else warning("DESCRIPTION was not adjusted.")
 }
