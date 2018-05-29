@@ -15,3 +15,7 @@ devtools::spell_check()
 devtools::check_rhub()
 devtools::release()
 #devtools::build_manual()
+
+remove.packages(c("readxl","writexl"))
+.rs.restartR()
+hgutils::use_common_packages()
