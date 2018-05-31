@@ -4,6 +4,7 @@
 #' @seealso \code{\link[utils]{compareVersion}}
 #' @export
 #' @examples .vec_compareVersion(a=c("1.0","7.2-0"), b=c("1.0-1","7.1-12"))
+#' @importFrom utils compareVersion
 .vec_compareVersion = function(a, b)
 {
   if (length(a)!=length(b) || !length(a)>=1)
@@ -29,9 +30,10 @@
 #' use_packages('magrittr','dplyr',install_packages=FALSE)}
 #' @export
 #' @family developer functions
-#' @importFrom utils install.packages
+#' @importFrom utils install.packages capture.output old.packages update.packages
 #' @importFrom cli rule symbol
-#' @importFrom crayon green red make_style
+#' @importFrom crayon green red yellow make_style
+#' @importFrom dplyr mutate filter
 use_packages = function(..., install_packages = TRUE, load_packages = TRUE, force_install = FALSE) {
   if (!load_packages & !install_packages)
   {warning("Function 'use_packages' not executed: Set argument 'load_packages' and/or 'install_packages' to TRUE."); return()}
@@ -55,9 +57,9 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
   spc = paste0(rep(" ",5),collapse = "")
   outdated_pkgs = old.packages() %>%
              data.frame(stringsAsFactors=FALSE) %>%
-             {dplyr::mutate(., "Installed" = sapply(.$Package, function(x) packageVersion(x) %>% format))} %>%
-             dplyr::filter(.vec_compareVersion(Installed, ReposVer) < 0) %>%
-             dplyr::filter(Package %in% packages)
+             {mutate(., "Installed" = sapply(.$Package, function(x) packageVersion(x) %>% format))} %>%
+             filter(.vec_compareVersion(Installed, ReposVer) < 0) %>%
+             filter(Package %in% packages)
 
   if(settings$show_title)
     cat(rule(left = "Loading packages", line = "bar4"),"\n")

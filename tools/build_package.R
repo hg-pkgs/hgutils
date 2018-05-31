@@ -8,7 +8,7 @@ hgutils::set_package_imports(skip_prompt = TRUE, use_version_numbers=FALSE, rver
 roxygen2::roxygenise()
 devtools::document()
 devtools::run_examples(fresh=TRUE, run = FALSE)
-devtools::check(check_version=FALSE) #again!
+devtools::check(check_version=FALSE)
 
 installr::updateR(TRUE)
 devtools::spell_check()
