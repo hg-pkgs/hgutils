@@ -36,6 +36,7 @@
 #' @importFrom cli rule symbol
 #' @importFrom crayon green red yellow make_style
 #' @importFrom dplyr mutate filter
+#' @importFrom magrittr %>% %<>%
 use_packages = function(..., install_packages = TRUE, load_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
   if (!load_packages & !install_packages)
   {warning("Function 'use_packages' not executed: Set argument 'load_packages' and/or 'install_packages' to TRUE."); return()}
@@ -57,11 +58,9 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
   stfu = . %>% capture.output(type = "message") %>% capture.output(type="output") %>% invisible %>%
          suppressPackageStartupMessages %>% suppressMessages %>% suppressWarnings
   spc = paste0(rep(" ",5),collapse = "")
-  outdated_pkgs = old.packages() %>%
-             data.frame(stringsAsFactors=FALSE) %>%
-             {mutate(., "Installed" = sapply(.$Package, function(x) packageVersion(x) %>% format))} %>%
-             filter(.vec_compareVersion(Installed, ReposVer) < 0) %>%
-             filter(Package %in% packages)
+  outdated_pkgs = old.packages() %>% data.frame(stringsAsFactors=FALSE)
+  outdated_pkgs$Installed = sapply(outdated_pkgs$Package, function(x) packageVersion(x) %>% format)
+  outdated_pkgs %<>% filter(.vec_compareVersion(.$Installed, .$ReposVer) < 0) %>% filter(.$Package %in% packages)
 
   if(settings$show_title)
     cat(rule(left = "Loading packages", line = "bar4"),"\n")
@@ -218,6 +217,7 @@ generic_implementations = function(generic, ...) {
 #' @importFrom stringr str_match str_replace str_replace_all str_split
 #' @importFrom utils read.delim packageVersion menu
 #' @importFrom cli rule cat_bullet cat_rule
+#' @import cli rms survival
 #' @family developer functions
 set_package_imports = function(...) {
   settings = list(skip_prompt=TRUE, use_version_numbers=TRUE, rversion = format(getRversion()))
@@ -232,11 +232,12 @@ set_package_imports = function(...) {
 
   depen = list.files("R/", ".*\\.[rR]$", full.names = TRUE, recursive = TRUE) %>%
           sapply(. %>% read.delim(sep = "\n", stringsAsFactors = FALSE, quote="") %>% unlist %>%
-                 str_match(., paste0(paste0("#\'[ ]*@import(?:From)?[ ]+(",valid_pkgname(),")|"),
+                 str_match(., paste0("#'[ ]*@import[ ]+([[:alnum:] \\.]*)$|",
+                           paste0("#\'[ ]*@importFrom[ ]+(",valid_pkgname(),")|"),
                  paste0("[^#]*?(?:library|require)\\((",valid_pkgname(),")[ ]*[,\\)]|"),
                  paste0("[^#]*?\\((",valid_pkgname(),")::[:]?[^(:)]+|"),
                  "[^#]*?use_packages\\((?:c\\()?([[:alnum:] ,\"\\'\\.]*?)\\).*")) %>% .[, -1] %>% rmNA) %>%
-          unlist %>% str_split(",") %>% unlist %>% str_replace_all("[\\'[:space:]\"]","") %>%
+          unlist %>% str_split("[ ,]") %>% unlist %>% str_replace_all("[\\'\"]","") %>%
           unique %>% {.[valid_pkgname(.)]} %>% sort
 
   depen = depen[sapply(depen, function(x) suppressWarnings(suppressPackageStartupMessages(
