@@ -2,9 +2,12 @@
 % Please edit documentation in R/package_functions.R
 \name{use_common_packages}
 \alias{use_common_packages}
+\alias{list_common_packages}
 \title{Load commonly used packages}
 \usage{
 use_common_packages(...)
+
+list_common_packages()
 }
 \arguments{
 \item{...}{Arguments passed on to \code{use_packages}
@@ -15,12 +18,16 @@ use_common_packages(...)
 }}
 }
 \description{
-\code{load_common_packages} loads (and optionally install) commonly used packages.
-A list of used packages is available from \code{common_packages}.
+Utility function to load and install frequently used packages.
+}
+\details{
+\code{load_common_packages} is a wrapper function for \code{\link{use_packages}}. The supplied package names
+are available from \code{list_common_packages}.
 }
 \seealso{
-Other initialization functions: \code{\link{is_registered}},
-  \code{\link{is_valid_pkgname}}, \code{\link{startup}},
-  \code{\link{use_packages}}
+Other developer functions: \code{\link{generic_implementations}},
+  \code{\link{set_package_imports}},
+  \code{\link{update_settings}},
+  \code{\link{use_packages}}, \code{\link{valid_pkgname}}
 }
-\concept{initialization functions}
+\concept{developer functions}

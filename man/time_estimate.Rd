@@ -28,15 +28,15 @@ time_estimate(fit, survival, ...)
 \item{newdata}{A dataframe containing predictors for which predictors are desired. See \code{\link[survival]{survfit.coxph}}.}
 }
 \value{
-A named list or matrix with elements surv (estimate), lower and upper (confidence interval). The attribute 'survival' is added to the
-result and set to the argument survival probability
+A named list or matrix with elements 'surv' (estimate), 'lower' and 'upper' (confidence interval).
+The attribute 'survival' is added to the result and set to the argument survival probability
 }
 \description{
 Get estimate of timepoints for a given survival probability.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{survRes}: for survRes objects
+\item \code{survRes}: for 'survRes' objects
 
 \item \code{survfit}: for \code{\link[survival]{survfit}} objects.
 

@@ -2,29 +2,31 @@
 % Please edit documentation in R/hgutils.R
 \name{get_breaks}
 \alias{get_breaks}
-\title{Nice plotting axis breaks}
+\title{Create nice axis breaks for plots}
 \usage{
 get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE,
-  strict = FALSE, include_upper = TRUE, ...)
+  multiples_only = FALSE, include_bounds = TRUE, ...)
 }
 \arguments{
 \item{limits}{The limits of the axis. May be a vector of 2 elements with lower and upper bounds, or a
-single digit (the upperbound, the lowerbound is then assumed to be 0).}
+single digit (which is the upper bound, the lower bound is then assumed to be 0).}
 
-\item{N}{The unit stepsize; The eventual interval size will be multiples of the divisors of N. Defaults to 10.}
+\item{N}{The step size. The eventual intervals will be multiples of the divisors of \code{N} or
+multiples of \code{N} when \code{multiples_only} is \code{TRUE}. Defaults to 10.}
 
-\item{max_breaks}{Maximum amount of steps, defaults to 10.}
+\item{max_breaks}{Maximum amount of breaks, defaults to 10.}
 
-\item{int_only}{Whether only integer divisors of 'N' may be used for interval sizes, defaults to TRUE.}
+\item{int_only}{Whether only integer divisors of \code{N} may be used for interval sizes, defaults to \code{TRUE}.}
 
-\item{strict}{Whether only multiples of N can be used, defaults to FALSE.}
+\item{multiples_only}{Whether only multiples of \code{N} can be used, defaults to \code{FALSE}.}
 
-\item{include_upper}{Whether the resulting upperbound should go past the upper limit. Defaults to TRUE.}
+\item{include_bounds}{Whether the resulting bounds should include \code{min} and \code{max}. Defaults to \code{TRUE}.}
 
 \item{...}{Additional parameters.}
 }
 \value{
-A list of maximum \code{max_breaks+1} elements with intervals.
+A sorted numerical vector with breakpoints of with size \code{|max_breaks|+1} when \code{include_bounds} is \code{TRUE}
+and of size \code{|max_breaks|} otherwise.
 }
 \description{
 Set the breaks for a graph in nice positions.

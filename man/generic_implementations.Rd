@@ -2,19 +2,33 @@
 % Please edit documentation in R/package_functions.R
 \name{generic_implementations}
 \alias{generic_implementations}
-\title{Retrieves generic function implementation}
+\title{Retrieves generic function implementations}
 \usage{
-generic_implementations(generic)
+generic_implementations(generic, ...)
 }
 \arguments{
-\item{generic}{A string with the name of the generic function.}
+\item{generic}{The name of the generic function.}
+
+\item{...}{Optional settings}
 }
 \value{
-A vector of class names for which argument 'generic' provides an implementation.
+A vector with class names for which argument '\code{generic}' has an implementation.
 }
 \description{
-Retrieves generic function implementation
+Obtains a list of classes for which the supplied generic function has an implementation.
+}
+\note{
+Removes the default generic implementation
 }
 \examples{
+#get a list of classes which have an implementation for graphics::plot
 impls = generic_implementations('plot')
+
 }
+\seealso{
+Other developer functions: \code{\link{set_package_imports}},
+  \code{\link{update_settings}},
+  \code{\link{use_common_packages}},
+  \code{\link{use_packages}}, \code{\link{valid_pkgname}}
+}
+\concept{developer functions}

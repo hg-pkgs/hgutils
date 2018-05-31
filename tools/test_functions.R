@@ -79,3 +79,17 @@ for (i in 1:length(files))
   if (i < length(files))
     cat("\n")
 }
+
+limits=c(0,1001)
+N = 10; max_breaks = 10; int_only = TRUE; strict = FALSE; use_outer=TRUE
+#limits=c(0,100)
+
+#sq = seq(0, ifelse(include_upper,ceiling(xmax/selected),floor(xmax/selected)) * selected, selected) + ceiling(xmin/selected) * selected
+
+A=data.frame()
+for(i in 1:1000)
+{
+  min=runif(1,0,100); max=runif(1,min,1000); N=round(runif(1,1,50)); max_breaks=round(runif(1,10,20))
+  A = rbind(A,list(l=length(get_breaks(c(min,max), N, max_breaks = max_breaks,include_bounds = FALSE)),
+                   max_breaks=max_breaks, min=min, max=max, N=N))
+}

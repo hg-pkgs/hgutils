@@ -9,7 +9,7 @@
 \arguments{
 \item{verbose}{Whether to print the user name and registered working directory.}
 
-\item{return_data}{Whether to return a boolean or a tibble containing the found user.}
+\item{return_data}{Whether to return a boolean or a \code{\link[tibble]{tibble}} containing the found user.}
 }
 \value{
 Either a boolean (if return_data is FALSE) or a tibble containing fields 'desc' (computer description),

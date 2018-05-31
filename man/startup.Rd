@@ -19,9 +19,6 @@ Clears the workspace and sets the working directory to specified folder.
 \dontrun{startup('project_folder/')}
 }
 \seealso{
-Other initialization functions: \code{\link{is_registered}},
-  \code{\link{is_valid_pkgname}},
-  \code{\link{use_common_packages}},
-  \code{\link{use_packages}}
+Other initialization functions: \code{\link{is_registered}}
 }
 \concept{initialization functions}

@@ -15,3 +15,10 @@ Creates a list of necessary imports for the DESCRIPTION file.
 \examples{
 \dontrun{set_package_imports(skip_prompt=TRUE)}
 }
+\seealso{
+Other developer functions: \code{\link{generic_implementations}},
+  \code{\link{update_settings}},
+  \code{\link{use_common_packages}},
+  \code{\link{use_packages}}, \code{\link{valid_pkgname}}
+}
+\concept{developer functions}

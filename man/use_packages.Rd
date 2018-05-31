@@ -2,13 +2,13 @@
 % Please edit documentation in R/package_functions.R
 \name{use_packages}
 \alias{use_packages}
-\title{Installs and loads specified packages}
+\title{Prepare packages for usage}
 \usage{
 use_packages(..., install_packages = TRUE, load_packages = TRUE,
   force_install = FALSE)
 }
 \arguments{
-\item{...}{List of package names}
+\item{...}{List of package names and other options.}
 
 \item{install_packages}{Whether to install the selected packages}
 
@@ -17,16 +17,20 @@ use_packages(..., install_packages = TRUE, load_packages = TRUE,
 \item{force_install}{Whether to install packages even if they are installed already}
 }
 \description{
-Installs and loads specified packages
+Utility function to load and optionally install packages if they are missing. When the function terminates,
+packages are installed (if necessary), upgraded to the latest version (if necessary) and loaded.
 }
 \examples{
 \dontrun{
+#package names can be given as a vector or one-by-one
 use_packages(c('magrittr','dplyr'))
 use_packages('magrittr','dplyr',install_packages=FALSE)}
 }
 \seealso{
-Other initialization functions: \code{\link{is_registered}},
-  \code{\link{is_valid_pkgname}}, \code{\link{startup}},
-  \code{\link{use_common_packages}}
+Other developer functions: \code{\link{generic_implementations}},
+  \code{\link{set_package_imports}},
+  \code{\link{update_settings}},
+  \code{\link{use_common_packages}},
+  \code{\link{valid_pkgname}}
 }
-\concept{initialization functions}
+\concept{developer functions}

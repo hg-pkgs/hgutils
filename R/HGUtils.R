@@ -39,7 +39,7 @@ startup = function(folder = NULL, rm = TRUE) {
 #' Internal function to check whether the current user has the working directory registered.
 #'
 #' @param verbose Whether to print the user name and registered working directory.
-#' @param return_data Whether to return a boolean or a tibble containing the found user.
+#' @param return_data Whether to return a boolean or a \code{\link[tibble]{tibble}} containing the found user.
 #'
 #' @return Either a boolean (if return_data is FALSE) or a tibble containing fields 'desc' (computer description),
 #' 'usr' (computer user name) and 'location' (working directory base).
@@ -49,8 +49,8 @@ startup = function(folder = NULL, rm = TRUE) {
   registered = nrow(results) == 1
 
   if (verbose) {
-      if (!registered)
-          print(paste0("User '", current_usr, "' is not registered."), quote = F) else print(paste0("User '", current_usr, "' is registered. Default working directory is '", results$location[1], "'"), quote = F)
+      if (!registered) print(paste0("User '", current_usr, "' is not registered."), quote = F) else
+          print(paste0("User '", current_usr, "' is registered. Default working directory is '", results$location[1], "'"), quote = F)
   }
 
   if (return_data)
@@ -70,46 +70,46 @@ is_registered = function(verbose = FALSE) {
   .is_registered(verbose = verbose, return_data = FALSE)
 }
 
-#' Nice plotting axis breaks
+#' Create nice axis breaks for plots
 #' @description Set the breaks for a graph in nice positions.
 #'
 #' @param limits The limits of the axis. May be a vector of 2 elements with lower and upper bounds, or a
-#'               single digit (the upperbound, the lowerbound is then assumed to be 0).
-#' @param N The unit stepsize; The eventual interval size will be multiples of the divisors of N. Defaults to 10.
-#' @param max_breaks Maximum amount of steps, defaults to 10.
-#' @param int_only Whether only integer divisors of 'N' may be used for interval sizes, defaults to TRUE.
-#' @param strict Whether only multiples of N can be used, defaults to FALSE.
+#'               single digit (which is the upper bound, the lower bound is then assumed to be 0).
+#' @param N The step size. The eventual intervals will be multiples of the divisors of \code{N} or
+#' multiples of \code{N} when \code{multiples_only} is \code{TRUE}. Defaults to 10.
+#' @param max_breaks Maximum amount of breaks, defaults to 10.
+#' @param int_only Whether only integer divisors of \code{N} may be used for interval sizes, defaults to \code{TRUE}.
+#' @param multiples_only Whether only multiples of \code{N} can be used, defaults to \code{FALSE}.
+#' @param include_bounds Whether the resulting bounds should include \code{min} and \code{max}. Defaults to \code{TRUE}.
 #' @param ... Additional parameters.
-#' @param include_upper Whether the resulting upperbound should go past the upper limit. Defaults to TRUE.
 #'
-#' @return A list of maximum \code{max_breaks+1} elements with intervals.
+#' @return A sorted numerical vector with breakpoints of with size \code{|max_breaks|+1} when \code{include_bounds} is \code{TRUE}
+#' and of size \code{|max_breaks|} otherwise.
 #'
 #' @examples get_breaks(24, N=12, max_breaks=15)
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom numbers divisors
 #' @family break functions
-get_breaks = function(limits, N = 10, max_breaks = 10, int_only = TRUE, strict = FALSE, include_upper=TRUE, ...) {
-  if (length(limits) == 1) {
-      xmin = 0
-      xmax = limits
-  } else {
-      xmin = limits[1]
-      xmax = limits[2]
-  }
+get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, multiples_only=FALSE, include_bounds=TRUE, ...) {
+  if (!is.vector(limits) || length(limits) > 2 || !is.numeric(limits))
+    stop("Argument 'limits' must be a scalar or numeric vector.")
+  if (length(limits) == 1) {xmin = 0; xmax = limits} else {xmin = limits[1]; xmax = limits[2]}
+  if (xmax < xmin)
+    stop("In argument 'limits', 'xmax' must be at least as large as 'xmin'.")
+  xmax = xmax - xmin
 
   options = list(prnt = FALSE) %>% update_settings(...)
   if (options$prnt)
-      cat(paste0("input range: [", xmin, " - ", xmax, "]"))
+    cat(paste0("input range: [", xmin, " - ", xmax, "]"))
 
-  xmax = xmax - xmin
-  lower_powers = function(X) (xmax/(max_breaks * X)) %>% log10 %>% ceiling %>% ifelse(int_only, 0, .)
-  upper_powers = function(X) (xmax/X) %>% log10 %>% floor
-  intervals = sapply(if (!strict)
-      divisors(N) else N * 1:(xmax/N), function(X) X * 10^(lower_powers(X):upper_powers(X))) %>% unlist %>% unique %>% sort
+  lp = function(d) (xmax/(max_breaks*d)) %>% log10 %>% ceiling %>% ifelse(int_only, max(., 0), .)
+  up = function(d) (xmax/d)              %>% log10 %>% floor   %>% ifelse(int_only, max(., 0), .)
+  intervals = {if(multiples_only) N else divisors(N)} %>% sapply(. %>% {. * 10^(lp(.):up(.))}) %>% unlist %>% unique %>% sort
   selected = intervals[xmax/intervals <= max_breaks][1]
-  #replace 0 by -xmin*selected
-  sq = seq(0, ifelse(include_upper,ceiling(xmax/selected),floor(xmax/selected)) * selected, selected) + ceiling(xmin/selected) * selected
+
+  sq = seq(0, ceiling(xmax/selected)*selected, selected) + floor(xmin/selected)*selected
+  if (!include_bounds) sq = sq[sq>=xmin & sq<=(xmin+xmax)]
 
   if (options$prnt)
     cat(paste0(sprintf("\nSelected: %s.\nSequence: %s.",selected,frmt(sq))))
@@ -230,4 +230,27 @@ rmNA = function(vec) {
 #' @export
 rnd_dbl = function(dbl, digits = 3) {
   sprintf(paste0("%.", digits, "f"), round(dbl, digits))
+}
+
+#' Creates a nice string representation of a variable.
+#'
+#' @param x The variable for which a string representation is created.
+#' @param show_class Whether to show the class of 'x'. Defaults to FALSE.
+#'
+#' @return A character vector with the string representation of 'x'.
+#' @export
+#' @examples frmt(c(1,2,3))
+frmt = function(x, show_class = FALSE) {
+  text = if (length(x) == 0L) {
+    "{}"
+  } else if (length(x) == 1) {
+    sprintf("'%s'", x)
+  } else if (is.atomic(x)) {
+    sprintf("['%s']", paste0(sort(x), collapse = "','"))
+  } else {
+    sprintf("{'%s'}", paste0(x, collapse = "','"))
+  }
+
+  if (show_class)
+    sprintf("%s (class: %s)", text, class(x)) else text
 }

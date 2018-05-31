@@ -9,10 +9,10 @@ update_settings(default, ...)
 \arguments{
 \item{default}{A named list of default values for settings.}
 
-\item{...}{Optional settings. to override the default settings.}
+\item{...}{Optional settings to override the default settings.}
 }
 \value{
-The updated list of settings. with possible new values.
+The updated list of settings with possible new values.
 }
 \description{
 Uses ellipsis parameter to update a list of default settings.
@@ -23,5 +23,12 @@ foo = function(...) {
   settings = update_settings(default, ...)
 }
 
-foo(a=2, b=3)
+\dontrun{foo(a=2, b=3)}
 }
+\seealso{
+Other developer functions: \code{\link{generic_implementations}},
+  \code{\link{set_package_imports}},
+  \code{\link{use_common_packages}},
+  \code{\link{use_packages}}, \code{\link{valid_pkgname}}
+}
+\concept{developer functions}
