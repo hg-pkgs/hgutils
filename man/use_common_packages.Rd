@@ -15,6 +15,7 @@ list_common_packages()
   \item{load_packages}{Whether to load the selected packages}
   \item{install_packages}{Whether to install the selected packages}
   \item{force_install}{Whether to install packages even if they are installed already}
+  \item{upgrade}{Whether to upgrade outdated packages. Defaults to FALSE.}
 }}
 }
 \description{

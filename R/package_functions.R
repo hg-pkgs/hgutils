@@ -17,10 +17,12 @@
 #'
 #' @description Utility function to load and optionally install packages if they are missing. When the function terminates,
 #' packages are installed (if necessary), upgraded to the latest version (if necessary) and loaded.
+#'
 #' @param load_packages Whether to load the selected packages
 #' @param install_packages Whether to install the selected packages
 #' @param force_install Whether to install packages even if they are installed already
 #' @param ... List of package names and other options.
+#' @param upgrade Whether to upgrade outdated packages. Defaults to FALSE.
 #'
 #' @return NULL
 #'
@@ -34,7 +36,7 @@
 #' @importFrom cli rule symbol
 #' @importFrom crayon green red yellow make_style
 #' @importFrom dplyr mutate filter
-use_packages = function(..., install_packages = TRUE, load_packages = TRUE, force_install = FALSE) {
+use_packages = function(..., install_packages = TRUE, load_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
   if (!load_packages & !install_packages)
   {warning("Function 'use_packages' not executed: Set argument 'load_packages' and/or 'install_packages' to TRUE."); return()}
 
@@ -77,7 +79,7 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
       if (!can_load) cat(red(spc,symbol$cross, "Installation failed","\n",spc), sep = "") else
         cat(green(spc,symbol$tick, "Installation succesful","\n",spc), sep = "")
     }
-    if (package %in% outdated_pkgs$Package) #upgrade package
+    if (upgrade && package %in% outdated_pkgs$Package) #upgrade package
     {
       sel = outdated_pkgs[outdated_pkgs$Package==package,]
       cat("\n")

@@ -5,7 +5,7 @@
 \title{Prepare packages for usage}
 \usage{
 use_packages(..., install_packages = TRUE, load_packages = TRUE,
-  force_install = FALSE)
+  force_install = FALSE, upgrade = FALSE)
 }
 \arguments{
 \item{...}{List of package names and other options.}
@@ -15,6 +15,8 @@ use_packages(..., install_packages = TRUE, load_packages = TRUE,
 \item{load_packages}{Whether to load the selected packages}
 
 \item{force_install}{Whether to install packages even if they are installed already}
+
+\item{upgrade}{Whether to upgrade outdated packages. Defaults to FALSE.}
 }
 \description{
 Utility function to load and optionally install packages if they are missing. When the function terminates,
