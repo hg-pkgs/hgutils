@@ -1,8 +1,9 @@
-#' Clears the workspace and sets the working directory to specified folder.
-#'
+#' Cleans R for use
+#' @description Clears workspace, deletes all objects from global environment, clears graphics and (optionally) sets working directory.
 #' @param folder String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
-#' working directory paths. Use \code{is_registered()} to check whether user registration is enabled
-#' @param rm Whether to remove objects in the current environment. Defaults to TRUE.
+#' working directory paths. Use \code{is_registered()} to check whether user registration is enabled.
+#' If \code{NULL}, the working directory is not changed.
+#' @param rm Whether to remove objects in the current environment. Defaults to \code{TRUE}.
 #'
 #' @return NULL
 #'
@@ -18,60 +19,31 @@ startup = function(folder = NULL, rm = TRUE) {
     graphics.off()
   }
 
-  results = .is_registered()
-  has_results = results %>% nrow == 1
-
-  if (!has_results) {
-      if (!is.null(folder) && dir.exists(folder)) {
-          setwd(folder)
-          message(paste0("Setting the working directory at: '", folder, "'"), quote = F)
-      } else warning(paste0("[UNREGISTERED] Directory does not exist: '", ifelse(is.null(folder), "NULL", folder), "'"))
-  } else {
-      dir = ifelse(!is.null(folder) && dir.exists(folder), folder, paste0(results$location, folder))
-      if (dir.exists(dir)) {
-          setwd(dir)
-          print(paste0("Setting the working directory at: '", dir, "'"), quote = F)
-      } else warning(paste0("[REGISTERED] Directory does not exist: '", dir, "'"))
+  if (!is.null(folder))
+  {
+    # results = .is_registered()
+    # has_results = results %>% nrow == 1
+    # if (!has_results) {
+    #     if (!is.null(folder) && dir.exists(folder)) {
+    #         setwd(folder)
+    #         message(paste0("Setting the working directory at: '", folder, "'"), quote = F)
+    #     } else warning(paste0("[UNREGISTERED] Directory does not exist: '", ifelse(is.null(folder), "NULL", folder), "'"))
+    # } else {
+    #     dir = ifelse(!is.null(folder) && dir.exists(folder), folder, paste0(results$location, folder))
+    #     if (dir.exists(dir)) {
+    #         setwd(dir)
+    #         print(paste0("Setting the working directory at: '", dir, "'"), quote = F)
+    #     } else warning(paste0("[REGISTERED] Directory does not exist: '", dir, "'"))
+    # }
+    warning("Deprecated setting of working directory.")
   }
-}
-
-
-#' Internal function to check whether the current user has the working directory registered.
-#'
-#' @param verbose Whether to print the user name and registered working directory.
-#' @param return_data Whether to return a boolean or a \code{\link[tibble]{tibble}} containing the found user.
-#'
-#' @return Either a boolean (if return_data is FALSE) or a tibble containing fields 'desc' (computer description),
-#' 'usr' (computer user name) and 'location' (working directory base).
-.is_registered = function(verbose = FALSE, return_data = TRUE) {
-  current_usr = Sys.info()["user"]
-  results = working_dirs[working_dirs$usr == current_usr, ]
-  registered = nrow(results) == 1
-
-  if (verbose) {
-      if (!registered) print(paste0("User '", current_usr, "' is not registered."), quote = F) else
-          print(paste0("User '", current_usr, "' is registered. Default working directory is '", results$location[1], "'"), quote = F)
-  }
-
-  if (return_data)
-      return(results) else return(registered)
-}
-
-#' Checks whether the current user has the working directory registered.
-#'
-#' @param verbose Whether to print the user name and registered working directory.
-#'
-#' @return Boolean indicating whether the user is registered or not.
-#'
-#' @examples is_registered()
-#' @export
-#' @family initialization functions
-is_registered = function(verbose = FALSE) {
-  .is_registered(verbose = verbose, return_data = FALSE)
 }
 
 #' Create nice axis breaks for plots
 #' @description Set the breaks for a graph in nice positions.
+#' @details \code{get_breaks} is the base function and creates a vector of breakspoints. \code{ggplot_breaks} is a wrapper and
+#' makes usage easier in \pkg{ggplot2}. The limits of the axis may not be known beforehand,
+#' but \code{ggplot_breaks} receives it from \code{ggplot} and then creates nice breaks.
 #'
 #' @param limits The limits of the axis. May be a vector of 2 elements with lower and upper bounds, or a
 #'               single digit (which is the upper bound, the lower bound is then assumed to be 0).
@@ -81,27 +53,27 @@ is_registered = function(verbose = FALSE) {
 #' @param int_only Whether only integer divisors of \code{N} may be used for interval sizes, defaults to \code{TRUE}.
 #' @param multiples_only Whether only multiples of \code{N} can be used, defaults to \code{FALSE}.
 #' @param include_bounds Whether the resulting bounds should include \code{min} and \code{max}. Defaults to \code{TRUE}.
-#' @param ... Additional parameters.
 #'
 #' @return A sorted numerical vector with breakpoints of with size \code{|max_breaks|+1} when \code{include_bounds} is \code{TRUE}
 #' and of size \code{|max_breaks|} otherwise.
 #'
-#' @examples get_breaks(24, N=12, max_breaks=15)
+#' @examples
+#' get_breaks(24, N=12, max_breaks=15)
+#'
+#' \dontrun{
+#' ggplot() + scale_x_continuous(breaks = ggplot_breaks(N=12, max_breaks=15))}
+#'
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom numbers divisors
 #' @family break functions
-get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, multiples_only=FALSE, include_bounds=TRUE, ...) {
+get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, multiples_only=FALSE, include_bounds=TRUE) {
   if (!is.vector(limits) || length(limits) > 2 || !is.numeric(limits))
     stop("Argument 'limits' must be a scalar or numeric vector.")
   if (length(limits) == 1) {xmin = 0; xmax = limits} else {xmin = limits[1]; xmax = limits[2]}
   if (xmax < xmin)
     stop("In argument 'limits', 'xmax' must be at least as large as 'xmin'.")
   xmax = xmax - xmin
-
-  options = list(prnt = FALSE) %>% update_settings(...)
-  if (options$prnt)
-    cat(paste0("input range: [", xmin, " - ", xmax, "]"))
 
   lp = function(d) (xmax/(max_breaks*d)) %>% log10 %>% ceiling %>% ifelse(int_only, max(., 0), .)
   up = function(d) (xmax/d)              %>% log10 %>% floor   %>% ifelse(int_only, max(., 0), .)
@@ -110,23 +82,12 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, multiples_only
 
   sq = seq(0, ceiling(xmax/selected)*selected, selected) + floor(xmin/selected)*selected
   if (!include_bounds) sq = sq[sq>=xmin & sq<=(xmin+xmax)]
-
-  if (options$prnt)
-    cat(paste0(sprintf("\nSelected: %s.\nSequence: %s.",selected,frmt(sq))))
-
   sq
 }
 
-#' Nice plotting axis breaks
-#'
-#' @description This makes usage easier in \pkg{ggplot2} as the limits may not be always be known before plotting.
-#'
-#' @return A \code{\link{get_breaks}} function with filled-in parameters which expects limits.
-#'
-#' @export
-#' @examples \dontrun{ggplot() + scale_x_continuous(breaks = ggplot_breaks(N=12, max_breaks=15))}
-#' @family axis break functions
 #' @inheritDotParams get_breaks
+#' @export
+#' @rdname get_breaks
 ggplot_breaks = function(...) {
   function(X) get_breaks(X, ...)
 }
@@ -136,8 +97,8 @@ ggplot_breaks = function(...) {
 #' close as possible to their original values.
 #'
 #' @param X A numerical vector of real numbers.
-#' @param distance The minimum distance between subsequent numbers. Must be a scalar or vector of size |X|.
-#' @param min,max The lower and upper bounds
+#' @param distance The minimum distance between subsequent numbers. Must be a scalar or vector of size \code{|X|}.
+#' @param min,max The lower and upper bounds.
 #' @details The output vector has the following properties. For all elements \code{e_i}, \code{min <= e_i <= max}.
 #' For the distance \code{D} between \code{e_i} and \code{e_(i+1)}, \code{D >= max(d_i, d_(i+1))}. And finally, the distance
 #' between \code{e_i} and \code{X_i} is minimized for all \code{e_i}.
@@ -191,10 +152,10 @@ separate_values = function(X, distance = 0.05, min = 0, max = 1) {
 #' Specifies a square grid which fits N objects.
 #'
 #' @description The resulting grid will be of size \code{(a*a)} or \code{(a*(a+1))} where \code{a} is an integer.
-#' It will therefore always be a square or or have one row/column more than columns/rows
+#' It will therefore always be a square or or have one row/column more than columns/rows.
 #'
 #' @param N Number of objects
-#' @param moreRows Whether there should be more rows than columns if the grid is not square. Defaults to more rows.
+#' @param moreRows Whether there should be more rows than columns if the grid is not square. Defaults to more rows (\code{TRUE}).
 #'
 #' @return A named list with elements rows and columns specifying the size of the optimal grid.
 #'
@@ -207,11 +168,11 @@ get_square_grid = function(N, moreRows = TRUE) {
   }
 }
 
-#' Removes any NA from a vector
+#' Remove \code{NA}
+#' @description Removes any \code{NA} element from a vector.
+#' @param vec A vector which may contain \code{NA} elements.
 #'
-#' @param vec A vector which may contain NA elements
-#'
-#' @return A vector without NA elements
+#' @return A vector without \code{NA} elements.
 #'
 #' @examples rmNA(c(1,NA,5,6))
 #' @export
@@ -219,10 +180,10 @@ rmNA = function(vec) {
   vec[!is.na(vec)]
 }
 
-#' Rounds a number to a specified amount of digits and returns the string value
-#'
+#' Round number
+#' @description Rounds a number to a specified amount of digits and returns the string value.
 #' @param dbl The number to be rounded.
-#' @param digits The number of digits the number needs to be rounded to.
+#' @param digits The number of digits the number needs to be rounded to (defaults to \code{3}).
 #'
 #' @return A string value of the number rounded to the specified amount of digits.
 #'
@@ -232,12 +193,13 @@ rnd_dbl = function(dbl, digits = 3) {
   sprintf(paste0("%.", digits, "f"), round(dbl, digits))
 }
 
-#' Creates a nice string representation of a variable.
+#' Format variable value
 #'
+#' @description Creates a nice string representation of a variable value.
 #' @param x The variable for which a string representation is created.
-#' @param show_class Whether to show the class of 'x'. Defaults to FALSE.
+#' @param show_class Whether to show the class of \code{x}. Defaults to \code{FALSE}.
 #'
-#' @return A character vector with the string representation of 'x'.
+#' @return A character vector with the string representation of \code{x}.
 #' @export
 #' @examples frmt(c(1,2,3))
 frmt = function(x, show_class = FALSE) {

@@ -2,7 +2,7 @@
 % Please edit documentation in R/package_functions.R
 \name{use_packages}
 \alias{use_packages}
-\title{Prepare packages for usage}
+\title{Make packages ready for usage}
 \usage{
 use_packages(..., install_packages = TRUE, load_packages = TRUE,
   force_install = FALSE, upgrade = FALSE)
@@ -10,13 +10,13 @@ use_packages(..., install_packages = TRUE, load_packages = TRUE,
 \arguments{
 \item{...}{List of package names and other options.}
 
-\item{install_packages}{Whether to install the selected packages}
+\item{install_packages}{Whether to install the selected packages.}
 
-\item{load_packages}{Whether to load the selected packages}
+\item{load_packages}{Whether to load the selected packages.}
 
-\item{force_install}{Whether to install packages even if they are installed already}
+\item{force_install}{Whether to install packages even if they are installed already.}
 
-\item{upgrade}{Whether to upgrade outdated packages. Defaults to FALSE.}
+\item{upgrade}{Whether to upgrade outdated packages. Defaults to \code{FALSE}.}
 }
 \description{
 Utility function to load and optionally install packages if they are missing. When the function terminates,

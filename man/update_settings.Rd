@@ -9,10 +9,10 @@ update_settings(default, ...)
 \arguments{
 \item{default}{A named list of default values for settings.}
 
-\item{...}{Optional settings to override the default settings.}
+\item{...}{Optional settings values to override the default settings.}
 }
 \value{
-The updated list of settings with possible new values.
+The updated list of settings with updated values.
 }
 \description{
 Uses ellipsis parameter to update a list of default settings.

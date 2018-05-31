@@ -7,11 +7,11 @@
 valid_pkgname(pkg)
 }
 \arguments{
-\item{pkg}{The name of a package. Can be a vector of strings with size of at least 1.
+\item{pkg}{A package name. Can be a vector of strings with size of at least 1.
 If missing, the function returns the regex to validate the names.}
 }
 \value{
-A boolean indicating whether the package name is valid.
+A boolean indicating whether the package name is valid or the validation regex when \code{pkg} is missing.
 }
 \description{
 Naming rule obtained from \emph{'Writing R Extensions'} manual.

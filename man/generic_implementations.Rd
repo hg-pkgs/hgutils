@@ -2,14 +2,14 @@
 % Please edit documentation in R/package_functions.R
 \name{generic_implementations}
 \alias{generic_implementations}
-\title{Retrieves generic function implementations}
+\title{Retrieve generic function implementations}
 \usage{
 generic_implementations(generic, ...)
 }
 \arguments{
 \item{generic}{The name of the generic function.}
 
-\item{...}{Optional settings}
+\item{...}{Optional settings. Set \code{remove_default=FALSE} to keep the default implementation.}
 }
 \value{
 A vector with class names for which argument '\code{generic}' has an implementation.

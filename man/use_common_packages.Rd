@@ -12,10 +12,10 @@ list_common_packages()
 \arguments{
 \item{...}{Arguments passed on to \code{use_packages}
 \describe{
-  \item{load_packages}{Whether to load the selected packages}
-  \item{install_packages}{Whether to install the selected packages}
-  \item{force_install}{Whether to install packages even if they are installed already}
-  \item{upgrade}{Whether to upgrade outdated packages. Defaults to FALSE.}
+  \item{load_packages}{Whether to load the selected packages.}
+  \item{install_packages}{Whether to install the selected packages.}
+  \item{force_install}{Whether to install packages even if they are installed already.}
+  \item{upgrade}{Whether to upgrade outdated packages. Defaults to \code{FALSE}.}
 }}
 }
 \description{

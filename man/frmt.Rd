@@ -2,20 +2,20 @@
 % Please edit documentation in R/hgutils.R
 \name{frmt}
 \alias{frmt}
-\title{Creates a nice string representation of a variable.}
+\title{Format variable value}
 \usage{
 frmt(x, show_class = FALSE)
 }
 \arguments{
 \item{x}{The variable for which a string representation is created.}
 
-\item{show_class}{Whether to show the class of 'x'. Defaults to FALSE.}
+\item{show_class}{Whether to show the class of \code{x}. Defaults to \code{FALSE}.}
 }
 \value{
-A character vector with the string representation of 'x'.
+A character vector with the string representation of \code{x}.
 }
 \description{
-Creates a nice string representation of a variable.
+Creates a nice string representation of a variable value.
 }
 \examples{
 frmt(c(1,2,3))

@@ -19,7 +19,7 @@ time_estimate(fit, survival, ...)
 \method{time_estimate}{coxph}(fit, survival = 0.5, newdata = NULL, ...)
 }
 \arguments{
-\item{fit}{A survival fit object}
+\item{fit}{A survival fit object.}
 
 \item{survival}{the survival probability for which the timepoint is estimated.}
 
@@ -29,7 +29,7 @@ time_estimate(fit, survival, ...)
 }
 \value{
 A named list or matrix with elements 'surv' (estimate), 'lower' and 'upper' (confidence interval).
-The attribute 'survival' is added to the result and set to the argument survival probability
+The attribute 'survival' is added to the result and set to the argument survival probability.
 }
 \description{
 Get estimate of timepoints for a given survival probability.

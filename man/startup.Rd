@@ -2,23 +2,21 @@
 % Please edit documentation in R/hgutils.R
 \name{startup}
 \alias{startup}
-\title{Clears the workspace and sets the working directory to specified folder.}
+\title{Cleans R for use}
 \usage{
 startup(folder = NULL, rm = TRUE)
 }
 \arguments{
 \item{folder}{String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
-working directory paths. Use \code{is_registered()} to check whether user registration is enabled}
+working directory paths. Use \code{is_registered()} to check whether user registration is enabled.
+If \code{NULL}, the working directory is not changed.}
 
-\item{rm}{Whether to remove objects in the current environment. Defaults to TRUE.}
+\item{rm}{Whether to remove objects in the current environment. Defaults to \code{TRUE}.}
 }
 \description{
-Clears the workspace and sets the working directory to specified folder.
+Clears workspace, deletes all objects from global environment, clears graphics and (optionally) sets working directory.
 }
 \examples{
 \dontrun{startup('project_folder/')}
-}
-\seealso{
-Other initialization functions: \code{\link{is_registered}}
 }
 \concept{initialization functions}

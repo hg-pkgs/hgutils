@@ -9,9 +9,9 @@ separate_values(X, distance = 0.05, min = 0, max = 1)
 \arguments{
 \item{X}{A numerical vector of real numbers.}
 
-\item{distance}{The minimum distance between subsequent numbers. Must be a scalar or vector of size |X|.}
+\item{distance}{The minimum distance between subsequent numbers. Must be a scalar or vector of size \code{|X|}.}
 
-\item{min, max}{The lower and upper bounds}
+\item{min, max}{The lower and upper bounds.}
 }
 \value{
 A numerical vector with the same length as \code{X}, with numbers bounded by min and max, close to their original values and

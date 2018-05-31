@@ -2,20 +2,20 @@
 % Please edit documentation in R/hgutils.R
 \name{rnd_dbl}
 \alias{rnd_dbl}
-\title{Rounds a number to a specified amount of digits and returns the string value}
+\title{Round number}
 \usage{
 rnd_dbl(dbl, digits = 3)
 }
 \arguments{
 \item{dbl}{The number to be rounded.}
 
-\item{digits}{The number of digits the number needs to be rounded to.}
+\item{digits}{The number of digits the number needs to be rounded to (defaults to \code{3}).}
 }
 \value{
 A string value of the number rounded to the specified amount of digits.
 }
 \description{
-Rounds a number to a specified amount of digits and returns the string value
+Rounds a number to a specified amount of digits and returns the string value.
 }
 \examples{
 rnd_dbl(1.26564,digits = 2)

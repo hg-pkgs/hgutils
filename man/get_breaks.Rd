@@ -2,10 +2,13 @@
 % Please edit documentation in R/hgutils.R
 \name{get_breaks}
 \alias{get_breaks}
+\alias{ggplot_breaks}
 \title{Create nice axis breaks for plots}
 \usage{
 get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE,
-  multiples_only = FALSE, include_bounds = TRUE, ...)
+  multiples_only = FALSE, include_bounds = TRUE)
+
+ggplot_breaks(...)
 }
 \arguments{
 \item{limits}{The limits of the axis. May be a vector of 2 elements with lower and upper bounds, or a
@@ -22,7 +25,17 @@ multiples of \code{N} when \code{multiples_only} is \code{TRUE}. Defaults to 10.
 
 \item{include_bounds}{Whether the resulting bounds should include \code{min} and \code{max}. Defaults to \code{TRUE}.}
 
-\item{...}{Additional parameters.}
+\item{...}{Arguments passed on to \code{get_breaks}
+\describe{
+  \item{limits}{The limits of the axis. May be a vector of 2 elements with lower and upper bounds, or a
+single digit (which is the upper bound, the lower bound is then assumed to be 0).}
+  \item{N}{The step size. The eventual intervals will be multiples of the divisors of \code{N} or
+multiples of \code{N} when \code{multiples_only} is \code{TRUE}. Defaults to 10.}
+  \item{max_breaks}{Maximum amount of breaks, defaults to 10.}
+  \item{int_only}{Whether only integer divisors of \code{N} may be used for interval sizes, defaults to \code{TRUE}.}
+  \item{multiples_only}{Whether only multiples of \code{N} can be used, defaults to \code{FALSE}.}
+  \item{include_bounds}{Whether the resulting bounds should include \code{min} and \code{max}. Defaults to \code{TRUE}.}
+}}
 }
 \value{
 A sorted numerical vector with breakpoints of with size \code{|max_breaks|+1} when \code{include_bounds} is \code{TRUE}
@@ -31,7 +44,16 @@ and of size \code{|max_breaks|} otherwise.
 \description{
 Set the breaks for a graph in nice positions.
 }
+\details{
+\code{get_breaks} is the base function and creates a vector of breakspoints. \code{ggplot_breaks} is a wrapper and
+makes usage easier in \pkg{ggplot2}. The limits of the axis may not be known beforehand,
+but \code{ggplot_breaks} receives it from \code{ggplot} and then creates nice breaks.
+}
 \examples{
 get_breaks(24, N=12, max_breaks=15)
+
+\dontrun{
+ggplot() + scale_x_continuous(breaks = ggplot_breaks(N=12, max_breaks=15))}
+
 }
 \concept{break functions}

@@ -9,14 +9,14 @@ get_square_grid(N, moreRows = TRUE)
 \arguments{
 \item{N}{Number of objects}
 
-\item{moreRows}{Whether there should be more rows than columns if the grid is not square. Defaults to more rows.}
+\item{moreRows}{Whether there should be more rows than columns if the grid is not square. Defaults to more rows (\code{TRUE}).}
 }
 \value{
 A named list with elements rows and columns specifying the size of the optimal grid.
 }
 \description{
 The resulting grid will be of size \code{(a*a)} or \code{(a*(a+1))} where \code{a} is an integer.
-It will therefore always be a square or or have one row/column more than columns/rows
+It will therefore always be a square or or have one row/column more than columns/rows.
 }
 \examples{
 get_square_grid(5)

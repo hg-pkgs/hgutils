@@ -2,15 +2,27 @@
 % Please edit documentation in R/package_functions.R
 \name{set_package_imports}
 \alias{set_package_imports}
-\title{Creates a list of necessary imports for the DESCRIPTION file.}
+\title{Set imports for DESCRIPTION file}
 \usage{
-set_package_imports(...)
+set_package_imports(skip_prompt = TRUE, update = TRUE,
+  use_version_numbers = TRUE, rversion = "DEPENDENCIES_VERSION")
 }
 \arguments{
-\item{...}{Additional parameters.}
+\item{skip_prompt}{Whether to ask confirmation of the DESCRIPTION file should be adjusted. Defaults to \code{TRUE}.}
+
+\item{update}{Whether the DESCRIPTION file should be updated. Defaults to \code{TRUE}.}
+
+\item{use_version_numbers}{Whether package version numbers should be included in the DESCRIPTION file. Defaults to \code{TRUE}}
+
+\item{rversion}{What version of R to be used in the DESCRIPTION file.
+Can be \code{DEPENDENCIES_VERSION} for the latest version in the package dependencies,
+\code{LATEST_VERSION} for the current R version or any valid version number.}
+}
+\value{
+A list with the R version and packages names and versions.
 }
 \description{
-Creates a list of necessary imports for the DESCRIPTION file.
+Update the DESCRIPTION file with all imported packages stated in the source code.
 }
 \examples{
 \dontrun{set_package_imports(skip_prompt=TRUE)}
