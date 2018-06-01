@@ -12,11 +12,11 @@ Imports:
   crayon,
   dplyr,
   grDevices,
-  limSolve (>= 1.5.5.3),
+  limSolve,
   magrittr,
   methods,
   numbers,
-  rms (>= 5.1.2),
+  rms,
   stringr,
   survival,
   utils
