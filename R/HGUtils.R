@@ -41,7 +41,7 @@ startup = function(folder = NULL, rm = TRUE) {
 
 #' Create nice axis breaks for plots
 #' @description Set the breaks for a graph in nice positions.
-#' @details \code{get_breaks} is the base function and creates a vector of breakspoints. \code{ggplot_breaks} is a wrapper and
+#' @details \code{get_breaks} is the base function and creates a vector of breaks \code{ggplot_breaks} is a wrapper and
 #' makes usage easier in \pkg{ggplot2}. The limits of the axis may not be known beforehand,
 #' but \code{ggplot_breaks} receives it from \code{ggplot} and then creates nice breaks.
 #'
@@ -52,9 +52,9 @@ startup = function(folder = NULL, rm = TRUE) {
 #' @param max_breaks Maximum amount of breaks, defaults to 10.
 #' @param int_only Whether only integer divisors of \code{N} may be used for interval sizes, defaults to \code{TRUE}.
 #' @param multiples_only Whether only multiples of \code{N} can be used, defaults to \code{FALSE}.
-#' @param include_bounds Whether the resulting bounds should include \code{min} and \code{max}. Defaults to \code{TRUE}.
+#' @param include_bounds Whether the resulting breaks should encompass \code{min} and \code{max}. Defaults to \code{TRUE}.
 #'
-#' @return A sorted numerical vector with breakpoints of with size \code{|max_breaks|+1} when \code{include_bounds} is \code{TRUE}
+#' @return A sorted numerical vector with breaks of length \code{|max_breaks|+1} when \code{include_bounds} is \code{TRUE}
 #' and of size \code{|max_breaks|} otherwise.
 #'
 #' @examples
