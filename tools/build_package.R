@@ -9,11 +9,13 @@ roxygen2::roxygenise()
 devtools::document()
 devtools::run_examples(fresh=TRUE, run = FALSE)
 devtools::check(check_version=FALSE)
+devtools::test()
 
 #installr::updateR(TRUE)
 devtools::spell_check()
 devtools::check_rhub()
 devtools::check_win_devel()
+devtools::check_win_release()
 devtools::release()
 #devtools::build_manual()
 

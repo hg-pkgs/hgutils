@@ -2,7 +2,10 @@ Package: hgutils
 Title: Collection of Utility Functions
 Version: 0.3.7
 Authors@R: person("H.G.", "van den Boorn", email = "hvdboorn@gmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description:
+   A handy collection of handy utility 
+   functions to aid in developing an own package and 
+   to extend the graphing functionality in 'ggplot2'.
 Depends: R (>= 3.1.2)
 License: GPL-3
 Encoding: UTF-8

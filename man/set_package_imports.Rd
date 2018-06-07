@@ -2,27 +2,28 @@
 % Please edit documentation in R/package_functions.R
 \name{set_package_imports}
 \alias{set_package_imports}
-\title{Set imports for DESCRIPTION file}
+\title{Set imports for \emph{DESCRIPTION} file}
 \usage{
-set_package_imports(skip_prompt = TRUE, update = TRUE,
+set_package_imports(skip_prompt = FALSE, update = TRUE,
   use_version_numbers = TRUE, rversion = "DEPENDENCIES_VERSION")
 }
 \arguments{
-\item{skip_prompt}{Whether to ask confirmation of the DESCRIPTION file should be adjusted. Defaults to \code{TRUE}.}
+\item{skip_prompt}{Whether to skip the confirmation prompt to change the \emph{DESCRIPTION} file. Defaults to \code{FALSE}.}
 
-\item{update}{Whether the DESCRIPTION file should be updated. Defaults to \code{TRUE}.}
+\item{update}{Whether the \emph{DESCRIPTION} file should be updated. Defaults to \code{TRUE}.}
 
-\item{use_version_numbers}{Whether package version numbers should be included in the DESCRIPTION file. Defaults to \code{TRUE}}
+\item{use_version_numbers}{Whether package version numbers should be included in the \emph{DESCRIPTION} file. Defaults to \code{TRUE}.}
 
-\item{rversion}{What version of R to be used in the DESCRIPTION file.
+\item{rversion}{What version of R to be used in the \emph{DESCRIPTION} file.
 Can be \code{DEPENDENCIES_VERSION} for the latest version in the package dependencies,
 \code{LATEST_VERSION} for the current R version or any valid version number.}
 }
 \value{
-A list with the R version and packages names and versions.
+Invisibly returns a list with the current R version,
+the R version obtained from dependencies and packages names (including version numbers).
 }
 \description{
-Update the DESCRIPTION file with all imported packages stated in the source code.
+Update the \emph{DESCRIPTION} file with all imported packages stated in the source code.
 }
 \examples{
 \dontrun{set_package_imports(skip_prompt=TRUE)}
@@ -30,7 +31,6 @@ Update the DESCRIPTION file with all imported packages stated in the source code
 \seealso{
 Other developer functions: \code{\link{generic_implementations}},
   \code{\link{update_settings}},
-  \code{\link{use_common_packages}},
   \code{\link{use_packages}}, \code{\link{valid_pkgname}}
 }
 \concept{developer functions}

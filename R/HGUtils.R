@@ -14,6 +14,7 @@
 #' @family initialization functions
 startup = function(folder = NULL, rm = TRUE) {
   if (rm) {
+    .rs.restartR()
     rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
     gc()
     graphics.off()
@@ -196,21 +197,23 @@ rnd_dbl = function(dbl, digits = 3) {
 #' Format variable value
 #'
 #' @description Creates a nice string representation of a variable value.
+#'
 #' @param x The variable for which a string representation is created.
 #' @param show_class Whether to show the class of \code{x}. Defaults to \code{FALSE}.
+#' @param quotes Whether to use single quotation marks (default: \code{TRUE}).
 #'
 #' @return A character vector with the string representation of \code{x}.
 #' @export
 #' @examples frmt(c(1,2,3))
-frmt = function(x, show_class = FALSE) {
+frmt = function(x, show_class = FALSE, quotes=TRUE) {
   text = if (length(x) == 0L) {
     "{}"
   } else if (length(x) == 1) {
-    sprintf("'%s'", x)
+    sprintf(ifelse(quotes,"'%s'","%s"), x)
   } else if (is.atomic(x)) {
-    sprintf("['%s']", paste0(sort(x), collapse = "','"))
+    sprintf(ifelse(quotes,"['%s']","[%s]"), paste0(sort(x), collapse = ifelse(quotes,"','",",")))
   } else {
-    sprintf("{'%s'}", paste0(x, collapse = "','"))
+    sprintf(ifelse(quotes,"{'%s'}","{%s}"), paste0(x, collapse = ifelse(quotes,"','",",")))
   }
 
   if (show_class)

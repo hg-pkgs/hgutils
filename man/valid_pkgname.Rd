@@ -7,19 +7,20 @@
 valid_pkgname(pkg)
 }
 \arguments{
-\item{pkg}{A package name. Can be a vector of strings with size of at least 1.
-If missing, the function returns the regex to validate the names.}
+\item{pkg}{A character vector containing package names. Can be a vector of strings with size of at least 1.
+If \code{pkg} is missing, the function returns the regex to validate the names.}
 }
 \value{
-A boolean indicating whether the package name is valid or the validation regex when \code{pkg} is missing.
+A named logical indicating whether the package name is valid or the validation regex when \code{pkg} is missing.
 }
 \description{
 Naming rule obtained from \emph{'Writing R Extensions'} manual.
 }
 \examples{
-valid_pkgname("hgutils") #valid
-valid_pkgname("ggplot2") #valid
-valid_pkgname("pkg2.-1") #invalid
+valid_pkgname("hgutils") # valid
+valid_pkgname("ggplot2") # valid
+valid_pkgname("pkg2.-1") # invalid
+valid_pkgname()          # returns package name regex
 }
 \references{
 \href{https://cran.r-project.org/doc/manuals/r-devel/R-exts.html#The-DESCRIPTION-file}{'Writing R Extensions'} manual.
@@ -27,8 +28,6 @@ valid_pkgname("pkg2.-1") #invalid
 \seealso{
 Other developer functions: \code{\link{generic_implementations}},
   \code{\link{set_package_imports}},
-  \code{\link{update_settings}},
-  \code{\link{use_common_packages}},
-  \code{\link{use_packages}}
+  \code{\link{update_settings}}, \code{\link{use_packages}}
 }
 \concept{developer functions}

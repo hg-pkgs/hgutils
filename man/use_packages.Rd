@@ -2,10 +2,20 @@
 % Please edit documentation in R/package_functions.R
 \name{use_packages}
 \alias{use_packages}
+\alias{use_package_genre}
+\alias{use_common_packages}
+\alias{list_common_packages}
 \title{Make packages ready for usage}
 \usage{
 use_packages(..., install_packages = TRUE, load_packages = TRUE,
   force_install = FALSE, upgrade = FALSE)
+
+use_package_genre(genre)
+
+use_common_packages(..., install_packages = TRUE, load_packages = TRUE,
+  force_install = FALSE, upgrade = FALSE)
+
+list_common_packages()
 }
 \arguments{
 \item{...}{List of package names and other options.}
@@ -17,22 +27,39 @@ use_packages(..., install_packages = TRUE, load_packages = TRUE,
 \item{force_install}{Whether to install packages even if they are installed already.}
 
 \item{upgrade}{Whether to upgrade outdated packages. Defaults to \code{FALSE}.}
+
+\item{genre}{A genre name, obtained from the dataset \code{pkg_genre}.}
+}
+\value{
+Returns invisibly a list with additional package information and results of installing/upgrading and loading.
 }
 \description{
 Utility function to load and optionally install packages if they are missing. When the function terminates,
 packages are installed (if necessary), upgraded to the latest version (if necessary) and loaded.
 }
+\details{
+\code{use_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
+\code{use_common_packages} is a convenient utility which does the same for a pre-specified list of common package names
+defined in \code{list_common_packages}.
+}
 \examples{
 \dontrun{
-#package names can be given as a vector or one-by-one
+# Package names can be given as a vector or one-by-one
 use_packages(c('magrittr','dplyr'))
-use_packages('magrittr','dplyr',install_packages=FALSE)}
+use_packages('magrittr','dplyr',install_packages=FALSE)
+
+# These are equivalent
+use_common_packages()
+use_packages(list_common_packages())}
 }
 \seealso{
+\code{\link[utils]{install.packages}} for installation of new packages,
+\code{\link[utils]{update.packages}} for updating outdated packages,
+\code{\link[base]{library}} for load and attaching packages.
+
 Other developer functions: \code{\link{generic_implementations}},
   \code{\link{set_package_imports}},
   \code{\link{update_settings}},
-  \code{\link{use_common_packages}},
   \code{\link{valid_pkgname}}
 }
 \concept{developer functions}

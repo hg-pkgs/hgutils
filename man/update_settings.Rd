@@ -28,7 +28,6 @@ foo = function(...) {
 \seealso{
 Other developer functions: \code{\link{generic_implementations}},
   \code{\link{set_package_imports}},
-  \code{\link{use_common_packages}},
   \code{\link{use_packages}}, \code{\link{valid_pkgname}}
 }
 \concept{developer functions}

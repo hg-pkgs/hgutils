@@ -79,8 +79,3 @@ for (i in 1:length(files))
   if (i < length(files))
     cat("\n")
 }
-
-
-pkgs =
-depends = do.call(rbind, sapply(set_package_imports(update = FALSE)$packages, function(x) packageDescription(x)$Depends)) %>% .[,1] %>% unname %>%
-{str_match(.,"R \\(>= (.*?)\\)")[,-1]} %>% rmNA %>% sort_version_numbers %>% last

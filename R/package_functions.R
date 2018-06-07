@@ -1,47 +1,3 @@
-#' Compares two vectors of version numbers
-#' @description Vectorised version of \code{\link[utils]{compareVersion}}.
-#' @inherit utils::compareVersion
-#' @seealso \code{\link[utils]{compareVersion}}
-#' @export
-#' @examples vec_compareVersion(a=c("1.0","7.2-0"), b=c("1.0-1","7.1-12"))
-#' @importFrom utils compareVersion
-vec_compareVersion = function(a, b)
-{
-  if (length(a)!=length(b) || !length(a)>=1)
-    stop(sprintf("Argument 'a' and 'b' must be of the same positive length, but |a|=%s and |b|=%s", length(a), length(b)))
-
-  1:length(a) %>% sapply(. %>% {compareVersion(a[.],b[.])})
-}
-
-#' Sorts version numbers
-#' @description Sort version numbers ascending according to \code{\link[utils]{compareVersion}}.
-#' @param X A vector of version numbers.
-#'
-#' @return A sorted list of version numbers
-#' @export
-#' @seealso \code{\link[utils]{compareVersion}}
-#' @importFrom utils compareVersion
-#' @examples sort_version(c("3.1.2","3.1","3.1.0"))
-sort_version = function(X)
-{
-  #use bubble sort
-  again = TRUE
-  while (again)
-  {
-    again = FALSE
-    for (i in 1:(length(X)-1))
-    {
-      res = compareVersion(X[i],X[i+1])
-      if (res > 0)
-      {
-        a=X[i+1]; X[i+1]=X[i]; X[i]=a
-        again = TRUE
-      }
-    }
-  }
-  X
-}
-
 #' Make packages ready for usage
 #'
 #' @description Utility function to load and optionally install packages if they are missing. When the function terminates,
@@ -53,15 +9,28 @@ sort_version = function(X)
 #' @param upgrade Whether to upgrade outdated packages. Defaults to \code{FALSE}.
 #' @param ... List of package names and other options.
 #'
-#' @return NULL
+#' @details
+#' \code{use_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
+#' \code{use_common_packages} is a convenient utility which does the same for a pre-specified list of common package names
+#' defined in \code{list_common_packages}.
+#'
+#' @return Returns invisibly a list with additional package information and results of installing/upgrading and loading.
+#' @seealso \code{\link[utils]{install.packages}} for installation of new packages,
+#' \code{\link[utils]{update.packages}} for updating outdated packages,
+#' \code{\link[base]{library}} for load and attaching packages.
 #'
 #' @examples \dontrun{
-#' #package names can be given as a vector or one-by-one
+#' # Package names can be given as a vector or one-by-one
 #' use_packages(c('magrittr','dplyr'))
-#' use_packages('magrittr','dplyr',install_packages=FALSE)}
+#' use_packages('magrittr','dplyr',install_packages=FALSE)
+#'
+#' # These are equivalent
+#' use_common_packages()
+#' use_packages(list_common_packages())}
 #' @export
 #' @family developer functions
-#' @importFrom utils install.packages capture.output old.packages update.packages
+#'
+#' @importFrom utils install.packages capture.output old.packages update.packages compareVersion
 #' @importFrom cli rule symbol
 #' @importFrom crayon green red yellow make_style
 #' @importFrom dplyr mutate filter
@@ -89,16 +58,19 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
   spc = paste0(rep(" ",5),collapse = "")
   outdated_pkgs = old.packages() %>% data.frame(stringsAsFactors=FALSE)
   outdated_pkgs$Installed = sapply(outdated_pkgs$Package, function(x) packageVersion(x) %>% format)
-  outdated_pkgs %<>% filter(vec_compareVersion(.$Installed, .$ReposVer) < 0) %>% filter(.$Package %in% packages)
+  outdated_pkgs %<>% filter(numeric_version(.$Installed) < numeric_version(.$ReposVer)) %>%
+                  filter(.$Package %in% packages)
 
   if(settings$show_title)
     cat(rule(left = sprintf("Loading packages (total: %s packages)",length(packages)), line = "bar4"),"\n")
 
+  data_acc = data.frame(package=character(),action=character(),result=logical()); acc_i = 1
   for (package in packages) {
     stfu({package_exists = require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
     cat(blue(symbol$arrow_right," ",package), rep(" ",max_n+2-nchar(package)),sep = "")
 
     can_load = TRUE
+    added_res = FALSE
     if (!package_exists && install_packages || force_install) {
       cat("\n")
       cat(blue(spc,symbol$continue, "Installing...","\n"), sep = "")
@@ -107,6 +79,9 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
       stfu({can_load = require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
       if (!can_load) cat(red(spc,symbol$cross, "Installation failed","\n",spc), sep = "") else
         cat(green(spc,symbol$tick, "Installation succesful","\n",spc), sep = "")
+
+      data_acc = rbind(data_acc, data.frame(package=package, action="INSTALL", result=can_load, stringsAsFactors = FALSE))
+      added_res = TRUE
     }
     if (upgrade && package %in% outdated_pkgs$Package) #upgrade package
     {
@@ -122,28 +97,75 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
       } else {
         cat(green(spc,symbol$tick, sprintf("Upgrade to version [%s] succesful.",current_ver),"\n",spc), sep = "")
       }
+
+      data_acc = rbind(data_acc, data.frame(package=package, action="UPGRADE",
+                                            result=compareVersion(current_ver, sel$ReposVer) < 0, stringsAsFactors = FALSE))
+      added_res = TRUE
     }
 
     if (load_packages && can_load) {
       stfu({library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
       cat(green(symbol$tick,"Loaded","\n"),sep = "")
+
+      if(!added_res)
+        data_acc = rbind(data_acc, data.frame(package=package, action="LOAD", result=TRUE, stringsAsFactors = FALSE))
     }
   }
+
+  invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
+}
+
+#' Loads categorized packageds
+#'
+#' @param genre A genre name, obtained from the dataset \code{pkg_genre}.
+#'
+#' @export
+#' @importFrom magrittr %>%
+#' @importFrom cli cat_bullet
+#' @rdname use_packages
+use_package_genre = function(genre)
+{
+  pg = hgutils::pkg_genre
+  genres = match.arg(genre, choices = pg$shorthand, several.ok = TRUE)
+  for(g in genres)
+  {
+    cat_bullet(sprintf("Importing packages: %s",pg$name[pg$shorthand==g]),background_col = "dodgerblue4",
+               col = "white", bullet_col = "white", bullet = "arrow_right")
+    use_packages(pg[pg$shorthand==g, "packages"][[1]])
+    cat("\n")
+  }
+}
+
+#' @export
+#' @rdname use_packages
+#Calls \code{use_packages} for a list of common package names.
+use_common_packages = function(..., install_packages = TRUE, load_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
+  use_packages(list_common_packages(), ...)
+}
+
+#' @export
+#' @rdname use_packages
+list_common_packages = function()
+{
+  c("devtools", "utils", "readxl", "writexl", "grid", "gridExtra", "gridGraphics", "cli", "installr",
+    "reshape2", "scales", "ggplot2", "stringi", "stringr", "formatR", "tibble", "magrittr","dplyr","roxygen2")
 }
 
 #' Validate a package name
 #' @description Naming rule obtained from \emph{'Writing R Extensions'} manual.
-#' @param pkg A package name. Can be a vector of strings with size of at least 1.
-#' If missing, the function returns the regex to validate the names.
+#' @param pkg A character vector containing package names. Can be a vector of strings with size of at least 1.
+#' If \code{pkg} is missing, the function returns the regex to validate the names.
 #'
-#' @return A boolean indicating whether the package name is valid or the validation regex when \code{pkg} is missing.
+#' @return A named logical indicating whether the package name is valid or the validation regex when \code{pkg} is missing.
 #' @export
 #' @references \href{https://cran.r-project.org/doc/manuals/r-devel/R-exts.html#The-DESCRIPTION-file}{'Writing R Extensions'} manual.
 #' @examples
-#' valid_pkgname("hgutils") #valid
-#' valid_pkgname("ggplot2") #valid
-#' valid_pkgname("pkg2.-1") #invalid
+#' valid_pkgname("hgutils") # valid
+#' valid_pkgname("ggplot2") # valid
+#' valid_pkgname("pkg2.-1") # invalid
+#' valid_pkgname()          # returns package name regex
 #' @importFrom stringr str_detect
+#' @importFrom magrittr %>% set_names
 #' @family developer functions
 valid_pkgname = function(pkg) {
   regex = "[[:alpha:]][[:alnum:]\\.]*[[:alnum:]]"
@@ -151,30 +173,9 @@ valid_pkgname = function(pkg) {
   if (missing(pkg))
     return(regex)
   if (!is.character(pkg))
-    stop(sprintf("Argument 'pkg' must be of class 'character', but is %s.",frmt(pkg, TRUE)))
+    stop(sprintf("Argument 'pkg' must be of class 'character', but is %s.", frmt(pkg, TRUE)))
 
-  str_detect(pkg,paste0("^",regex,"$"))
-}
-
-#' Load commonly used packages
-#' @description Utility function to load and install frequently used packages.
-#' @inheritDotParams use_packages
-#' @details \code{load_common_packages} is a wrapper function for \code{\link{use_packages}}. The supplied package names
-#' are available from \code{list_common_packages}.
-#'
-#' @return NULL
-#' @export
-#' @family developer functions
-use_common_packages = function(...) {
-  use_packages(list_common_packages(), ...)
-}
-
-#' @export
-#' @rdname use_common_packages
-list_common_packages = function()
-{
-  c("devtools", "utils", "readxl", "writexl", "grid", "gridExtra", "gridGraphics", "cli", "installr",
-    "reshape2", "scales", "ggplot2", "stringi", "stringr", "formatR", "tibble", "magrittr","dplyr","roxygen2")
+  str_detect(pkg,paste0("^",regex,"$")) %>% set_names(pkg)
 }
 
 #' Update default function settings
@@ -234,17 +235,18 @@ generic_implementations = function(generic, ...) {
     if(settings$remove_default) .[. != "default"] else .
 }
 
-#' Set imports for DESCRIPTION file
-#' @description Update the DESCRIPTION file with all imported packages stated in the source code.
+#' Set imports for \emph{DESCRIPTION} file
+#' @description Update the \emph{DESCRIPTION} file with all imported packages stated in the source code.
 #'
-#' @param skip_prompt Whether to ask confirmation of the DESCRIPTION file should be adjusted. Defaults to \code{TRUE}.
-#' @param update Whether the DESCRIPTION file should be updated. Defaults to \code{TRUE}.
-#' @param use_version_numbers Whether package version numbers should be included in the DESCRIPTION file. Defaults to \code{TRUE}
-#' @param rversion What version of R to be used in the DESCRIPTION file.
+#' @param skip_prompt Whether to skip the confirmation prompt to change the \emph{DESCRIPTION} file. Defaults to \code{FALSE}.
+#' @param update Whether the \emph{DESCRIPTION} file should be updated. Defaults to \code{TRUE}.
+#' @param use_version_numbers Whether package version numbers should be included in the \emph{DESCRIPTION} file. Defaults to \code{TRUE}.
+#' @param rversion What version of R to be used in the \emph{DESCRIPTION} file.
 #' Can be \code{DEPENDENCIES_VERSION} for the latest version in the package dependencies,
 #' \code{LATEST_VERSION} for the current R version or any valid version number.
 #'
-#' @return A list with the R version and packages names and versions.
+#' @return Invisibly returns a list with the current R version,
+#' the R version obtained from dependencies and packages names (including version numbers).
 #' @export
 #'
 #' @examples \dontrun{set_package_imports(skip_prompt=TRUE)}
@@ -255,12 +257,13 @@ generic_implementations = function(generic, ...) {
 #' @importFrom dplyr last
 #'
 #' @family developer functions
-set_package_imports = function(skip_prompt=TRUE, update = TRUE, use_version_numbers=TRUE, rversion = "DEPENDENCIES_VERSION") {
+set_package_imports = function(skip_prompt=FALSE, update=TRUE, use_version_numbers=TRUE, rversion = "DEPENDENCIES_VERSION") {
   if (!dir.exists("R/") || !file.exists("DESCRIPTION"))
     stop("Working directory not set to an R project folder.")
 
-  if (!rversion %in% c("DEPENDENCIES_VERSION","LATEST_VERSION") && !str_detect(rversion,"[[:digit:]]+([\\.-][[:digit:]]+)+"))
-    stop(sprintf("Argument 'rversion' must be either a valid version number or one of %s.",frmt(c("DEPENDENCIES_VERSION","LATEST_VERSION"))))
+  rversion_const = c("DEPENDENCIES_VERSION","LATEST_VERSION")
+  if (!rversion %in% rversion_const && !str_detect(rversion,"[[:digit:]]+([\\.-][[:digit:]]+)+"))
+    stop(sprintf("Argument 'rversion' must be either a valid version number or one of %s.",frmt(rversion_const)))
 
   desc = readLines("DESCRIPTION") %>% paste0(collapse = "\n")
   package_name = desc %>% {str_match(., "Package:[ ]*(.*?)\n(?:.*\n)+Version:[ ]*(.*?)\n")[-1]} %>% paste(collapse = " ")
@@ -283,22 +286,19 @@ set_package_imports = function(skip_prompt=TRUE, update = TRUE, use_version_numb
   pack_version = depen %>% sapply(. %>% packageVersion %>% format) %>% paste0(depen," (>= ",.,")")
   pkgs = if(use_version_numbers) pack_version else depen
 
-  rversion =
-    if (identical(rversion, "LATEST_VERSION")){
-      format(getRversion())
-    } else if(identical(rversion, "DEPENDENCIES_VERSION")) {
-      do.call(rbind, sapply(depen, function(x) packageDescription(x)$Depends)) %>% .[,1] %>%
-      unname %>% {str_match(.,"R \\(>= (.*?)\\)")[,-1]} %>% rmNA %>% sort_version %>% last
-    } else {
-      format(rversion)
-    }
+  #-- Determine R versions -------------------------------
+  current_r = format(getRversion())
+  dependencies_r = do.call(rbind, sapply(depen, function(x) packageDescription(x)$Depends)) %>% .[,1] %>%
+                   unname %>% {str_match(.,"R \\(>= (.*?)\\)")[,-1]} %>% rmNA %>% numeric_version %>% max %>% format
 
+  rversion = ifelse(identical(rversion, "LATEST_VERSION"), current_r,
+             ifelse(identical(rversion, "DEPENDENCIES_VERSION"), dependencies_r, format(rversion)))
   RVersion = sprintf("R (>= %s)",rversion)
 
   cat_rule(left = "Analyzing package usage", right=package_name, line = "bar4",
            line_col = "dodgerblue4", col="dodgerblue4")
   cat_bullet("R version: ",RVersion, background_col = "dodgerblue4", bullet_col = "white", col="white", bullet = "continue")
-  cat_bullet(pkgs, col = "dodgerblue4", bullet_col = "black", bullet = "tick")
+  cat_bullet(pkgs, col = "dodgerblue4", bullet_col = "black", bullet = "continue")
 
   if (update && (skip_prompt || menu(c("Yes","No"),title="\nReplace DESCRIPTION imports?") == 1)) {
     desc %>% str_replace("R \\(.*?\\)",RVersion) %>%
@@ -315,6 +315,7 @@ set_package_imports = function(skip_prompt=TRUE, update = TRUE, use_version_numb
   cat("\n")
   cat_rule(center="DONE",line="bar1", col="white", background_col = "green")
 
-  return(list(R=RVersion, packages_version=pack_version, packages=depen))
+  invisible(list(current_r_version=current_r, dependencies_r_version=dependencies_r,
+            packages=depen, packages_version=pack_version))
 }
 
