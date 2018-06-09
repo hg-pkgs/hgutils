@@ -1,20 +1,19 @@
 #' Cleans R for use
 #' @description Clears workspace, deletes all objects from global environment, clears graphics and (optionally) sets working directory.
-#' @param folder String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
-#' working directory paths. Use \code{is_registered()} to check whether user registration is enabled.
-#' If \code{NULL}, the working directory is not changed.
-#' @param rm Whether to remove objects in the current environment. Defaults to \code{TRUE}.
+#'
+#' @param clean Removes objects in the global environment, runs garbage collection and clears graphics. Defaults to \code{TRUE}.
+#' @param folder Folder name to set the current working directory.
 #'
 #' @return NULL
 #'
-#' @examples \dontrun{startup('project_folder/')}
+#' @examples \dontrun{startup()}
 #' @export
 #' @importFrom magrittr %>%
 #' @importFrom grDevices graphics.off
 #' @family initialization functions
-startup = function(folder = NULL, rm = TRUE) {
-  if (rm) {
-    .rs.restartR()
+startup = function(clean = TRUE, folder = NULL) {
+  if (clean)
+  {
     rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
     gc()
     graphics.off()
@@ -22,21 +21,7 @@ startup = function(folder = NULL, rm = TRUE) {
 
   if (!is.null(folder))
   {
-    # results = .is_registered()
-    # has_results = results %>% nrow == 1
-    # if (!has_results) {
-    #     if (!is.null(folder) && dir.exists(folder)) {
-    #         setwd(folder)
-    #         message(paste0("Setting the working directory at: '", folder, "'"), quote = F)
-    #     } else warning(paste0("[UNREGISTERED] Directory does not exist: '", ifelse(is.null(folder), "NULL", folder), "'"))
-    # } else {
-    #     dir = ifelse(!is.null(folder) && dir.exists(folder), folder, paste0(results$location, folder))
-    #     if (dir.exists(dir)) {
-    #         setwd(dir)
-    #         print(paste0("Setting the working directory at: '", dir, "'"), quote = F)
-    #     } else warning(paste0("[REGISTERED] Directory does not exist: '", dir, "'"))
-    # }
-    warning("Deprecated setting of working directory.")
+    ifelse(dir.exists(folder), setwd(folder), warning("Argument 'folder' does not refer to an existing directory."))
   }
 }
 

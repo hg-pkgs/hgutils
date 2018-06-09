@@ -39,7 +39,7 @@ packages are installed (if necessary), upgraded to the latest version (if necess
 }
 \details{
 \code{use_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
-\code{use_common_packages} is a convenient utility which does the same for a pre-specified list of common package names
+\code{use_common_packages} is a convenient utility which does the same for a prespecified list of common package names
 defined in \code{list_common_packages}.
 }
 \examples{

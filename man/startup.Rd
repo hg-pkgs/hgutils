@@ -4,19 +4,17 @@
 \alias{startup}
 \title{Cleans R for use}
 \usage{
-startup(folder = NULL, rm = TRUE)
+startup(clean = TRUE, folder = NULL)
 }
 \arguments{
-\item{folder}{String to specify folder name. Registered users can indicate subfolders, others needs to specify complete
-working directory paths. Use \code{is_registered()} to check whether user registration is enabled.
-If \code{NULL}, the working directory is not changed.}
+\item{clean}{Removes objects in the global environment, runs garbage collection and clears graphics. Defaults to \code{TRUE}.}
 
-\item{rm}{Whether to remove objects in the current environment. Defaults to \code{TRUE}.}
+\item{folder}{Folder name to set the current working directory.}
 }
 \description{
 Clears workspace, deletes all objects from global environment, clears graphics and (optionally) sets working directory.
 }
 \examples{
-\dontrun{startup('project_folder/')}
+\dontrun{startup()}
 }
 \concept{initialization functions}
