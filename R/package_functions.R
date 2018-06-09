@@ -126,14 +126,37 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
 use_package_genre = function(genre)
 {
   pg = hgutils::pkg_genre
-  genres = match.arg(genre, choices = pg$shorthand, several.ok = TRUE)
+  genres = match.arg(genre, choices = pg$name, several.ok = TRUE)
   for(g in genres)
   {
-    cat_bullet(sprintf("Importing packages: %s",pg$name[pg$shorthand==g]),background_col = "dodgerblue4",
+    cat_bullet(sprintf("Importing packages: %s",pg$name[pg$name==g]),background_col = "dodgerblue4",
                col = "white", bullet_col = "white", bullet = "arrow_right")
-    use_packages(pg[pg$shorthand==g, "packages"][[1]])
+    use_packages(pg[pg$name==g, "packages"][[1]])
     cat("\n")
+    .get_examples(g)
   }
+}
+
+#' Displays sample functions for various genres of functions.
+#'
+#' @param genre The genre obtained from hgutils::pkg_genre
+#'
+#' @return NULL
+#' @importFrom crayon bgMagenta white
+.get_examples = function(genre)
+{
+  if (genre == "survival")
+    cli::cat_bullet(paste("Consider using",white(bgMagenta(" hgutils::time_estimate ")),
+                           "to obtain a time estimate for a given survival probability.\n"))
+  if (genre == "ggplot")
+    cli::cat_bullet(paste("Consider using",white(bgMagenta(" hgutils::plot_breaks ")),
+                          "for nice and customized axis breaks.\n"))
+
+  if (genre == "development")
+    cli::cat_bullet(paste("Consider using:\n",
+                          "-  ",white(bgMagenta("hgutils::update_settings ")),"to use the elipsis parameter to specify function settings.\n",
+                          "-  ",white(bgMagenta("hgutils::set_package_imports ")),"to automatically specify imports in the DESCRIPTION file.\n",
+                          "-  ",white(bgMagenta("hgutils::generic_implmentations ")),"to find implementations of generic functions.\n"))
 }
 
 #' @export
