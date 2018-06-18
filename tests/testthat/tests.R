@@ -40,11 +40,11 @@ test_that("Values are nicely seperated and in range", {
     }
 })
 
-context("pkg_genre")
-test_that("All packages in pkg_genre exist", {
-  pg = hgutils::pkg_genre
-  for(p in unlist(pg$packages))
-  {
-    expect_true(suppressWarnings(require(p, character.only = TRUE, quietly = TRUE)), info = p)
-  }
-})
+# context("pkg_genre")
+# test_that("All packages in pkg_genre exist", {
+#   pg = hgutils::pkg_genre
+#   for(p in unlist(pg$packages))
+#   {
+#     expect_true(suppressWarnings(require(p, character.only = TRUE, quietly = TRUE)), info = p)
+#   }
+# })

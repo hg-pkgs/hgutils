@@ -4,7 +4,7 @@ Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:\\Program Files\\MiKTeX 2.9\\mikt
 
 .rs.restartR()
 hgutils::startup()
-hgutils::set_package_imports(skip_prompt = TRUE, use_version_numbers=FALSE, rversion="DEPENDENCIES_VERSION", update = TRUE)
+hgutils::crossref_description(skip_prompt = TRUE, use_version_numbers=FALSE, rversion="DEPENDENCIES_VERSION", update = TRUE)
 roxygen2::roxygenise()
 devtools::document()
 devtools::spell_check()

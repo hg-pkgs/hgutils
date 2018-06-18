@@ -1,6 +1,6 @@
 Package: hgutils
 Title: Collection of Utility Functions
-Version: 0.3.7
+Version: 0.4.1
 Authors@R: person("H.G.", "van den Boorn", email = "hvdboorn@gmail.com", role = c("aut", "cre"))
 Description:
    A handy collection of handy utility 
@@ -20,6 +20,7 @@ Imports:
   methods,
   numbers,
   rms,
+  stats,
   stringr,
   survival,
   utils

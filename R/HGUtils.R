@@ -154,18 +154,6 @@ get_square_grid = function(N, moreRows = TRUE) {
   }
 }
 
-#' Remove \code{NA}
-#' @description Removes any \code{NA} element from a vector.
-#' @param vec A vector which may contain \code{NA} elements.
-#'
-#' @return A vector without \code{NA} elements.
-#'
-#' @examples rmNA(c(1,NA,5,6))
-#' @export
-rmNA = function(vec) {
-  vec[!is.na(vec)]
-}
-
 #' Round number
 #' @description Rounds a number to a specified amount of digits and returns the string value.
 #' @param dbl The number to be rounded.
@@ -203,4 +191,36 @@ frmt = function(x, show_class = FALSE, quotes=TRUE) {
 
   if (show_class)
     sprintf("%s (class: %s)", text, class(x)) else text
+}
+
+#' Discretize continuous numbers
+#'
+#' @param x A vector of numbers
+#' @param min_size Specifies the minimum size of bins at the edges. Any bins smaller than this size are combined.
+#' @inheritDotParams get_breaks -limits -include_bounds
+#' @details The function \code{get_breaks} is called to create the boundaries between groups.
+#' It is called on default with \code{limits = range(x)} and with \code{include_bounds = FALSE}.
+#' This behavior may be overridden with the \code{...} argument, although it is advised not to do so to avoid empty groups.
+#'
+#' \code{NA} values are preserved in the result.
+#'
+#' @return A factor with the same length as \code{x}, with labels indicating bins.
+#' @export
+#'
+#' @examples ages = round(rnorm(1000,50,10)); ages[1] = NA
+#' discretize_numbers(ages)
+#' @importFrom magrittr %>%
+discretize_numbers = function(x, min_size = 1, ...) {
+  if (!is.numeric(x))
+    stop(sprintf("Argument 'x' must be a numeric vector but is of type %s.", frmt(class(x))))
+
+  breaks_args = list(...)
+  if (!"limits" %in% names(breaks_args)) breaks_args = c(breaks_args, list(limits=range_na(x)))
+  if (!"include_bounds" %in% names(breaks_args)) breaks_args = c(breaks_args, list(include_bounds=FALSE))
+  br = do.call(get_breaks, breaks_args) %>%
+       setdiff(., .[sapply(., function(y) sum_na(x < y) < min_size)]) %>%
+       setdiff(., .[sapply(., function(y) sum_na(x >= y) < min_size)])
+
+  labels = c(paste0("<",br[1]), paste0(br[-length(br)], "-",br[-1]), paste0(">=",last(br)))
+  cut(x, breaks=c(-Inf,br,Inf), right=FALSE, labels = labels)
 }

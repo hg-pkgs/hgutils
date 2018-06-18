@@ -26,8 +26,9 @@ valid_pkgname()          # returns package name regex
 \href{https://cran.r-project.org/doc/manuals/r-devel/R-exts.html#The-DESCRIPTION-file}{'Writing R Extensions'} manual.
 }
 \seealso{
-Other developer functions: \code{\link{generic_implementations}},
-  \code{\link{set_package_imports}},
-  \code{\link{update_settings}}, \code{\link{use_packages}}
+Other developer functions: \code{\link{crossref_description}},
+  \code{\link{generic_implementations}},
+  \code{\link{load_packages}},
+  \code{\link{update_settings}}
 }
 \concept{developer functions}

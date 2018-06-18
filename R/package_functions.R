@@ -3,41 +3,45 @@
 #' @description Utility function to load and optionally install packages if they are missing. When the function terminates,
 #' packages are installed (if necessary), upgraded to the latest version (if necessary) and loaded.
 #'
-#' @param load_packages Whether to load the selected packages.
 #' @param install_packages Whether to install the selected packages.
 #' @param force_install Whether to install packages even if they are installed already.
 #' @param upgrade Whether to upgrade outdated packages. Defaults to \code{FALSE}.
 #' @param ... List of package names and other options.
 #'
 #' @details
-#' \code{use_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
+#' \code{load_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
 #' \code{use_common_packages} is a convenient utility which does the same for a prespecified list of common package names
-#' defined in \code{list_common_packages}.
+#' defined in \code{list_common_packages}. The dots parameter is passed on to \code{load_packages}.
+#' \code{load_package_collection} loads a collection of useful packages, identified by a collection name. This is used to
+#' load a collection of similar packages for a specific programming task.
 #'
 #' @return Returns invisibly a list with additional package information and results of installing/upgrading and loading.
-#' @seealso \code{\link[utils]{install.packages}} for installation of new packages,
+#' @seealso \code{\link{load_package_collection}} for loading packages collections.
+#' \code{\link[utils]{install.packages}} for installation of new packages,
 #' \code{\link[utils]{update.packages}} for updating outdated packages,
 #' \code{\link[base]{library}} for load and attaching packages.
 #'
 #' @examples \dontrun{
 #' # Package names can be given as a vector or one-by-one
-#' use_packages(c('magrittr','dplyr'))
-#' use_packages('magrittr','dplyr',install_packages=FALSE)
+#' load_packages(c('magrittr','dplyr'))
+#' load_packages('magrittr','dplyr',install_packages=FALSE)
 #'
 #' # These are equivalent
-#' use_common_packages()
-#' use_packages(list_common_packages())}
+#' load_common_packages()
+#' load_packages(list_common_packages())
+#'
+#' #load package collection "processing"
+#' #installs/loads dplyr, lubridate, magrittr, mice, stringr, tibble and utils
+#' load_package_collection("processing")}
 #' @export
 #' @family developer functions
 #'
 #' @importFrom utils install.packages capture.output old.packages update.packages compareVersion
-#' @importFrom cli rule symbol
+#' @importFrom cli rule symbol cat_bullet
 #' @importFrom crayon green red yellow make_style
 #' @importFrom dplyr mutate filter
 #' @importFrom magrittr %>% %<>%
-use_packages = function(..., install_packages = TRUE, load_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
-  if (!load_packages & !install_packages)
-  {warning("Function 'use_packages' not executed: Set argument 'load_packages' and/or 'install_packages' to TRUE."); return()}
+load_packages = function(..., install_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
 
   #-- Check for extra arguments in '...' -------
   packages = list(...)
@@ -45,7 +49,7 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
   settings = update_settings(list(show_title=TRUE), ...)
 
   #-- Check for invalid package names in '...' -------
-  packages = sort(unlist(packages))
+  packages = sort(unique(unlist(packages)))
   invalid_names = packages[!valid_pkgname(packages)]
   if(length(invalid_names) > 0)
     stop(sprintf("The argument '...' contains the following invalid package names: %s.", invalid_names))
@@ -103,7 +107,7 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
       added_res = TRUE
     }
 
-    if (load_packages && can_load) {
+    if (can_load) {
       stfu({library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
       cat(green(symbol$tick,"Loaded","\n"),sep = "")
 
@@ -115,59 +119,66 @@ use_packages = function(..., install_packages = TRUE, load_packages = TRUE, forc
   invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
 }
 
-#' Loads categorized packageds
-#'
-#' @param genre A genre name, obtained from the dataset \code{pkg_genre}.
+#' @param collection_name One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
+#' "grid","survival","processing","shiny","development"}
 #'
 #' @export
-#' @importFrom magrittr %>%
-#' @importFrom cli cat_bullet
-#' @rdname use_packages
-use_package_genre = function(genre)
+#' @rdname load_packages
+load_package_collection = function(collection_name = c("data_import","image_import","ggplot","grid",
+                                                       "survival","processing","shiny","development"))
 {
-  pg = hgutils::pkg_genre
-  genres = match.arg(genre, choices = pg$name, several.ok = TRUE)
-  for(g in genres)
+  collections = match.arg(collection_name, several.ok = TRUE)
+
+  pkg_collections = data.frame(name="data_import", packages=I(list(c("readxl","writexl","foreign","utils"))), stringsAsFactors = FALSE) %>%
+    rbind(list("image_import", I(list(c("png","bmp","rtiff","rgdal"))))) %>%
+    rbind(list("ggplot", I(list(c("ggplot2","ggthemes","ggmap","colorspace","reshape2","RColorBrewer","Cairo"))))) %>%
+    rbind(list("grid", I(list(c("grid","gridExtra","gridGraphics"))))) %>%
+    rbind(list("survival", I(list(c("survival","Hmisc","rms","mice"))))) %>%
+    rbind(list("processing",I(list(c("magrittr","dplyr","stringr","lubridate","tibble","utils","mice"))))) %>%
+    rbind(list("shiny",I(list(c("shiny","shinydashboard","shinyBS","shinyjs","plotly","shinycssloaders","shinyalert","shinythemes"))))) %>%
+    rbind(list("development",I(list(c("devtools","roxygen2","testthat","utils","rhub")))))
+
+  for(collection in collections)
   {
-    cat_bullet(sprintf("Importing packages: %s",pg$name[pg$name==g]),background_col = "dodgerblue4",
-               col = "white", bullet_col = "white", bullet = "arrow_right")
-    use_packages(pg[pg$name==g, "packages"][[1]])
+    cat_bullet(sprintf("Importing packages: %s",pkg_collections$name[pkg_collections$name==collection]),
+              background_col = "dodgerblue4", col = "white", bullet_col = "white", bullet = "arrow_right")
+    load_packages(pkg_collections[pkg_collections$name==collection, "packages"][[1]])
     cat("\n")
-    .get_examples(g)
+    .get_examples(collection)
   }
 }
 
 #' Displays sample functions for various genres of functions.
 #'
-#' @param genre The genre obtained from hgutils::pkg_genre
+#' @param collection The collection name. See \code{\link{load_package_collection}}.
 #'
 #' @return NULL
 #' @importFrom crayon bgMagenta white
-.get_examples = function(genre)
+.get_examples = function(collection)
 {
-  if (genre == "survival")
+  if (collection == "survival")
     cli::cat_bullet(paste("Consider using",white(bgMagenta(" hgutils::time_estimate ")),
                            "to obtain a time estimate for a given survival probability.\n"))
-  if (genre == "ggplot")
+  if (collection == "ggplot")
     cli::cat_bullet(paste("Consider using",white(bgMagenta(" hgutils::plot_breaks ")),
                           "for nice and customized axis breaks.\n"))
 
-  if (genre == "development")
+  if (collection == "development")
     cli::cat_bullet(paste("Consider using:\n",
                           "-  ",white(bgMagenta("hgutils::update_settings ")),"to use the elipsis parameter to specify function settings.\n",
-                          "-  ",white(bgMagenta("hgutils::set_package_imports ")),"to automatically specify imports in the DESCRIPTION file.\n",
+                          "-  ",white(bgMagenta("hgutils::crossref_description ")),"to automatically specify imports in the DESCRIPTION file.\n",
                           "-  ",white(bgMagenta("hgutils::generic_implmentations ")),"to find implementations of generic functions.\n"))
 }
 
 #' @export
-#' @rdname use_packages
-#Calls \code{use_packages} for a list of common package names.
-use_common_packages = function(..., install_packages = TRUE, load_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
-  use_packages(list_common_packages(), ...)
+#' @rdname load_packages
+#' @inheritParams load_packages
+load_common_packages = function(...) {
+  load_packages(list_common_packages(), ...)
 }
 
 #' @export
-#' @rdname use_packages
+#' @rdname load_packages
 list_common_packages = function()
 {
   c("devtools", "utils", "readxl", "writexl", "grid", "gridExtra", "gridGraphics", "cli", "installr",
@@ -254,7 +265,7 @@ generic_implementations = function(generic, ...) {
     stop(sprintf("Argument 'generic' is not a valid generic function."))
   settings = update_settings(list(remove_default=TRUE), ...)
 
-  impls %>% sapply(. %>% {str_match(., "^.*\\.(.*)$")[, 2]}) %>% unname %>% rmNA %>%
+  impls %>% sapply(. %>% {str_match(., "^.*\\.(.*)$")[, 2]}) %>% unname %>% rm_na %>%
     if(settings$remove_default) .[. != "default"] else .
 }
 
@@ -272,7 +283,7 @@ generic_implementations = function(generic, ...) {
 #' the R version obtained from dependencies and packages names (including version numbers).
 #' @export
 #'
-#' @examples \dontrun{set_package_imports(skip_prompt=TRUE)}
+#' @examples \dontrun{crossref_description(skip_prompt=TRUE)}
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_match str_replace str_replace_all str_split
 #' @importFrom utils read.delim packageVersion menu packageDescription
@@ -280,7 +291,7 @@ generic_implementations = function(generic, ...) {
 #' @importFrom dplyr last
 #'
 #' @family developer functions
-set_package_imports = function(skip_prompt=FALSE, update=TRUE, use_version_numbers=TRUE, rversion = "DEPENDENCIES_VERSION") {
+crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numbers=TRUE, rversion = "DEPENDENCIES_VERSION") {
   if (!dir.exists("R/") || !file.exists("DESCRIPTION"))
     stop("Working directory not set to an R project folder.")
 
@@ -299,7 +310,7 @@ set_package_imports = function(skip_prompt=FALSE, update=TRUE, use_version_numbe
                            paste0("#\'[ ]*@importFrom[ ]+(",valid_pkgname(),")|"),
                  paste0("[^#]*?(?:library|require)\\((",valid_pkgname(),")[ ]*[,\\)]|"),
                  paste0("[^#]*?\\((",valid_pkgname(),")::[:]?[^(:)]+|"),
-                 "[^#]*?use_packages\\((?:c\\()?([[:alnum:] ,\"\\'\\.]*?)\\).*")) %>% .[, -1] %>% rmNA) %>%
+                 "[^#]*?load_packages\\((?:c\\()?([[:alnum:] ,\"\\'\\.]*?)\\).*")) %>% .[, -1] %>% rm_na) %>%
           unlist %>% str_split("[ ,]") %>% unlist %>% str_replace_all("[\\'\"]","") %>%
           unique %>% {.[valid_pkgname(.)]} %>% sort
 
@@ -312,7 +323,7 @@ set_package_imports = function(skip_prompt=FALSE, update=TRUE, use_version_numbe
   #-- Determine R versions -------------------------------
   current_r = format(getRversion())
   dependencies_r = do.call(rbind, sapply(depen, function(x) packageDescription(x)$Depends)) %>% .[,1] %>%
-                   unname %>% {str_match(.,"R \\(>= (.*?)\\)")[,-1]} %>% rmNA %>% numeric_version %>% max %>% format
+                   unname %>% {str_match(.,"R \\(>= (.*?)\\)")[,-1]} %>% rm_na %>% numeric_version %>% max %>% format
 
   rversion = ifelse(identical(rversion, "LATEST_VERSION"), current_r,
              ifelse(identical(rversion, "DEPENDENCIES_VERSION"), dependencies_r, format(rversion)))
@@ -334,7 +345,7 @@ set_package_imports = function(skip_prompt=FALSE, update=TRUE, use_version_numbe
 
   cat("\n")
   cat_rule(left="Installing/loading dependencies", right=package_name, col="dodgerblue4", line="bar4")
-  use_packages(depen, show_title=FALSE)
+  load_packages(depen, show_title=FALSE)
   cat("\n")
   cat_rule(center="DONE",line="bar1", col="white", background_col = "green")
 

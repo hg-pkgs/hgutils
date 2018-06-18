@@ -4,10 +4,10 @@
 \alias{.get_examples}
 \title{Displays sample functions for various genres of functions.}
 \usage{
-.get_examples(genre)
+.get_examples(collection)
 }
 \arguments{
-\item{genre}{The genre obtained from hgutils::pkg_genre}
+\item{collection}{The collection name. See \code{\link{load_package_collection}}.}
 }
 \description{
 Displays sample functions for various genres of functions.
