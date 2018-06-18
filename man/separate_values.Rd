@@ -15,7 +15,7 @@ separate_values(X, distance = 0.05, min = 0, max = 1)
 }
 \value{
 A numerical vector with the same length as \code{X}, with numbers bounded by min and max, close to their original values and
-        with the minimum allowed distance between subsequent values.
+with the minimum allowed distance between subsequent values.
 }
 \description{
 Separates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as

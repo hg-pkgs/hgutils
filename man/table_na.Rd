@@ -20,20 +20,20 @@
 Provides a variety of \code{base} and \code{stats} function, whose default implementation returns \code{NA} if any input value is \code{NA}.
 For convenience, these utility functions are provided which ignores \code{NA} and executes the original implementations, see table.
 \tabular{ll}{
-  \code{table_na}            \tab \code{\link[base]{table}}    \cr
-  \code{mean_na}             \tab \code{\link[base]{mean}}     \cr
-  \code{min_na}              \tab \code{\link[base]{min}}      \cr
-  \code{max_na}              \tab \code{\link[base]{max}}      \cr
-  \code{pmin_na}             \tab \code{\link[base]{pmin}}     \cr
-  \code{pmax_na}             \tab \code{\link[base]{pmax}}     \cr
-  \code{pmin_na.int}         \tab \code{\link[base]{pmin.int}} \cr
-  \code{pmax_na.int}         \tab \code{\link[base]{pmax.int}} \cr
-  \code{sum_na}              \tab \code{\link[base]{sum}}      \cr
-  \code{sd_na}               \tab \code{\link[stats]{sd}}      \cr
-  \code{var_na}              \tab \code{\link[stats]{var}}     \cr
-  \code{median_na}           \tab \code{\link[stats]{median}}  \cr
-  \code{quantile_na}         \tab \code{\link[stats]{quantile}}\cr
-  \code{range_na}            \tab \code{\link[base]{range}}    \cr
+\code{table_na}            \tab \code{\link[base]{table}}    \cr
+\code{mean_na}             \tab \code{\link[base]{mean}}     \cr
+\code{min_na}              \tab \code{\link[base]{min}}      \cr
+\code{max_na}              \tab \code{\link[base]{max}}      \cr
+\code{pmin_na}             \tab \code{\link[base]{pmin}}     \cr
+\code{pmax_na}             \tab \code{\link[base]{pmax}}     \cr
+\code{pmin_na.int}         \tab \code{\link[base]{pmin.int}} \cr
+\code{pmax_na.int}         \tab \code{\link[base]{pmax.int}} \cr
+\code{sum_na}              \tab \code{\link[base]{sum}}      \cr
+\code{sd_na}               \tab \code{\link[stats]{sd}}      \cr
+\code{var_na}              \tab \code{\link[stats]{var}}     \cr
+\code{median_na}           \tab \code{\link[stats]{median}}  \cr
+\code{quantile_na}         \tab \code{\link[stats]{quantile}}\cr
+\code{range_na}            \tab \code{\link[base]{range}}    \cr
 }
 }
 \examples{

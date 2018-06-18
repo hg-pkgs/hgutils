@@ -40,8 +40,20 @@ packages are installed (if necessary), upgraded to the latest version (if necess
 \code{load_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
 \code{use_common_packages} is a convenient utility which does the same for a prespecified list of common package names
 defined in \code{list_common_packages}. The dots parameter is passed on to \code{load_packages}.
+
 \code{load_package_collection} loads a collection of useful packages, identified by a collection name. This is used to
-load a collection of similar packages for a specific programming task.
+load similar packages for specific programming tasks.
+The possible collections are:
+\itemize{
+\item \code{data_import}:  readxl, writexl, foreign, utils, haven
+\item \code{image_import}: png, bmp, rtiff, rgdal
+\item \code{ggplot}: ggplot2, ggthemes, ggmap, colorspace, reshape2, RColorBrewer, Cairo
+\item \code{grid}: grid, gridExtra, gridGraphics
+\item \code{survival}: survival, Hmisc, rms, mice
+\item \code{processing}: magrittr, dplyr, stringr, lubridate, tibble, utils, mice
+\item \code{shiny}: shiny, shinydashboard, shinyBS, shinyjs, plotly, shinycssloaders, shinyalert, shinythemes
+\item \code{development}: devtools, roxygen2, testthat, utils, rhub
+}
 }
 \examples{
 \dontrun{

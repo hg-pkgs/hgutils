@@ -27,3 +27,4 @@ Imports:
 RoxygenNote: 6.0.1.9000
 Suggests: testthat
 Language: en-US
+Roxygen: list(markdown = TRUE)
