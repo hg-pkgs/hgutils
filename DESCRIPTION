@@ -1,11 +1,11 @@
 Package: hgutils
 Title: Collection of Utility Functions
-Version: 0.4.1
+Version: 0.0.0.9000
 Authors@R: person("H.G.", "van den Boorn", email = "hvdboorn@gmail.com", role = c("aut", "cre"))
 Description:
    A handy collection of handy utility 
-   functions to aid in developing an own package and 
-   to extend the graphing functionality in 'ggplot2'.
+   functions designed to aid in package
+   development.
 Depends: R (>= 3.1.2)
 License: GPL-3
 Encoding: UTF-8
@@ -20,11 +20,9 @@ Imports:
   methods,
   numbers,
   rms,
-  stats,
   stringr,
   survival,
   utils
-RoxygenNote: 6.0.1.9000
 Suggests: testthat
 Language: en-US
-Roxygen: list(markdown = TRUE)
+RoxygenNote: 6.0.1.9000

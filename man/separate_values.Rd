@@ -11,17 +11,21 @@ separate_values(X, distance = 0.05, min = 0, max = 1)
 
 \item{distance}{The minimum distance between subsequent numbers. Must be a scalar or vector of size \code{|X|}.}
 
-\item{min, max}{The lower and upper bounds.}
+\item{min, max}{The lower and upper limits.}
 }
 \value{
 A numerical vector with the same length as \code{X}, with numbers bounded by min and max, close to their original values and
-with the minimum allowed distance between subsequent values.
+        with the minimum allowed distance between subsequent values.
 }
 \description{
-Separates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
+Separates real numbers from one another that are to close to each other. In the resulting set,
+the values are separated by a minimum distance, bounded by lower and upper limits and are constraint to be as
 close as possible to their original values.
 }
 \details{
+This function can be used for example to separate labels that are too close to one another.
+The resulting vector will create enough space, such that the labels do not overlap anymore, yet are still close to their original values.
+
 The output vector has the following properties. For all elements \code{e_i}, \code{min <= e_i <= max}.
 For the distance \code{D} between \code{e_i} and \code{e_(i+1)}, \code{D >= max(d_i, d_(i+1))}. And finally, the distance
 between \code{e_i} and \code{X_i} is minimized for all \code{e_i}.

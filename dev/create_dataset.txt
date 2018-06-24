@@ -1,4 +1,0 @@
-  # working_dirs = matrix(c(c("Héctor AMC","hgvandenboorn","C:/Users/hgvandenboorn/Dropbox/"),
-  #            c("Héctor Home","H.G. van den Boorn","S:/Dropbox/Dropbox/")),ncol =  3,byrow = T) %>%
-  #   as_tibble %>% setNames(c("desc","usr","location"))
-  # devtools::use_data(working_dirs, internal = T, overwrite = T)

@@ -1,7 +1,7 @@
 #' Cleans R for use
 #' @description Clears workspace, deletes all objects from global environment, clears graphics and (optionally) sets working directory.
 #'
-#' @param clean Removes objects in the global environment, runs garbage collection and clears graphics. Defaults to \code{TRUE}.
+#' @param clean Whether to remove objects in the global environment, run garbage collection and to clear graphics. Defaults to \code{TRUE}.
 #' @param folder Folder name to set the current working directory.
 #'
 #' @return NULL
@@ -31,13 +31,13 @@ startup = function(clean = TRUE, folder = NULL) {
 #' makes usage easier in \pkg{ggplot2}. The limits of the axis may not be known beforehand,
 #' but \code{ggplot_breaks} receives it from \code{ggplot} and then creates nice breaks.
 #'
-#' @param limits The limits of the axis. May be a vector of 2 elements with lower and upper bounds, or a
-#'               single digit (which is the upper bound, the lower bound is then assumed to be 0).
+#' @param limits The axis limits. May be either a vector of 2 elements with lower and upper bounds, or a
+#'               single number (which is the upper bound, the lower bound is then assumed to be 0).
 #' @param N The step size. The eventual intervals will be multiples of the divisors of \code{N} or
 #' multiples of \code{N} when \code{multiples_only} is \code{TRUE}. Defaults to 10.
 #' @param max_breaks Maximum amount of breaks, defaults to 10.
-#' @param int_only Whether only integer divisors of \code{N} may be used for interval sizes, defaults to \code{TRUE}.
-#' @param multiples_only Whether only multiples of \code{N} can be used, defaults to \code{FALSE}.
+#' @param int_only Whether only integer divisors of \code{N} may be used as breaks, defaults to \code{TRUE}.
+#' @param multiples_only Whether only multiples of \code{N} can be used as breaks, defaults to \code{FALSE}.
 #' @param include_bounds Whether the resulting breaks should encompass \code{min} and \code{max}. Defaults to \code{TRUE}.
 #'
 #' @return A sorted numerical vector with breaks of length \code{|max_breaks|+1} when \code{include_bounds} is \code{TRUE}
@@ -79,13 +79,17 @@ ggplot_breaks = function(...) {
 }
 
 #' Separate values
-#' @description Separates real numbers from one another with a minimum distance, bounded by lower and upper values and constraint to be as
+#' @description Separates real numbers from one another that are to close to each other. In the resulting set,
+#' the values are separated by a minimum distance, bounded by lower and upper limits and are constraint to be as
 #' close as possible to their original values.
 #'
 #' @param X A numerical vector of real numbers.
 #' @param distance The minimum distance between subsequent numbers. Must be a scalar or vector of size \code{|X|}.
-#' @param min,max The lower and upper bounds.
-#' @details The output vector has the following properties. For all elements \code{e_i}, \code{min <= e_i <= max}.
+#' @param min,max The lower and upper limits.
+#' @details This function can be used for example to separate labels that are too close to one another.
+#' The resulting vector will create enough space, such that the labels do not overlap anymore, yet are still close to their original values.
+#'
+#' The output vector has the following properties. For all elements \code{e_i}, \code{min <= e_i <= max}.
 #' For the distance \code{D} between \code{e_i} and \code{e_(i+1)}, \code{D >= max(d_i, d_(i+1))}. And finally, the distance
 #' between \code{e_i} and \code{X_i} is minimized for all \code{e_i}.
 #'
@@ -140,8 +144,8 @@ separate_values = function(X, distance = 0.05, min = 0, max = 1) {
 #' @description The resulting grid will be of size \code{(a*a)} or \code{(a*(a+1))} where \code{a} is an integer.
 #' It will therefore always be a square or or have one row/column more than columns/rows.
 #'
-#' @param N Number of objects
-#' @param moreRows Whether there should be more rows than columns if the grid is not square. Defaults to more rows (\code{TRUE}).
+#' @param N Number of objects.
+#' @param moreRows Whether there should be more rows than columns if the resulting grid is not square. Defaults to more rows (\code{TRUE}).
 #'
 #' @return A named list with elements rows and columns specifying the size of the optimal grid.
 #'
@@ -193,9 +197,22 @@ frmt = function(x, show_class = FALSE, quotes=TRUE) {
     sprintf("%s (class: %s)", text, class(x)) else text
 }
 
+#' Remove \code{NA}
+#'
+#' @param x Vector containing possible \code{NA} values.
+#'
+#' @return Vector without \code{NA}
+#' @export
+#'
+#' @examples
+#' rm_na(c(1,2,NA,54))
+rm_na = function(x) {
+  x[!is.na(x)]
+}
+
 #' Discretize continuous numbers
 #'
-#' @param x A vector of numbers
+#' @param x A vector of numbers.
 #' @param min_size Specifies the minimum size of bins at the edges. Any bins smaller than this size are combined.
 #' @inheritDotParams get_breaks -limits -include_bounds
 #' @details The function \code{get_breaks} is called to create the boundaries between groups.
@@ -207,7 +224,8 @@ frmt = function(x, show_class = FALSE, quotes=TRUE) {
 #' @return A factor with the same length as \code{x}, with labels indicating bins.
 #' @export
 #'
-#' @examples ages = round(rnorm(1000,50,10)); ages[1] = NA
+#' @examples
+#' ages = round(rnorm(1000,50,10)); ages[1] = NA
 #' discretize_numbers(ages)
 #' @importFrom magrittr %>%
 discretize_numbers = function(x, min_size = 1, ...) {
@@ -215,11 +233,11 @@ discretize_numbers = function(x, min_size = 1, ...) {
     stop(sprintf("Argument 'x' must be a numeric vector but is of type %s.", frmt(class(x))))
 
   breaks_args = list(...)
-  if (!"limits" %in% names(breaks_args)) breaks_args = c(breaks_args, list(limits=range_na(x)))
+  if (!"limits" %in% names(breaks_args)) breaks_args = c(breaks_args, list(limits=range(x,na.rm = TRUE)))
   if (!"include_bounds" %in% names(breaks_args)) breaks_args = c(breaks_args, list(include_bounds=FALSE))
   br = do.call(get_breaks, breaks_args) %>%
-       setdiff(., .[sapply(., function(y) sum_na(x < y) < min_size)]) %>%
-       setdiff(., .[sapply(., function(y) sum_na(x >= y) < min_size)])
+       setdiff(., .[sapply(., function(y) sum(x < y, na.rm = TRUE) < min_size)]) %>%
+       setdiff(., .[sapply(., function(y) sum(x >= y, na.rm = TRUE) < min_size)])
 
   labels = c(paste0("<",br[1]), paste0(br[-length(br)], "-",br[-1]), paste0(">=",last(br)))
   cut(x, breaks=c(-Inf,br,Inf), right=FALSE, labels = labels)

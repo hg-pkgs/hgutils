@@ -7,7 +7,7 @@
 discretize_numbers(x, min_size = 1, ...)
 }
 \arguments{
-\item{x}{A vector of numbers}
+\item{x}{A vector of numbers.}
 
 \item{min_size}{Specifies the minimum size of bins at the edges. Any bins smaller than this size are combined.}
 
@@ -16,8 +16,8 @@ discretize_numbers(x, min_size = 1, ...)
   \item{N}{The step size. The eventual intervals will be multiples of the divisors of \code{N} or
 multiples of \code{N} when \code{multiples_only} is \code{TRUE}. Defaults to 10.}
   \item{max_breaks}{Maximum amount of breaks, defaults to 10.}
-  \item{int_only}{Whether only integer divisors of \code{N} may be used for interval sizes, defaults to \code{TRUE}.}
-  \item{multiples_only}{Whether only multiples of \code{N} can be used, defaults to \code{FALSE}.}
+  \item{int_only}{Whether only integer divisors of \code{N} may be used as breaks, defaults to \code{TRUE}.}
+  \item{multiples_only}{Whether only multiples of \code{N} can be used as breaks, defaults to \code{FALSE}.}
 }}
 }
 \value{

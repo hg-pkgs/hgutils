@@ -11,29 +11,29 @@ get_breaks(limits, N = 10, max_breaks = 10, int_only = TRUE,
 ggplot_breaks(...)
 }
 \arguments{
-\item{limits}{The limits of the axis. May be a vector of 2 elements with lower and upper bounds, or a
-single digit (which is the upper bound, the lower bound is then assumed to be 0).}
+\item{limits}{The axis limits. May be either a vector of 2 elements with lower and upper bounds, or a
+single number (which is the upper bound, the lower bound is then assumed to be 0).}
 
 \item{N}{The step size. The eventual intervals will be multiples of the divisors of \code{N} or
 multiples of \code{N} when \code{multiples_only} is \code{TRUE}. Defaults to 10.}
 
 \item{max_breaks}{Maximum amount of breaks, defaults to 10.}
 
-\item{int_only}{Whether only integer divisors of \code{N} may be used for interval sizes, defaults to \code{TRUE}.}
+\item{int_only}{Whether only integer divisors of \code{N} may be used as breaks, defaults to \code{TRUE}.}
 
-\item{multiples_only}{Whether only multiples of \code{N} can be used, defaults to \code{FALSE}.}
+\item{multiples_only}{Whether only multiples of \code{N} can be used as breaks, defaults to \code{FALSE}.}
 
 \item{include_bounds}{Whether the resulting breaks should encompass \code{min} and \code{max}. Defaults to \code{TRUE}.}
 
 \item{...}{Arguments passed on to \code{get_breaks}
 \describe{
-  \item{limits}{The limits of the axis. May be a vector of 2 elements with lower and upper bounds, or a
-single digit (which is the upper bound, the lower bound is then assumed to be 0).}
+  \item{limits}{The axis limits. May be either a vector of 2 elements with lower and upper bounds, or a
+single number (which is the upper bound, the lower bound is then assumed to be 0).}
   \item{N}{The step size. The eventual intervals will be multiples of the divisors of \code{N} or
 multiples of \code{N} when \code{multiples_only} is \code{TRUE}. Defaults to 10.}
   \item{max_breaks}{Maximum amount of breaks, defaults to 10.}
-  \item{int_only}{Whether only integer divisors of \code{N} may be used for interval sizes, defaults to \code{TRUE}.}
-  \item{multiples_only}{Whether only multiples of \code{N} can be used, defaults to \code{FALSE}.}
+  \item{int_only}{Whether only integer divisors of \code{N} may be used as breaks, defaults to \code{TRUE}.}
+  \item{multiples_only}{Whether only multiples of \code{N} can be used as breaks, defaults to \code{FALSE}.}
   \item{include_bounds}{Whether the resulting breaks should encompass \code{min} and \code{max}. Defaults to \code{TRUE}.}
 }}
 }

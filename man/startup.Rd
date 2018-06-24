@@ -7,7 +7,7 @@
 startup(clean = TRUE, folder = NULL)
 }
 \arguments{
-\item{clean}{Removes objects in the global environment, runs garbage collection and clears graphics. Defaults to \code{TRUE}.}
+\item{clean}{Whether to remove objects in the global environment, run garbage collection and to clear graphics. Defaults to \code{TRUE}.}
 
 \item{folder}{Folder name to set the current working directory.}
 }

@@ -1,7 +1,7 @@
 # Initialization ----------------------------------------------------------
 
 library(hgutils)
-use_package_genre("processing")
+load_package_collection("processing")
 startup()
 df = iris; df[is.na(ampute(iris, prop = 0.2)$amp)] = NA
 
@@ -36,14 +36,6 @@ create_contigency_table = function(df, x, max_size = 5)
 
 tbl = do.call(rbind, lapply(names(df), function(x) create_contigency_table(df, x)))
 
-# #min, q1, median, q3, max
-# quantile(ages,probs = c(0,0.25,0.5,0.75,1))
-# #min, q1,...,median,..., max
-# quantile(ages,probs = get_breaks(c(0,1), max_breaks=10,include_bounds = FALSE, int_only = FALSE))
-#
-# quantile_na(ages,c(0.25,0.5,0.75))
-# mean_na(ages); sd_na(ages)
-
 
 #' Creates a formatted percentage table
 #'
@@ -55,12 +47,12 @@ tbl = do.call(rbind, lapply(names(df), function(x) create_contigency_table(df, x
 #'
 #' @examples percentage_table(iris$Species)
 percentage_table = function(..., n_digits=2) {
-  freq = table_na(...)
-  pct = prop.table(freq, 2)
+  freq = table(..., useNA = TRUE)
+  pct = if(length(dim(freq))==1) prop.table(freq) else prop.table(freq, 2)
   frmt = matrix(c(names(freq),freq,paste0("(",rnd_dbl(pct*100,2),"%)")),ncol = 3)
   frmt = cbind(frmt[,1], sprintf(paste0("%-",
-                         max_na(nchar(frmt[,2]))+1,"s%",
-                         max_na(nchar(frmt[,3]))+1,"s"), frmt[,2], frmt[,3]))
+                         max(nchar(frmt[,2]), na.rm = TRUE)+1,"s%",
+                         max(nchar(frmt[,3]), na.rm = TRUE)+1,"s"), frmt[,2], frmt[,3]))
   result = list(percentage_table = frmt, frequencies = freq, percentages = pct)
   class(result) = "percentage_table"
   result
@@ -76,5 +68,5 @@ percentage_table = function(..., n_digits=2) {
 #'
 #' @examples print(percentage_table(iris$Species))
 print.percentage_table = function(x, ...) {
-  cat(paste0(sprintf(paste0("%-",max_na(nchar(x$percentage_table[,1]))+2,"s%s"), x$percentage_table[,1], x$percentage_table[,2]), collapse = "\n"))
+  cat(paste0(sprintf(paste0("%-",max(nchar(x$percentage_table[,1]), na.rm = TRUE)+2,"s%s"), x$percentage_table[,1], x$percentage_table[,2]), collapse = "\n"))
 }

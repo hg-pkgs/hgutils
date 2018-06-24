@@ -1,14 +1,14 @@
-#' Survival time estimation
+#' Time point estimation
 #'
-#' @description Get estimate of timepoints for a given survival probability.
+#' @description Get estimate of time points for a given survival probability.
 #'
-#' @param ... unused
-#' @param survival the survival probability for which the timepoint is estimated.
-#' @param fit A survival fit object.
-#' @param newdata A dataframe containing predictors for which predictors are desired. See \code{\link[survival]{survfit.coxph}}.
+#' @param ... Further arguments passed to or from other methods.
+#' @param survival Vector of survival probabilities for which the time points are estimated.
+#' @param fit A \code{\link[=coxph]{survival fit}} object.
+#' @param newdata A \code{data.frame} containing predictors for which predictors are desired. See \code{\link[survival]{survfit.coxph}}.
 #'
-#' @return A named list or matrix with elements 'surv' (estimate), 'lower' and 'upper' (confidence interval).
-#' The attribute 'survival' is added to the result and set to the argument survival probability.
+#' @return A named list or matrix with elements \code{surv} (estimate), \code{lower} and \code{upper} (confidence interval).
+#' The attribute \code{survival} is added to the result and set to the argument survival probability.
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr rename
@@ -33,7 +33,7 @@ time_estimate = function(fit, survival, ...) {
     UseMethod("time_estimate")
 }
 
-#' @describeIn time_estimate for 'survRes' objects
+#' @describeIn time_estimate for \code{survRes} objects.
 #' @export
 time_estimate.survRes = function(fit, survival = 0.5, ...) {
     d = dim(fit$surv)[2]

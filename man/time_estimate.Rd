@@ -6,7 +6,7 @@
 \alias{time_estimate.survfit}
 \alias{time_estimate.list}
 \alias{time_estimate.coxph}
-\title{Survival time estimation}
+\title{Time point estimation}
 \usage{
 time_estimate(fit, survival, ...)
 
@@ -19,24 +19,24 @@ time_estimate(fit, survival, ...)
 \method{time_estimate}{coxph}(fit, survival = 0.5, newdata = NULL, ...)
 }
 \arguments{
-\item{fit}{A survival fit object.}
+\item{fit}{A \code{\link[=coxph]{survival fit}} object.}
 
-\item{survival}{the survival probability for which the timepoint is estimated.}
+\item{survival}{Vector of survival probabilities for which the time points are estimated.}
 
-\item{...}{unused}
+\item{...}{Further arguments passed to or from other methods.}
 
-\item{newdata}{A dataframe containing predictors for which predictors are desired. See \code{\link[survival]{survfit.coxph}}.}
+\item{newdata}{A \code{data.frame} containing predictors for which predictors are desired. See \code{\link[survival]{survfit.coxph}}.}
 }
 \value{
-A named list or matrix with elements 'surv' (estimate), 'lower' and 'upper' (confidence interval).
-The attribute 'survival' is added to the result and set to the argument survival probability.
+A named list or matrix with elements \code{surv} (estimate), \code{lower} and \code{upper} (confidence interval).
+The attribute \code{survival} is added to the result and set to the argument survival probability.
 }
 \description{
-Get estimate of timepoints for a given survival probability.
+Get estimate of time points for a given survival probability.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{survRes}: for 'survRes' objects
+\item \code{survRes}: for \code{survRes} objects.
 
 \item \code{survfit}: for \code{\link[survival]{survfit}} objects.
 

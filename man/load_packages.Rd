@@ -2,20 +2,22 @@
 % Please edit documentation in R/package_functions.R
 \name{load_packages}
 \alias{load_packages}
+\alias{list_package_collections}
 \alias{load_package_collection}
-\alias{load_common_packages}
 \alias{list_common_packages}
+\alias{load_common_packages}
 \title{Make packages ready for usage}
 \usage{
 load_packages(..., install_packages = TRUE, force_install = FALSE,
   upgrade = FALSE)
 
-load_package_collection(collection_name = c("data_import", "image_import",
-  "ggplot", "grid", "survival", "processing", "shiny", "development"))
+list_package_collections()
 
-load_common_packages(...)
+load_package_collection(collection_name = names(list_package_collections()))
 
 list_common_packages()
+
+load_common_packages(...)
 }
 \arguments{
 \item{...}{List of package names and other options.}
@@ -27,7 +29,7 @@ list_common_packages()
 \item{upgrade}{Whether to upgrade outdated packages. Defaults to \code{FALSE}.}
 
 \item{collection_name}{One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
-"grid","survival","processing","shiny","development"}}
+"grid","survival","processing","shiny","development"}.}
 }
 \value{
 Returns invisibly a list with additional package information and results of installing/upgrading and loading.
@@ -42,18 +44,7 @@ packages are installed (if necessary), upgraded to the latest version (if necess
 defined in \code{list_common_packages}. The dots parameter is passed on to \code{load_packages}.
 
 \code{load_package_collection} loads a collection of useful packages, identified by a collection name. This is used to
-load similar packages for specific programming tasks.
-The possible collections are:
-\itemize{
-\item \code{data_import}:  readxl, writexl, foreign, utils, haven
-\item \code{image_import}: png, bmp, rtiff, rgdal
-\item \code{ggplot}: ggplot2, ggthemes, ggmap, colorspace, reshape2, RColorBrewer, Cairo
-\item \code{grid}: grid, gridExtra, gridGraphics
-\item \code{survival}: survival, Hmisc, rms, mice
-\item \code{processing}: magrittr, dplyr, stringr, lubridate, tibble, utils, mice
-\item \code{shiny}: shiny, shinydashboard, shinyBS, shinyjs, plotly, shinycssloaders, shinyalert, shinythemes
-\item \code{development}: devtools, roxygen2, testthat, utils, rhub
-}
+load similar packages for specific programming tasks. The possible collections are stated in \code{list_package_collections}
 }
 \examples{
 \dontrun{

@@ -4,12 +4,12 @@
 \alias{generic_implementations}
 \title{Retrieve generic function implementations}
 \usage{
-generic_implementations(generic, ...)
+generic_implementations(generic, remove_default = TRUE)
 }
 \arguments{
 \item{generic}{The name of the generic function.}
 
-\item{...}{Optional settings. Set \code{remove_default=FALSE} to keep the default implementation.}
+\item{remove_default}{Whether to keep the default generic implementation in the result.}
 }
 \value{
 A vector with class names for which argument '\code{generic}' has an implementation.
