@@ -232,6 +232,9 @@ discretize_numbers = function(x, min_size = 1, ...) {
   if (!is.numeric(x))
     stop(sprintf("Argument 'x' must be a numeric vector but is of type %s.", frmt(class(x))))
 
+  if(length(unique(x)) <= 3)
+    return(factor(x))
+
   breaks_args = list(...)
   if (!"limits" %in% names(breaks_args)) breaks_args = c(breaks_args, list(limits=range(x,na.rm = TRUE)))
   if (!"include_bounds" %in% names(breaks_args)) breaks_args = c(breaks_args, list(include_bounds=FALSE))
