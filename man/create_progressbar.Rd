@@ -11,7 +11,7 @@ create_progressbar(format = "[[|][|/-\\\\][ ]]", width = 25,
 
 \method{update}{progressbar}(object, progress, ...)
 
-\method{render}{progressbar}(x, ...)
+\method{render}{progressbar}(x, show_percentage, ...)
 }
 \arguments{
 \item{format}{Character vector containing format of the resulting progress bar. See 'details' for more information.}

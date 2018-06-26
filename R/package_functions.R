@@ -59,8 +59,8 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   #-- Define constants -------
   max_n = nchar(packages) %>% max
   blue = make_style("dodgerblue4")
-  stfu = . %>% capture.output(type = "message") %>% capture.output(type="output") %>% invisible %>%
-         suppressPackageStartupMessages %>% suppressMessages %>% suppressWarnings
+  # stfu = . %>% capture.output(type = "message") %>% capture.output(type="output") %>% invisible %>%
+  #        suppressPackageStartupMessages %>% suppressMessages %>% suppressWarnings
   spc = paste0(rep(" ",5),collapse = "")
 
   inst = installed.packages()
@@ -128,12 +128,12 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
 #' @rdname load_packages
 list_package_collections = function() {
   list(
-    "data_import" = c("readxl","writexl","foreign","utils","haven"),
+    "data_import" = c("readxl","writexl","foreign","utils","haven","lettercase","sas7bdat","Hmisc"),
     "image_import" = c("png","bmp","rtiff","rgdal"),
     "ggplot" = c("ggplot2","ggthemes","ggmap","colorspace","reshape2","RColorBrewer","Cairo"),
     "grid" = c("grid","gridExtra","gridGraphics"),
     "survival" = c("survival","Hmisc","rms","mice"),
-    "processing" = c("magrittr","dplyr","stringr","lubridate","tibble","utils","mice"),
+    "processing" = c("magrittr","dplyr","stringr","lubridate","tibble","utils","mice","lettercase", "Hmisc"),
     "shiny" = c("shiny","shinydashboard","shinyBS","shinyjs","plotly","shinycssloaders","shinyalert","shinythemes"),
     "development" = c("devtools","roxygen2","testthat","utils","rhub")
   )

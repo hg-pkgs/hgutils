@@ -43,6 +43,8 @@ create_progressbar = function(format="[[|][|/-\\][ ]]", width = 25, refresh = 20
 #' @export
 update.progressbar = function(object, progress, ...) {
   stopifnot(progress >= 0 && progress <= 1)
+
+  progressbar = object
   progressbar$progress = progress
   if (Sys.time() >= progressbar$time+progressbar$speed/1000)
   {
@@ -65,12 +67,13 @@ render = function(x, ...) {
 
 #' @rdname create_progressbar
 #' @export
-render.progressbar = function(x, ...) {
+render.progressbar = function(x, show_percentage,...) {
   progressbar = x
   loaded_width = round(progressbar$width*progressbar$progress)
   animation_width = if(length(progressbar$anim) > 0) min(max(progressbar$width-loaded_width, 0), 1) else 0
   loaded = paste0(rep(progressbar$ls,loaded_width), collapse = "")
   unloaded = paste0(rep(progressbar$us, max(progressbar$width-loaded_width-animation_width,0)), collapse = "")
   animation = paste0(rep(progressbar$anim[progressbar$index],animation_width), collapse = "")
-  paste0(progressbar$start, loaded, animation, unloaded, progressbar$end)
+  pct = ifelse(show_percentage, paste0(" ",round(progressbar$progress*100),"%"))
+  paste0(progressbar$start, loaded, animation, unloaded, progressbar$end, pct)
 }

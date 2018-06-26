@@ -210,6 +210,20 @@ rm_na = function(x) {
   x[!is.na(x)]
 }
 
+#' Remove empty rows
+#'
+#' @param dataframe A \code{data.frame}.
+#'
+#' @return A \code{data.frame} with rows removed that only contain \code{NA}.
+#' @export
+#'
+#' @examples
+#' data <- rbind(c(1,2,3), c(1, NA, 4), c(4,6,7), c(NA, NA, NA), c(4, 8, NA))
+#' rm_empty_rows(data)
+rm_empty_rows = function(dataframe) {
+  dataframe[rowSums(is.na(dataframe)) != ncol(dataframe),]
+}
+
 #' Discretize continuous numbers
 #'
 #' @param x A vector of numbers.
@@ -229,8 +243,8 @@ rm_na = function(x) {
 #' discretize_numbers(ages)
 #' @importFrom magrittr %>%
 discretize_numbers = function(x, min_size = 1, ...) {
-  if (!is.numeric(x))
-    stop(sprintf("Argument 'x' must be a numeric vector but is of type %s.", frmt(class(x))))
+  if (!is.numeric(x) & !is.logical(x))
+    stop(sprintf("Argument 'x' must be a numeric or logical vector but is of type %s.", frmt(class(x))))
 
   if(length(unique(x)) <= 3)
     return(factor(x))
@@ -244,4 +258,22 @@ discretize_numbers = function(x, min_size = 1, ...) {
 
   labels = c(paste0("<",br[1]), paste0(br[-length(br)], "-",br[-1]), paste0(">=",last(br)))
   cut(x, breaks=c(-Inf,br,Inf), right=FALSE, labels = labels)
+}
+
+#' STFU
+#' @description STFU: \strong{S}top \strong{T}umult \strong{F}rom o\strong{U}tput
+#'
+#' @param expr An expression to evaluate in silence.
+#'
+#' @return Returns (invisibly) the result of \code{expr}.
+#' @section Warning:
+#' Make sure to call this function \strong{always} directly on the expression and never indirectly such as via pipes.
+#' Example: \code{stfu(expr)} is correct, but \code{expr \%>\% stfu} will hide the output. However, the \code{expr} argument itself may contain pipes.
+#'
+#' @export
+#'
+#' @examples stfu(print("hi"))
+stfu = function(expr) {
+  sink(ifelse(.Platform$OS.type=="windows", "NUL", "/dev/null"))
+  invisible(tryCatch(suppressWarnings(suppressMessages(expr)), finally = sink()))
 }
