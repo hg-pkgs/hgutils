@@ -62,6 +62,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   # stfu = . %>% capture.output(type = "message") %>% capture.output(type="output") %>% invisible %>%
   #        suppressPackageStartupMessages %>% suppressMessages %>% suppressWarnings
   spc = paste0(rep(" ",5),collapse = "")
+  many_spaces = paste0(rep(" ",50),collapse = "")
 
   inst = installed.packages()
   outdated_pkgs = old.packages(instPkgs = inst[row.names(inst) %in% packages,, drop=FALSE]) %>% data.frame(stringsAsFactors=FALSE)
@@ -75,18 +76,39 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   data_acc = data.frame(package=character(),action=character(),result=logical()); acc_i = 1
   for (package in packages) {
     stfu({package_exists = require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
-    cat(blue(symbol$arrow_right," ",package), rep(" ",max_n+2-nchar(package)),sep = "")
+    pkg_spaces = paste0(rep(" ",max_n+2-nchar(package)),collapse = "")
+
+    #pkg_busy = paste0("\r", blue(symbol$arrow_right)," ",package, pkg_spaces)
+    #pkg_done = paste0("\r", green(symbol$tick)," ",package, pkg_spaces)
+    #pkg_failed = paste0("\r", red(symbol$cross)," ",package, pkg_spaces)
+
+    pkg_busy = list("\r", blue(symbol$arrow_right)," ",package, pkg_spaces)
+    pkg_done = list("\r", green(symbol$tick)," ",package, pkg_spaces)
+    pkg_failed = list("\r", red(symbol$cross)," ",package, pkg_spaces)
+    {
+      cat(unlist(pkg_busy),many_spaces, sep = "")
+      Sys.sleep(1)
+      cat(unlist(pkg_failed), sep = "")
+      #Sys.sleep(1)
+      #cat("\r", (symbol$arrow_right)," ",package, pkg_spaces,many_spaces, sep = "")
+      # Sys.sleep(1)
+      # cat("\r", green(symbol$tick)," ",package, pkg_spaces,many_spaces,sep = "")
+      # Sys.sleep(1)
+      # cat("\r", green(symbol$tick)," ",package, pkg_spaces,many_spaces,sep = "")
+    }
+
+    will_install = !package_exists && install_packages || force_install
+
+    cat(unlist(pkg_busy),ifelse(will_install, "[Installing...]",""),many_spaces, sep = "")
 
     can_load = TRUE
     added_res = FALSE
-    if (!package_exists && install_packages || force_install) {
-      cat("\n")
-      cat(blue(spc,symbol$continue, "Installing...","\n"), sep = "")
+    if (will_install) {
       stfu({install.packages(package, verbose = FALSE, quiet = TRUE)})
 
       stfu({can_load = require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
-      if (!can_load) cat(red(spc,symbol$cross, "Installation failed","\n",spc), sep = "") else
-        cat(green(spc,symbol$tick, "Installation succesful","\n",spc), sep = "")
+      if (!can_load) cat(unlist(pkg_failed),"[Installation failed]",many_spaces, sep = "") #else
+        #cat(pkg_busy,many_spaces, sep = "")
 
       data_acc = rbind(data_acc, data.frame(package=package, action="INSTALL", result=can_load, stringsAsFactors = FALSE))
       added_res = TRUE
@@ -113,11 +135,13 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
 
     if (can_load) {
       stfu({library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
-      cat(green(symbol$tick,"Loaded","\n"),sep = "")
+      cat(unlist(pkg_done),many_spaces,sep = "")
+      #cat(green(symbol$tick,"Loaded","\n"),sep = "")
 
       if(!added_res)
         data_acc = rbind(data_acc, data.frame(package=package, action="LOAD", result=TRUE, stringsAsFactors = FALSE))
     }
+    cat("\n")
   }
 
   invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
