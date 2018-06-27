@@ -5,8 +5,22 @@
 #' @param n_iterations Optional parameter, specifies the number of total iterations. When updating the progress bar it
 #' is then sufficient to specify the current iteration number.
 #' @param refresh The refresh rate in milliseconds of the animation.
+#' @param ... Further arguments passed to or from other methods.
+#' @param object An animated object (such as a progress bar).
+#' @param progress_ratio The proportion progress the bar should be set at.
+#' @param progress_iter The current iteration number if \code{n_iterations} is not \code{NULL}.
+#' @param show_percentage show percentage progress to the right of the progress bar.
+#' @param show_iteration show progress as iteration number to the right of the progress bar.
 #' @export
-#'
+#' @details The format of the progress bar is given by a character vector. It consists of 5 parts:
+#' \enumerate{
+#'   \item the left border of the progress bar consisting of 0 or more characters.
+#'   \item a pair of square brackets containing a single character which represents the loaded area.
+#'   \item a pair of square brackets containing 0 or more characters. These are animated on the border between the loaded and unloaded area.
+#'   \item a pair of square brackets containing a single character which represents the unloaded area.
+#'   \item the right border of the progress bar consisting of 0 or more characters.
+#' }
+#' The format follows the following regular expression: \code{^.*?[.?][.*?][.?].*$}
 #' @examples \dontrun{
 #' #simple progressbar
 #' bar = progressbar(format = "[[|][|/-\\][ ]]")
@@ -39,17 +53,25 @@ progressbar = function(format="[[|][|/-\\][ ]]", width = 25, refresh = 200, n_it
   progressbar
 }
 
-#' Updates a progress bar
+#' @param object
 #'
-#' @param progress Either the proportion progress the bar should be set at, or the current iteration number if \code{n_iterations} is not \code{NULL}.
-#' @param object A progress bar.
-#' @param ... Further arguments passed to or from other methods.
+
+#' @param ...
+#'
 #' @export
-update.progressbar = function(object, progress, ...) {
+#' @rdname progressbar
+update.progressbar = function(object, progress_ratio = NULL, progress_iter = NULL, ...) {
   progressbar = object
-  if(!is.null(progressbar$n_iterations) && progress >= 1) {
-    progressbar$iteration = progress
-    progress = progress/progressbar$n_iterations
+  if(!is.null(progress_iter) && !is.null(progress_ratio)) {
+    stop("Only one of 'progress_ratio' or 'progress_iter' can be specified.")
+  }
+  if(!is.null(progressbar$n_iterations) && !is.null(progress_iter)) {
+    progressbar$iteration = progress_iter
+    progress = progress_iter/progressbar$n_iterations
+  } else if(!is.null(progress_ratio) && progress_ratio >= 0 && progress_ratio <= 1) {
+    progress = progress_ratio
+  } else {
+    stop("Either argument 'progress_ratio' or 'progress_iter' must be specified.")
   }
   stopifnot(progress >= 0 && progress <= 1)
   progressbar$progress = progress
@@ -62,20 +84,13 @@ update.progressbar = function(object, progress, ...) {
   progressbar
 }
 
-#' Render an animated object
-#'
-#' @param object An animated object.
-#' @param ... Further arguments passed to or from other methods.
-#'
-#' @return A character vector.
 #' @export
+#' @rdname progressbar
 render = function(object, ...) {
   UseMethod("render", object)
 }
 
-#' @param show_percentage show percentage progress to the right of the progress bar.
-#' @param show_iteration show progress as iteration number to the right of the progress bar.
-#' @rdname render
+#' @rdname progressbar
 #' @export
 render.progressbar = function(object, show_percentage = FALSE, show_iteration = FALSE, ...) {
   progressbar = object

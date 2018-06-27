@@ -31,8 +31,6 @@ load_common_packages(...)
 
 \item{collection_name}{One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
 "grid","survival","processing","shiny","development"}.}
-
-\item{...}{List of additional package names.}
 }
 \value{
 Returns invisibly a list with additional package information and results of installing/upgrading and loading.

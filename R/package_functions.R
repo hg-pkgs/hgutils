@@ -7,6 +7,8 @@
 #' @param force_install Whether to install packages even if they are installed already.
 #' @param upgrade Whether to upgrade outdated packages. Defaults to \code{FALSE}.
 #' @param ... List of additional package names.
+#' @param collection_name One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
+#' "grid","survival","processing","shiny","development"}.
 #'
 #' @details
 #' \code{load_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
@@ -58,7 +60,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
 
   #-- Define constants -------
   blue = make_style("dodgerblue4")
-  spaces = paste0(rep(" ",100),collapse = "")
+  spaces = paste0(rep(" ",80),collapse = "")
   SUCCESS=      "Loaded succesfully:   "
   UPGRADED=     "Upgraded succesfully: "
   UPGRADE_FAIL= "Upgraded failed:      "
@@ -68,21 +70,25 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   exdent = nchar(SUCCESS) + 2
   redundant = redundant_packages(packages)
   success = c(); fail=c(); upgraded=c(); upgrade_fail=c()
-  progressbar = progressbar(format="\u258f[\u2589][][\u2581]\u2595",refresh = 0.3, width = 20, n_iterations = length(packages))
+  L = length(packages)
+  progressbar = progressbar(format=">[*][][ ]<",refresh = 0.3, width = min(max(10,L),20), n_iterations = L) #"\u258f[\u2589][][\u2581]\u2595"
+
+  name = paste("hgutils", packageVersion("hgutils"))
+  cat(rule(left = sprintf("Loading packages (total: %s packages)",length(packages)), right = blue(name), line = "bar4"),"\n")
+
+  progressbar = update(progressbar, progress_iter=0)
+  cat("\r",render(progressbar),"Retrieving package info...",spaces)
 
   inst = installed.packages()
   outdated_pkgs = old.packages(instPkgs = inst[row.names(inst) %in% packages,, drop=FALSE]) %>% data.frame(stringsAsFactors=FALSE)
   outdated_pkgs$Installed = sapply(outdated_pkgs$Package, function(x) packageVersion(x) %>% format)
   outdated_pkgs %<>% filter(numeric_version(.$Installed) < numeric_version(.$ReposVer))
 
-  name = paste("hgutils", packageVersion("hgutils"))
-  cat(rule(left = sprintf("Loading packages (total: %s packages)",length(packages)), right = blue(name), line = "bar4"),"\n")
-
   data_acc = data.frame(package=character(),action=character(),result=logical()); acc_i = 1
   for (p in 1:length(packages)) {
     package = packages[p]
 
-    progressbar = update(progressbar, p)
+    progressbar = update(progressbar, progress_iter=p)
     cat("\r",render(progressbar, show_iteration = TRUE),"loading",package,spaces)
     stfu({package_exists = require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
 
@@ -94,7 +100,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     if(!package_exists && !install_packages) fail = c(fail, package)
 
     if (will_install) {
-      progressbar = update(progressbar, p)
+      progressbar = update(progressbar, progress_iter=p)
       cat("\r",render(progressbar, show_iteration = TRUE),"installing",package,spaces)
       stfu({install.packages(package, verbose = FALSE, quiet = TRUE)})
 
@@ -108,7 +114,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     if (upgrade && package %in% outdated_pkgs$Package) #upgrade package
     {
       sel = outdated_pkgs[outdated_pkgs$Package==package,]
-      progressbar = update(progressbar, p)
+      progressbar = update(progressbar, progress_iter=p)
       cat("\r",render(progressbar, show_iteration = TRUE),"upgrading",package,spaces)
       stfu({update.packages(oldPkgs=package, ask=FALSE, verbose = FALSE, quiet = TRUE)})
 
@@ -121,7 +127,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     }
 
     if (can_load) {
-      progressbar = update(progressbar, p)
+      progressbar = update(progressbar, progress_iter=p)
       cat("\r",render(progressbar, show_iteration = TRUE),"loading",package,spaces)
       stfu({library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
       success = c(success,package)
@@ -130,27 +136,27 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
         data_acc = rbind(data_acc, data.frame(package=package, action="LOAD", result=TRUE, stringsAsFactors = FALSE))
     }
   }
+  cat("\r",spaces,"\n")
 
   ## Output status ####################
-  pkg_success = str_wrap(paste(success,collapse = ", "),width=80,exdent=exdent)
-  pkg_failed = str_wrap(paste(red(underline(fail)),collapse = ", "),width=200,exdent=exdent)
-  pkg_upgrade = str_wrap(paste(upgraded,collapse = ", "),width=80,exdent=exdent)
-  pkg_upgrade_failed = str_wrap(paste(red(underline(upgrade_fail)),collapse = ", "),width=200,exdent=exdent)
-  pkg_dupl = str_wrap(paste(underline(names(duplicates)),collapse = ", "),width=120,exdent=exdent)
+  pkg_success = str_wrap(paste(success,collapse = ", "),width=80-exdent,exdent=exdent)
+  pkg_upgrade = str_wrap(paste(upgraded,collapse = ", "),width=80-exdent,exdent=exdent)
+  pkg_upgrade_failed = str_wrap(paste(upgrade_fail,collapse = ", "),width=80-exdent,exdent=exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
+  pkg_failed = str_wrap(paste(fail,collapse = ", "),width=80-exdent,exdent=exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
+  pkg_dupl = str_wrap(paste(names(duplicates),collapse = ", "),width=80-exdent,exdent=exdent) %>% str_replace_all("(\\w+)",underline("\\1"))
 
-  cat("\r",spaces,"\n")
   if(length(success) > 0) cat_bullet(green(SUCCESS),pkg_success,"\n",bullet = "tick", bullet_col = "green")
   if(length(upgraded) > 0) cat_bullet(green(UPGRADED),pkg_upgrade,"\n",bullet = "tick", bullet_col = "green")
   if(length(upgrade_fail) > 0) cat_bullet(red(UPGRADE_FAIL),pkg_upgrade_failed,"\n", bullet = "cross", bullet_col = "red")
   if(length(fail) > 0) cat_bullet(red(FAILED),pkg_failed,"\n", bullet = "cross", bullet_col = "red")
-
   if(length(duplicates) > 0) cat_bullet(yellow(DUPLICATED),pkg_dupl, "\n", bullet = "warning", bullet_col = "yellow")
+
   if(length(redundant) > 0) {
     txt = sapply(names(redundant), function(x) paste0(underline(x), " (loaded by ", frmt(redundant[[x]]), ")"))
     spaces = paste0(rep(" ",nchar(REDUNDANT)+2),collapse = "")
     cat_bullet(yellow(REDUNDANT), paste0(txt,collapse = paste0("\n",spaces)),bullet_col = "yellow", bullet = "warning")
   }
-
+  cat(blue("\n\u25ba"),"Done.")
   invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
 }
 
@@ -170,10 +176,6 @@ list_package_collections = function() {
   )
 }
 
-#' @param collection_name One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
-#' "grid","survival","processing","shiny","development"}.
-#' @param ... List of additional package names.
-#'
 #' @export
 #' @rdname load_packages
 #' @importFrom crayon bold
@@ -181,10 +183,13 @@ load_package_collection = function(collection_name = names(list_package_collecti
 {
   col_names = unique(match.arg(collection_name, several.ok = TRUE))
   pkg_cols = list_package_collections()
-
   pkgs = sapply(col_names,function(x) pkg_cols[x]) %>% unlist %>% unique %>% sort
 
-  cat_bullet(sprintf("Importing collection: %s",paste0(bold(col_names),collapse = ", ")), bullet = "arrow_right")
+  # title = sprintf("Importing package collection%s: ",ifelse(length(col_names) > 1,"s",""))
+  # exdent = nchar(title)+2
+  # cols = str_wrap(paste0(col_names,collapse = ", "), width = 80-exdent, exdent = exdent) %>%
+  #        str_replace_all("(\\w+)",blue("\\1"))
+  # cat(blue("\u25ba "),title, paste(cols),"\n",sep = "")
   load_packages(pkgs, ...)
 }
 
@@ -198,7 +203,6 @@ list_common_packages = function()
 
 #' @export
 #' @rdname load_packages
-#' @inheritParams load_packages
 load_common_packages = function(...) {
   load_packages(list_common_packages(), ...)
 }
@@ -361,9 +365,7 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
   cat_bullet("DESCRIPTION was not adjusted.",background_col = "red4", col="white", bullet_col = "white", bullet="warning")
 
   cat("\n")
-  # cat_rule(left="Installing/loading dependencies", right=package_name, col="dodgerblue4", line="bar4")
   load_packages(depen)
-  cat("\nDone.")
 
   invisible(list(current_r_version=current_r, dependencies_r_version=dependencies_r,
             packages=depen, packages_version=pack_version))

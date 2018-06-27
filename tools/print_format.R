@@ -16,9 +16,9 @@ load_packages("cli","crayon")
 
     pb = update(pb, p)
     cat("\r",render(pb, show_iteration = TRUE),"loading",pkg,spaces)
-    Sys.sleep(0.3)
+    Sys.sleep(0.1)
   }
-  cat("\r",spaces,"\n")
+  cat(green("\r",spaces,"\r"))
   redundant = redundant_packages(c(packages,"survival","rms"))
   duplicates = hgutils:::.pkg_duplicated(c(packages,"rms","rms"))
 

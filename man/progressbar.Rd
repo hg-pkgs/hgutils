@@ -2,10 +2,21 @@
 % Please edit documentation in R/loading_animations.R
 \name{progressbar}
 \alias{progressbar}
+\alias{update.progressbar}
+\alias{render}
+\alias{render.progressbar}
 \title{Creates an animated progress bar}
 \usage{
 progressbar(format = "[[|][|/-\\\\][ ]]", width = 25, refresh = 200,
   n_iterations = NULL)
+
+\method{update}{progressbar}(object, progress_ratio = NULL,
+  progress_iter = NULL, ...)
+
+render(object, ...)
+
+\method{render}{progressbar}(object, show_percentage = FALSE,
+  show_iteration = FALSE, ...)
 }
 \arguments{
 \item{format}{Character vector containing format of the resulting progress bar. See 'details' for more information.}
@@ -16,9 +27,36 @@ progressbar(format = "[[|][|/-\\\\][ ]]", width = 25, refresh = 200,
 
 \item{n_iterations}{Optional parameter, specifies the number of total iterations. When updating the progress bar it
 is then sufficient to specify the current iteration number.}
+
+\item{object}{An animated object (such as a progress bar).}
+
+\item{progress_ratio}{The proportion progress the bar should be set at.}
+
+\item{progress_iter}{The current iteration number if \code{n_iterations} is not \code{NULL}.}
+
+\item{...}{Further arguments passed to or from other methods.}
+
+\item{show_percentage}{show percentage progress to the right of the progress bar.}
+
+\item{show_iteration}{show progress as iteration number to the right of the progress bar.}
+
+\item{object}{}
+
+\item{...}{}
 }
 \description{
 Creates an animated progress bar
+}
+\details{
+The format of the progress bar is given by a character vector. It consists of 5 parts:
+\enumerate{
+  \item the left border of the progress bar consisting of 0 or more characters.
+  \item a pair of square brackets containing a single character which represents the loaded area.
+  \item a pair of square brackets containing 0 or more characters. These are animated on the border between the loaded and unloaded area.
+  \item a pair of square brackets containing a single character which represents the unloaded area.
+  \item the right border of the progress bar consisting of 0 or more characters.
+}
+The format follows the following regular expression: \code{^.*?[.?][.*?][.?].*$}
 }
 \examples{
 \dontrun{
