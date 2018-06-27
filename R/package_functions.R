@@ -156,7 +156,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     spaces = paste0(rep(" ",nchar(REDUNDANT)+2),collapse = "")
     cat_bullet(yellow(REDUNDANT), paste0(txt,collapse = paste0("\n",spaces)),bullet_col = "yellow", bullet = "warning")
   }
-  cat(blue("\n\u25ba"),"Done.")
+  cat(blue("\n\u25ba"),"Done.\n")
   invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
 }
 
