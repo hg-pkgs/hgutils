@@ -2,7 +2,7 @@
 % Please edit documentation in R/hgutils.R
 \name{stfu}
 \alias{stfu}
-\title{STFU}
+\title{S.T.F.U.: Stop Text From turning Up}
 \usage{
 stfu(expr)
 }
@@ -10,15 +10,15 @@ stfu(expr)
 \item{expr}{An expression to evaluate in silence.}
 }
 \value{
-Returns (invisibly) the result of \code{expr}.
+Returns invisibly the result of \code{expr}.
 }
 \description{
-STFU: \strong{S}top \strong{T}umult \strong{F}rom o\strong{U}tput
+S.T.F.U.: Stop Text From turning Up
 }
 \section{Warning}{
 
-Make sure to call this function \strong{always} directly on the expression and never indirectly such as via pipes.
-Example: \code{stfu(expr)} is correct, but \code{expr \%>\% stfu} will hide the output. However, the \code{expr} argument itself may contain pipes.
+Make sure to call this function \strong{always} directly on the expression and never indirectly e.g. via pipes.
+Example: \code{stfu(expr)} is correct, but \code{expr \%>\% stfu} will not hide the output. However, the \code{expr} argument itself may contain pipes.
 }
 
 \examples{

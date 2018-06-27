@@ -260,15 +260,14 @@ discretize_numbers = function(x, min_size = 1, ...) {
   cut(x, breaks=c(-Inf,br,Inf), right=FALSE, labels = labels)
 }
 
-#' STFU
-#' @description STFU: \strong{S}top \strong{T}umult \strong{F}rom o\strong{U}tput
+#' S.T.F.U.: Stop Text From turning Up
 #'
 #' @param expr An expression to evaluate in silence.
 #'
-#' @return Returns (invisibly) the result of \code{expr}.
+#' @return Returns invisibly the result of \code{expr}.
 #' @section Warning:
-#' Make sure to call this function \strong{always} directly on the expression and never indirectly such as via pipes.
-#' Example: \code{stfu(expr)} is correct, but \code{expr \%>\% stfu} will hide the output. However, the \code{expr} argument itself may contain pipes.
+#' Make sure to call this function \strong{always} directly on the expression and never indirectly e.g. via pipes.
+#' Example: \code{stfu(expr)} is correct, but \code{expr \%>\% stfu} will not hide the output. However, the \code{expr} argument itself may contain pipes.
 #'
 #' @export
 #'

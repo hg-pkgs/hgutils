@@ -20,6 +20,7 @@ Imports:
   methods,
   numbers,
   rms,
+  stats,
   stringr,
   survival,
   utils

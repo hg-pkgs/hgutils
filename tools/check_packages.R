@@ -23,7 +23,7 @@ intToUtf8(8942:8945) #three_dots https://mcdlr.com/utf-8/#9457
 intToUtf8(9776:9783) #three_hor_lines
 intToUtf8(9588:9599) #single lines, halve
 intToUtf8(c(9609,9600,9604)) # blocks
-as.hexmode(c(9776,9781,9783))
+intToUtf8(as.hexmode(c(9776,9781,9783)))
 {
   files = list.files("../../source_webinterface/dev/",pattern = ".*\\.[Rr]$", recursive = TRUE, full.names = TRUE)
   content = paste0(sapply(files, function(x) paste0(readLines(x), collapse = "\n")), collapse = "\n")
@@ -52,18 +52,3 @@ as.hexmode(c(9776,9781,9783))
   unused_packages = setdiff(pkgs, used_pkgs)
 }
 to_remove = unique(c(dups, redundant, unused_packages))
-
-#implementation for load bar, with update.loadbar to get the current value
-
-
-loading_bar = create_progressbar(format = "[*][][ ]")
-loading_bar = update(loading_bar, 0.4)
-print(loading_bar)
-
-load_packages("stringr")
-bar = "|[*][]|"
-regex = "^(.*?)\\[(.)\\](?:\\[(.*?)\\])?\\[(.?)\\](.*)$"
-regex2 = "^(.+)$"
-str_detect(bar, regex)
-str_detect("* ",regex2)
-str_match(bar, regex)[-1]

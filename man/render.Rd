@@ -2,14 +2,22 @@
 % Please edit documentation in R/loading_animations.R
 \name{render}
 \alias{render}
+\alias{render.progressbar}
 \title{Render an animated object}
 \usage{
-render(x, ...)
+render(object, ...)
+
+\method{render}{progressbar}(object, show_percentage = FALSE,
+  show_iteration = FALSE, ...)
 }
 \arguments{
-\item{x}{An animated object.}
+\item{object}{An animated object.}
 
 \item{...}{Further arguments passed to or from other methods.}
+
+\item{show_percentage}{show percentage progress to the right of the progress bar.}
+
+\item{show_iteration}{show progress as iteration number to the right of the progress bar.}
 }
 \value{
 A character vector.

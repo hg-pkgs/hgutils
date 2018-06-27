@@ -13,14 +13,15 @@ load_packages(..., install_packages = TRUE, force_install = FALSE,
 
 list_package_collections()
 
-load_package_collection(collection_name = names(list_package_collections()))
+load_package_collection(collection_name = names(list_package_collections()),
+  ...)
 
 list_common_packages()
 
 load_common_packages(...)
 }
 \arguments{
-\item{...}{List of package names and other options.}
+\item{...}{List of additional package names.}
 
 \item{install_packages}{Whether to install the selected packages.}
 
@@ -30,6 +31,8 @@ load_common_packages(...)
 
 \item{collection_name}{One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
 "grid","survival","processing","shiny","development"}.}
+
+\item{...}{List of additional package names.}
 }
 \value{
 Returns invisibly a list with additional package information and results of installing/upgrading and loading.
