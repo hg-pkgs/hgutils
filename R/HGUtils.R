@@ -141,7 +141,7 @@ separate_values = function(X, distance = 0.05, min = 0, max = 1) {
 
 #' Specifies a square grid which fits N objects.
 #'
-#' @description The resulting grid will be of size \code{(a*a)} or \code{(a*(a+1))} where \code{a} is an integer.
+#' @description The resulting grid will be of size \code{a*a} or \code{a*(a+1)} where \code{a} is an integer.
 #' It will therefore always be a square or or have one row/column more than columns/rows.
 #'
 #' @param N number of objects.
@@ -280,24 +280,28 @@ stfu = function(expr) {
 
 #' Creates a text table
 #'
-#' @param n_cols number of resulting columns.
-#' @inheritParams stringr::str_wrap
+#' @param compact whether to take only the necessary space (\code{TRUE}) or to fill out the table_width (\code{FALSE}).
+#' @inheritParams wrap_text_table
 #'
 #' @return A vector of strings per row, forming together a table.
 #' @export
 #' @examples cat(create_text_table(LETTERS),sep = "\n")
 #' @importFrom stringr str_pad
-create_text_table = function(string, n_cols = get_square_grid(length(string))$columns) {
+#' @seealso \code{\link{get_square_grid}}.
+create_text_table = function(string, table_width = 80, compact = TRUE) {
+  max_width = max(nchar(string))+2
+  n_cols = min(get_square_grid(length(string))$columns, floor(table_width/max_width))
+
   data = c(string, rep(NA, ceiling(length(string)/n_cols)*n_cols - length(string)))
   mat = matrix(data = data, ncol = n_cols, byrow = TRUE)
-  max_width = max(nchar(mat), na.rm = TRUE)+2
+  if(!compact) max_width = floor(table_width/n_cols)
   apply(mat, c(1,2), function(x) str_pad(x, max_width, side = "right")) %>% apply(1, function(x) paste0(rm_na(x),collapse = ""))
 }
 
 #' Wrap string table
 #'
 #' @param min_size minimal size where a table is constructed, otherwise elements are concatenated with ', '.
-#' @param n_cols number of resulting columns in the table.
+#' @param table_width table character width.
 #' @inheritParams stringr::str_wrap
 #' @export
 #'
@@ -306,11 +310,10 @@ create_text_table = function(string, n_cols = get_square_grid(length(string))$co
 #'
 #' @return A character vector of a wrapped table where rows are separated by the newline character.
 #' @examples cat(wrap_text_table(LETTERS, exdent=0))
-#' @seealso \code{\link[stringr]{str_wrap}}.
-wrap_text_table = function(string, exdent, min_size = 9,
-                           n_cols = min(5, get_square_grid(length(string))$columns)) {
+#' @seealso \code{\link[stringr]{str_wrap}}, \code{\link{get_square_grid}}.
+wrap_text_table = function(string, exdent, min_size = 9, table_width = 80-exdent) {
   if (length(string) >= min_size) {
-    tab = create_text_table(string, n_cols = n_cols)
+    tab = create_text_table(string, table_width = table_width)
     str_wrap(paste(tab %>% str_replace_all(" ","@_@"),collapse = "\n"), width=1, exdent=exdent) %>% str_replace_all("@_@"," ")
   } else {
     str_wrap(paste(string, collapse = ", "), width=80-exdent, exdent=exdent)

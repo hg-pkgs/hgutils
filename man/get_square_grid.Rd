@@ -15,7 +15,7 @@ get_square_grid(N, moreRows = TRUE)
 A named list with elements rows and columns specifying the size of the optimal grid.
 }
 \description{
-The resulting grid will be of size \code{(a*a)} or \code{(a*(a+1))} where \code{a} is an integer.
+The resulting grid will be of size \code{a*a} or \code{a*(a+1)} where \code{a} is an integer.
 It will therefore always be a square or or have one row/column more than columns/rows.
 }
 \examples{

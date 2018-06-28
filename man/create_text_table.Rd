@@ -4,12 +4,14 @@
 \alias{create_text_table}
 \title{Creates a text table}
 \usage{
-create_text_table(string, n_cols = get_square_grid(length(string))$columns)
+create_text_table(string, table_width = 80, compact = TRUE)
 }
 \arguments{
 \item{string}{character vector of strings to reformat.}
 
-\item{n_cols}{number of resulting columns.}
+\item{table_width}{table character width.}
+
+\item{compact}{whether to take only the necessary space (\code{TRUE}) or to fill out the table_width (\code{FALSE}).}
 }
 \value{
 A vector of strings per row, forming together a table.
@@ -19,4 +21,7 @@ Creates a text table
 }
 \examples{
 cat(create_text_table(LETTERS),sep = "\\n")
+}
+\seealso{
+\code{\link{get_square_grid}}.
 }

@@ -70,12 +70,13 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   success = c(); fail=c(); upgraded=c(); upgrade_fail=c()
   L = length(packages)
   progressbar = progressbar(format=">[*][][ ]<",refresh = 0.3, width = min(max(10,L),20), n_iterations = L) #"\u258f[\u2589][][\u2581]\u2595"
+  #install_packages = TRUE; force_install = FALSE; upgrade=FALSE
 
   name = paste("hgutils", packageVersion("hgutils"))
   cat(rule(left = sprintf("Loading packages (total: %s packages)",length(packages)), right = blue(name), line = "bar4"),"\n")
 
   progressbar = update.progressbar(progressbar, progress_iter=0)
-  cat("\r",render(progressbar),"Retrieving package info...",spaces)
+  cat("\r",render(progressbar)," Retrieving package info...",spaces, sep = "")
 
   inst = installed.packages()
   outdated_pkgs = old.packages(instPkgs = inst[row.names(inst) %in% packages,, drop=FALSE]) %>% data.frame(stringsAsFactors=FALSE)
@@ -87,7 +88,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     package = packages[p]
 
     progressbar = update.progressbar(progressbar, progress_iter=p)
-    cat("\r",render(progressbar, show_iteration = TRUE),"loading",package,spaces)
+    cat("\r",render(progressbar, show_iteration = TRUE)," loading ",package,spaces, sep = "")
     stfu({package_exists = require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
 
     will_install = !package_exists && install_packages || force_install
@@ -99,7 +100,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
 
     if (will_install) {
       progressbar = update.progressbar(progressbar, progress_iter=p)
-      cat("\r",render(progressbar, show_iteration = TRUE),"installing",package,spaces)
+      cat("\r",render(progressbar, show_iteration = TRUE)," installing ",package,spaces, sep = "")
       stfu({install.packages(package, verbose = FALSE, quiet = TRUE)})
 
       stfu({can_load = require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
@@ -113,7 +114,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     {
       sel = outdated_pkgs[outdated_pkgs$Package==package,]
       progressbar = update.progressbar(progressbar, progress_iter=p)
-      cat("\r",render(progressbar, show_iteration = TRUE),"upgrading",package,spaces)
+      cat("\r",render(progressbar, show_iteration = TRUE)," upgrading ",package,spaces, sep = "")
       stfu({update.packages(oldPkgs=package, ask=FALSE, verbose = FALSE, quiet = TRUE)})
 
       current_ver = format(packageVersion(package))
@@ -126,7 +127,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
 
     if (can_load) {
       progressbar = update.progressbar(progressbar, progress_iter=p)
-      cat("\r",render(progressbar, show_iteration = TRUE),"loading",package,spaces)
+      cat("\r",render(progressbar, show_iteration = TRUE)," loading ",package,spaces, sep = "")
       stfu({library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
       success = c(success,package)
 
@@ -134,18 +135,18 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
         data_acc = rbind(data_acc, data.frame(package=package, action="LOAD", result=TRUE, stringsAsFactors = FALSE))
     }
   }
-  cat("\r",spaces,"\n")
+  cat(green("\r",spaces,"\r"))
 
   ## Output status ####################
   pkg_success = wrap_text_table(success, exdent)
   pkg_upgrade = wrap_text_table(upgraded, exdent)
   pkg_upgrade_failed = wrap_text_table(upgrade_fail, exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
   pkg_failed = wrap_text_table(fail, exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
-  pkg_dupl = wrap_text_table(duplicates, exdent) %>% str_replace_all("(\\w+)",underline("\\1"))
+  pkg_dupl = wrap_text_table(names(duplicates), exdent) %>% str_replace_all("(\\w+)",underline("\\1"))
 
   if(length(success) > 0) cat(green("\u25ba "),SUCCESS,pkg_success,"\n",sep = "")
   if(length(upgraded) > 0) cat(green("\u25ba "),UPGRADED,pkg_upgrade,"\n",sep="")
-  if(length(upgrade_fail) > 0) cat(red("\u25ba", UPGRADE_FAIL),pkg_upgrade_failed,sep="")
+  if(length(upgrade_fail) > 0) cat(red("\u25ba", UPGRADE_FAIL),pkg_upgrade_failed,"\n",sep="")
   if(length(fail) > 0) cat(red("\u25ba",FAILED),pkg_failed,"\n",sep="")
   if(length(duplicates) > 0) cat(yellow("\u25ba", DUPLICATED),pkg_dupl,"\n",sep="")
 
@@ -154,7 +155,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     spaces = paste0(rep(" ",nchar(REDUNDANT)+2),collapse = "")
     cat(yellow("\u25ba", REDUNDANT), paste0(txt,collapse = paste0("\n",spaces)),"\n", sep="")
   }
-  cat(blue("\n\u25ba"),"Done.\n")
+  cat(blue("\u25ba"),"Done.\n")
   invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
 }
 
@@ -345,7 +346,7 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
   RVER =   "R version:         "
   exdent = nchar(IMPORT)+2
 
-  tab = wrap_text_table(pack_version, exdent=exdent, n_cols = 3)
+  tab = wrap_text_table(pack_version, exdent=exdent)
   pkgs_str = tab %>%
              str_replace_all("([[:alpha:]][[:alnum:]\\.]*[[:alnum:]])", underline("\\1")) %>%
              str_replace_all("_"," ") %>% str_replace_all(",","")

@@ -14,7 +14,7 @@ load_packages("cli","crayon")
   for (p in 1:length(packages)){
     pkg = packages[p]
 
-    pb = update(pb, p)
+    pb = update(pb, progress_iter = p)
     cat("\r",render(pb, show_iteration = TRUE),"loading",pkg,spaces)
     Sys.sleep(0.1)
   }
