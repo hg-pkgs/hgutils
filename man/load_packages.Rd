@@ -6,7 +6,7 @@
 \alias{load_package_collection}
 \alias{list_common_packages}
 \alias{load_common_packages}
-\title{Make packages ready for usage}
+\title{Load and install packages}
 \usage{
 load_packages(..., install_packages = TRUE, force_install = FALSE,
   upgrade = FALSE)
@@ -21,13 +21,13 @@ list_common_packages()
 load_common_packages(...)
 }
 \arguments{
-\item{...}{List of additional package names.}
+\item{...}{list of additional package names.}
 
-\item{install_packages}{Whether to install the selected packages.}
+\item{install_packages}{whether to install the selected packages.}
 
-\item{force_install}{Whether to install packages even if they are installed already.}
+\item{force_install}{whether to install packages even if they are installed already.}
 
-\item{upgrade}{Whether to upgrade outdated packages. Defaults to \code{FALSE}.}
+\item{upgrade}{whether to upgrade outdated packages. Defaults to \code{FALSE}.}
 
 \item{collection_name}{One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
 "grid","survival","processing","shiny","development"}.}

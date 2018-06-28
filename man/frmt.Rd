@@ -4,14 +4,14 @@
 \alias{frmt}
 \title{Format variable value}
 \usage{
-frmt(x, show_class = FALSE, quotes = TRUE)
+frmt(x, show_class = FALSE, use_quotes = TRUE)
 }
 \arguments{
-\item{x}{The variable for which a string representation is created.}
+\item{x}{variable for which a string representation is created.}
 
-\item{show_class}{Whether to show the class of \code{x}. Defaults to \code{FALSE}.}
+\item{show_class}{whether to show the class of \code{x}. Defaults to \code{FALSE}.}
 
-\item{quotes}{Whether to use single quotation marks (default: \code{TRUE}).}
+\item{use_quotes}{whether to use single quotation marks (default: \code{TRUE}).}
 }
 \value{
 A character vector with the string representation of \code{x}.

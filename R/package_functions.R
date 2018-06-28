@@ -1,12 +1,12 @@
-#' Make packages ready for usage
+#' Load and install packages
 #'
 #' @description Utility function to load and optionally install packages if they are missing. When the function terminates,
 #' packages are installed (if necessary), upgraded to the latest version (if necessary) and loaded.
 #'
-#' @param install_packages Whether to install the selected packages.
-#' @param force_install Whether to install packages even if they are installed already.
-#' @param upgrade Whether to upgrade outdated packages. Defaults to \code{FALSE}.
-#' @param ... List of additional package names.
+#' @param install_packages whether to install the selected packages.
+#' @param force_install whether to install packages even if they are installed already.
+#' @param upgrade whether to upgrade outdated packages. Defaults to \code{FALSE}.
+#' @param ... list of additional package names.
 #' @param collection_name One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
 #' "grid","survival","processing","shiny","development"}.
 #'
@@ -40,12 +40,11 @@
 #' @export
 #' @family developer functions
 #'
-#' @importFrom utils install.packages capture.output old.packages update.packages compareVersion installed.packages
-#' @importFrom cli rule symbol cat_bullet
-#' @importFrom crayon green red yellow blue make_style underline
-#' @importFrom dplyr mutate filter
+#' @importFrom utils install.packages old.packages update.packages compareVersion installed.packages
+#' @importFrom cli rule
+#' @importFrom crayon green red yellow blue underline
+#' @importFrom dplyr filter
 #' @importFrom magrittr %>% %<>%
-#' @importFrom stringr str_wrap
 load_packages = function(..., install_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
 
   #-- Check for extra arguments in '...' -------
@@ -75,7 +74,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   name = paste("hgutils", packageVersion("hgutils"))
   cat(rule(left = sprintf("Loading packages (total: %s packages)",length(packages)), right = blue(name), line = "bar4"),"\n")
 
-  progressbar = update(progressbar, progress_iter=0)
+  progressbar = update.progressbar(progressbar, progress_iter=0)
   cat("\r",render(progressbar),"Retrieving package info...",spaces)
 
   inst = installed.packages()
@@ -87,7 +86,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   for (p in 1:length(packages)) {
     package = packages[p]
 
-    progressbar = update(progressbar, progress_iter=p)
+    progressbar = update.progressbar(progressbar, progress_iter=p)
     cat("\r",render(progressbar, show_iteration = TRUE),"loading",package,spaces)
     stfu({package_exists = require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
 
@@ -99,7 +98,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     if(!package_exists && !install_packages) fail = c(fail, package)
 
     if (will_install) {
-      progressbar = update(progressbar, progress_iter=p)
+      progressbar = update.progressbar(progressbar, progress_iter=p)
       cat("\r",render(progressbar, show_iteration = TRUE),"installing",package,spaces)
       stfu({install.packages(package, verbose = FALSE, quiet = TRUE)})
 
@@ -113,7 +112,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     if (upgrade && package %in% outdated_pkgs$Package) #upgrade package
     {
       sel = outdated_pkgs[outdated_pkgs$Package==package,]
-      progressbar = update(progressbar, progress_iter=p)
+      progressbar = update.progressbar(progressbar, progress_iter=p)
       cat("\r",render(progressbar, show_iteration = TRUE),"upgrading",package,spaces)
       stfu({update.packages(oldPkgs=package, ask=FALSE, verbose = FALSE, quiet = TRUE)})
 
@@ -126,7 +125,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     }
 
     if (can_load) {
-      progressbar = update(progressbar, progress_iter=p)
+      progressbar = update.progressbar(progressbar, progress_iter=p)
       cat("\r",render(progressbar, show_iteration = TRUE),"loading",package,spaces)
       stfu({library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
       success = c(success,package)
@@ -138,22 +137,22 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   cat("\r",spaces,"\n")
 
   ## Output status ####################
-  pkg_success = str_wrap(paste(success,collapse = ", "),width=80-exdent,exdent=exdent)
-  pkg_upgrade = str_wrap(paste(upgraded,collapse = ", "),width=80-exdent,exdent=exdent)
-  pkg_upgrade_failed = str_wrap(paste(upgrade_fail,collapse = ", "),width=80-exdent,exdent=exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
-  pkg_failed = str_wrap(paste(fail,collapse = ", "),width=80-exdent,exdent=exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
-  pkg_dupl = str_wrap(paste(names(duplicates),collapse = ", "),width=80-exdent,exdent=exdent) %>% str_replace_all("(\\w+)",underline("\\1"))
+  pkg_success = wrap_text_table(success, exdent)
+  pkg_upgrade = wrap_text_table(upgraded, exdent)
+  pkg_upgrade_failed = wrap_text_table(upgrade_fail, exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
+  pkg_failed = wrap_text_table(fail, exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
+  pkg_dupl = wrap_text_table(duplicates, exdent) %>% str_replace_all("(\\w+)",underline("\\1"))
 
   if(length(success) > 0) cat(green("\u25ba "),SUCCESS,pkg_success,"\n",sep = "")
   if(length(upgraded) > 0) cat(green("\u25ba "),UPGRADED,pkg_upgrade,"\n",sep="")
-  if(length(upgrade_fail) > 0) cat_bullet(red(UPGRADE_FAIL),pkg_upgrade_failed, bullet = "cross", bullet_col = "red")
-  if(length(fail) > 0) cat_bullet(red(FAILED),pkg_failed, bullet = "cross", bullet_col = "red")
-  if(length(duplicates) > 0) cat_bullet(yellow(DUPLICATED),pkg_dupl, bullet = "warning", bullet_col = "yellow")
+  if(length(upgrade_fail) > 0) cat(red("\u25ba", UPGRADE_FAIL),pkg_upgrade_failed,sep="")
+  if(length(fail) > 0) cat(red("\u25ba",FAILED),pkg_failed,"\n",sep="")
+  if(length(duplicates) > 0) cat(yellow("\u25ba", DUPLICATED),pkg_dupl,"\n",sep="")
 
   if(length(redundant) > 0) {
     txt = sapply(names(redundant), function(x) paste0(underline(x), " (loaded by ", frmt(redundant[[x]]), ")"))
     spaces = paste0(rep(" ",nchar(REDUNDANT)+2),collapse = "")
-    cat_bullet(yellow(REDUNDANT), paste0(txt,collapse = paste0("\n",spaces)),bullet_col = "yellow", bullet = "warning")
+    cat(yellow("\u25ba", REDUNDANT), paste0(txt,collapse = paste0("\n",spaces)),"\n", sep="")
   }
   cat(blue("\n\u25ba"),"Done.\n")
   invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
@@ -177,18 +176,13 @@ list_package_collections = function() {
 
 #' @export
 #' @rdname load_packages
-#' @importFrom crayon bold
+#' @importFrom magrittr %>%
 load_package_collection = function(collection_name = names(list_package_collections()), ...)
 {
   col_names = unique(match.arg(collection_name, several.ok = TRUE))
   pkg_cols = list_package_collections()
   pkgs = sapply(col_names,function(x) pkg_cols[x]) %>% unlist %>% unique %>% sort
 
-  # title = sprintf("Importing package collection%s: ",ifelse(length(col_names) > 1,"s",""))
-  # exdent = nchar(title)+2
-  # cols = str_wrap(paste0(col_names,collapse = ", "), width = 80-exdent, exdent = exdent) %>%
-  #        str_replace_all("(\\w+)",blue("\\1"))
-  # cat(blue("\u25ba "),title, paste(cols),"\n",sep = "")
   load_packages(pkgs, ...)
 }
 
@@ -209,7 +203,7 @@ load_common_packages = function(...) {
 #' Validate a package name
 #' @description Naming rule obtained from \emph{'Writing R Extensions'} manual.
 #' The corresponding regular expression used for verifying the package name is \code{"[[:alpha:]][[:alnum:]\\.]*[[:alnum:]]"}.
-#' @param pkg A character vector containing package names. Can be a vector of strings with size of at least 1.
+#' @param pkg string vector containing package names. Can be a vector of strings with size of at least 1.
 #'
 #' @return A named logical indicating whether the package name is valid.
 #' @export
@@ -233,8 +227,8 @@ valid_pkgname = function(pkg) {
 #' Update default function settings
 #' @description Uses ellipsis parameter to update a list of default settings.
 #'
-#' @param default A named list of default values for settings.
-#' @param ... Optional settings values to override the default settings.
+#' @param default named list of default values for settings.
+#' @param ... optional settings values to override the default settings.
 #'
 #' @return The updated list of settings with updated values.
 #' @export
@@ -261,8 +255,8 @@ update_settings = function(default, ...) {
 #' Retrieve generic function implementations
 #' @description Obtains a list of classes for which the supplied generic function has an implementation.
 #'
-#' @param generic The name of the generic function.
-#' @param remove_default Whether to keep the default generic implementation in the result.
+#' @param generic name of the generic function.
+#' @param remove_default whether to keep the default generic implementation in the result.
 #'
 #' @return A vector with class names for which argument '\code{generic}' has an implementation.
 #' @export
@@ -275,7 +269,6 @@ update_settings = function(default, ...) {
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_match
 #' @importFrom utils methods
-#' @importFrom methods existsMethod
 #' @family developer functions
 generic_implementations = function(generic, remove_default = TRUE) {
   stopifnot(length(generic) == 1)
@@ -290,10 +283,10 @@ generic_implementations = function(generic, remove_default = TRUE) {
 #' Set imports for \emph{DESCRIPTION} file
 #' @description Update the \emph{DESCRIPTION} file with all imported packages stated in the source code.
 #'
-#' @param skip_prompt Whether to skip the confirmation prompt to change the \emph{DESCRIPTION} file. Defaults to \code{FALSE}.
-#' @param update Whether the \emph{DESCRIPTION} file should be updated. Defaults to \code{TRUE}.
-#' @param use_version_numbers Whether package version numbers should be included in the \emph{DESCRIPTION} file. Defaults to \code{TRUE}.
-#' @param rversion What version of R to be used in the \emph{DESCRIPTION} file.
+#' @param skip_prompt whether to skip the confirmation prompt to change the \emph{DESCRIPTION} file. Defaults to \code{FALSE}.
+#' @param update whether the \emph{DESCRIPTION} file should be updated. Defaults to \code{TRUE}.
+#' @param use_version_numbers whether package version numbers should be included in the \emph{DESCRIPTION} file. Defaults to \code{TRUE}.
+#' @param rversion version of R to be used in the \emph{DESCRIPTION} file.
 #' Can be \code{DEPENDENCIES_VERSION} for the latest version in the package dependencies,
 #' \code{LATEST_VERSION} for the current R version or any valid version number.
 #'
@@ -304,13 +297,11 @@ generic_implementations = function(generic, remove_default = TRUE) {
 #' @examples \dontrun{crossref_description(skip_prompt=TRUE)}
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_match str_replace str_replace_all str_split
-#' @importFrom utils read.delim packageVersion menu packageDescription
-#' @importFrom cli rule cat_bullet cat_rule
-#' @importFrom crayon blue
-#' @importFrom dplyr last
-#' @importFrom stats update
+#' @importFrom utils packageVersion packageDescription read.delim
+#' @importFrom crayon blue green red underline
 #'
 #' @family developer functions
+#' @seealso \code{\link[base]{numeric_version}}
 crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numbers=TRUE, rversion = "DEPENDENCIES_VERSION") {
   if (!dir.exists("R/") || !file.exists("DESCRIPTION"))
     stop("Working directory not set to an R project folder.")
@@ -354,20 +345,20 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
   RVER =   "R version:         "
   exdent = nchar(IMPORT)+2
 
-  tab = create_text_table(pkgs, n_cols = ifelse(use_version_numbers, 3, min(5, get_square_grid(length(pkgs))$columns)))
-  pkgs_str = str_wrap(paste(tab %>% str_replace_all(" ","_"),collapse = "\n"),width=1,exdent=exdent) %>%
-             str_replace_all("([[:alpha:]][[:alnum:]\\.]*[[:alnum:]])", ifelse(use_version_numbers, underline("\\1"), "\\1")) %>%
+  tab = wrap_text_table(pack_version, exdent=exdent, n_cols = 3)
+  pkgs_str = tab %>%
+             str_replace_all("([[:alpha:]][[:alnum:]\\.]*[[:alnum:]])", underline("\\1")) %>%
              str_replace_all("_"," ") %>% str_replace_all(",","")
   cat(blue("\u25ba "),RVER,RVersion,"\n",blue("\u25ba "),IMPORT,pkgs_str,"\n",sep = "")
 
-  if (update && (skip_prompt || menu(c("Yes","No"),title="\nReplace DESCRIPTION imports?") == 1)) {
-    desc %>% str_replace("R \\(.*?\\)",RVersion) %>%
-             str_replace("(Imports:)(?:(?:.*\n)+?)(.*?:)",sprintf("\\1\n  %s\n\\2",paste0(pkgs,collapse=",\n  "))) %>%
-             writeLines("DESCRIPTION")
-    cat(green("\u25ba"),"DESCRIPTION successfully updated.\n\n\n")
-  } else
-  cat(red(underline(cli::symbol$warning,"DESCRIPTION was not adjusted.\n\n\n")))
-  load_packages(depen)
+  ## Replace DESCRIPTION file #####################
+  desc %>% str_replace("R \\(.*?\\)",RVersion) %>%
+           str_replace("(Imports:)(?:(?:.*\n)+?)(.*?:)",sprintf("\\1\n  %s\n\\2",paste0(pkgs,collapse=",\n  "))) %>%
+           writeLines("DESCRIPTION")
+  cat(green("\u25ba"),"DESCRIPTION successfully updated.\n")
+
+  depen = stfu({Filter(function(x) !require(x, character.only = TRUE), depen)}) #check if needs installation
+  if (length(depen) > 0) {cat("\n\n"); load_packages(depen)} else cat(blue("\u25ba"),"Done.\n")
 
   invisible(list(current_r_version=current_r, dependencies_r_version=dependencies_r,
             packages=depen, packages_version=pack_version))
@@ -386,7 +377,7 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
 
 #' Find redundant packages
 #'
-#' @param packages A list of package names
+#' @param packages list of package names.
 #'
 #' @return A named list of packages names, where each value is a vector of packages already loading the corresponding package.
 #' @details Certain packages have a direct dependency on other packages. In that case it is unnecessary to attach the latter packages.

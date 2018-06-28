@@ -19,26 +19,26 @@ render(object, ...)
   show_iteration = FALSE, ...)
 }
 \arguments{
-\item{format}{Character vector containing format of the resulting progress bar. See 'details' for more information.}
+\item{format}{character vector containing format of the resulting progress bar. See 'details' for more information.}
 
-\item{width}{The width in characters of the progress bar.}
+\item{width}{progress bar width.}
 
-\item{refresh}{The refresh rate in milliseconds of the animation.}
+\item{refresh}{refresh rate in milliseconds of the animation.}
 
-\item{n_iterations}{Optional parameter, specifies the number of total iterations. When updating the progress bar it
+\item{n_iterations}{optional parameter, specifies the number of total iterations. When updating the progress bar it
 is then sufficient to specify the current iteration number.}
 
-\item{object}{An animated object (such as a progress bar).}
+\item{object}{animated object (such as a progress bar).}
 
-\item{progress_ratio}{The proportion progress the bar should be set at.}
+\item{progress_ratio}{proportion progress the bar should be set at.}
 
-\item{progress_iter}{The current iteration number if \code{n_iterations} is not \code{NULL}.}
+\item{progress_iter}{current iteration number if \code{n_iterations} is not \code{NULL}.}
 
-\item{...}{Further arguments passed to or from other methods.}
+\item{...}{further arguments passed to or from other methods.}
 
-\item{show_percentage}{show percentage progress to the right of the progress bar.}
+\item{show_percentage}{whether to show percentage progress to the right of the progress bar.}
 
-\item{show_iteration}{show progress as iteration number to the right of the progress bar.}
+\item{show_iteration}{whether to show progress as iteration number to the right of the progress bar.}
 }
 \description{
 Creates an animated progress bar

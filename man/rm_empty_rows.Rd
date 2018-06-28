@@ -7,7 +7,7 @@
 rm_empty_rows(dataframe)
 }
 \arguments{
-\item{dataframe}{A \code{data.frame}.}
+\item{dataframe}{\code{data.frame} object.}
 }
 \value{
 A \code{data.frame} with rows removed that only contain \code{NA}.

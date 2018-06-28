@@ -7,7 +7,7 @@
 stfu(expr)
 }
 \arguments{
-\item{expr}{An expression to evaluate in silence.}
+\item{expr}{expression to evaluate in silence.}
 }
 \value{
 Returns invisibly the result of \code{expr}.

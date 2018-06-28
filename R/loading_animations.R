@@ -1,16 +1,16 @@
 #' Creates an animated progress bar
 #'
-#' @param format Character vector containing format of the resulting progress bar. See 'details' for more information.
-#' @param width The width in characters of the progress bar.
-#' @param n_iterations Optional parameter, specifies the number of total iterations. When updating the progress bar it
+#' @param format character vector containing format of the resulting progress bar. See 'details' for more information.
+#' @param width progress bar width.
+#' @param n_iterations optional parameter, specifies the number of total iterations. When updating the progress bar it
 #' is then sufficient to specify the current iteration number.
-#' @param refresh The refresh rate in milliseconds of the animation.
-#' @param ... Further arguments passed to or from other methods.
-#' @param object An animated object (such as a progress bar).
-#' @param progress_ratio The proportion progress the bar should be set at.
-#' @param progress_iter The current iteration number if \code{n_iterations} is not \code{NULL}.
-#' @param show_percentage show percentage progress to the right of the progress bar.
-#' @param show_iteration show progress as iteration number to the right of the progress bar.
+#' @param refresh refresh rate in milliseconds of the animation.
+#' @param ... further arguments passed to or from other methods.
+#' @param object animated object (such as a progress bar).
+#' @param progress_ratio proportion progress the bar should be set at.
+#' @param progress_iter current iteration number if \code{n_iterations} is not \code{NULL}.
+#' @param show_percentage whether to show percentage progress to the right of the progress bar.
+#' @param show_iteration whether to show progress as iteration number to the right of the progress bar.
 #' @export
 #' @details The format of the progress bar is given by a character vector. It consists of 5 parts:
 #' \enumerate{

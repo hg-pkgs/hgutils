@@ -7,9 +7,9 @@
 startup(clean = TRUE, folder = NULL)
 }
 \arguments{
-\item{clean}{Whether to remove objects in the global environment, run garbage collection and to clear graphics. Defaults to \code{TRUE}.}
+\item{clean}{whether to remove objects in the global environment, run garbage collection and to clear graphics. Defaults to \code{TRUE}.}
 
-\item{folder}{Folder name to set the current working directory.}
+\item{folder}{folder name to set the current working directory.}
 }
 \description{
 Clears workspace, deletes all objects from global environment, clears graphics and (optionally) sets working directory.

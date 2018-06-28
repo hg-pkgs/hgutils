@@ -7,9 +7,9 @@
 rnd_dbl(dbl, digits = 3)
 }
 \arguments{
-\item{dbl}{The number to be rounded.}
+\item{dbl}{number to be rounded.}
 
-\item{digits}{The number of digits the number needs to be rounded to (defaults to \code{3}).}
+\item{digits}{number of digits the number needs to be rounded to (defaults to \code{3}).}
 }
 \value{
 A string value of the number rounded to the specified amount of digits.

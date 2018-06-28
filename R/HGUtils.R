@@ -1,8 +1,8 @@
 #' Cleans R for use
 #' @description Clears workspace, deletes all objects from global environment, clears graphics and (optionally) sets working directory.
 #'
-#' @param clean Whether to remove objects in the global environment, run garbage collection and to clear graphics. Defaults to \code{TRUE}.
-#' @param folder Folder name to set the current working directory.
+#' @param clean whether to remove objects in the global environment, run garbage collection and to clear graphics. Defaults to \code{TRUE}.
+#' @param folder folder name to set the current working directory.
 #'
 #' @return NULL
 #'
@@ -31,14 +31,14 @@ startup = function(clean = TRUE, folder = NULL) {
 #' makes usage easier in \pkg{ggplot2}. The limits of the axis may not be known beforehand,
 #' but \code{ggplot_breaks} receives it from \code{ggplot} and then creates nice breaks.
 #'
-#' @param limits The axis limits. May be either a vector of 2 elements with lower and upper bounds, or a
+#' @param limits axis limits. May be either a vector of 2 elements with lower and upper bounds, or a
 #'               single number (which is the upper bound, the lower bound is then assumed to be 0).
-#' @param N The step size. The eventual intervals will be multiples of the divisors of \code{N} or
+#' @param N step size. The eventual intervals will be multiples of the divisors of \code{N} or
 #' multiples of \code{N} when \code{multiples_only} is \code{TRUE}. Defaults to 10.
-#' @param max_breaks Maximum amount of breaks, defaults to 10.
-#' @param int_only Whether only integer divisors of \code{N} may be used as breaks, defaults to \code{TRUE}.
-#' @param multiples_only Whether only multiples of \code{N} can be used as breaks, defaults to \code{FALSE}.
-#' @param include_bounds Whether the resulting breaks should encompass \code{min} and \code{max}. Defaults to \code{TRUE}.
+#' @param max_breaks maximum amount of breaks, defaults to 10.
+#' @param int_only whether only integer divisors of \code{N} may be used as breaks, defaults to \code{TRUE}.
+#' @param multiples_only whether only multiples of \code{N} can be used as breaks, defaults to \code{FALSE}.
+#' @param include_bounds whether the resulting breaks should encompass \code{min} and \code{max}. Defaults to \code{TRUE}.
 #'
 #' @return A sorted numerical vector with breaks of length \code{|max_breaks|+1} when \code{include_bounds} is \code{TRUE}
 #' and of size \code{|max_breaks|} otherwise.
@@ -83,9 +83,9 @@ ggplot_breaks = function(...) {
 #' the values are separated by a minimum distance, bounded by lower and upper limits and are constraint to be as
 #' close as possible to their original values.
 #'
-#' @param X A numerical vector of real numbers.
-#' @param distance The minimum distance between subsequent numbers. Must be a scalar or vector of size \code{|X|}.
-#' @param min,max The lower and upper limits.
+#' @param X numerical vector of real numbers.
+#' @param distance minimum distance between subsequent numbers. Must be a scalar or vector of size \code{|X|}.
+#' @param min,max lower and upper limits.
 #' @details This function can be used for example to separate labels that are too close to one another.
 #' The resulting vector will create enough space, such that the labels do not overlap anymore, yet are still close to their original values.
 #'
@@ -144,8 +144,8 @@ separate_values = function(X, distance = 0.05, min = 0, max = 1) {
 #' @description The resulting grid will be of size \code{(a*a)} or \code{(a*(a+1))} where \code{a} is an integer.
 #' It will therefore always be a square or or have one row/column more than columns/rows.
 #'
-#' @param N Number of objects.
-#' @param moreRows Whether there should be more rows than columns if the resulting grid is not square. Defaults to more rows (\code{TRUE}).
+#' @param N number of objects.
+#' @param moreRows whether there should be more rows than columns if the resulting grid is not square. Defaults to more rows (\code{TRUE}).
 #'
 #' @return A named list with elements rows and columns specifying the size of the optimal grid.
 #'
@@ -160,8 +160,8 @@ get_square_grid = function(N, moreRows = TRUE) {
 
 #' Round number
 #' @description Rounds a number to a specified amount of digits and returns the string value.
-#' @param dbl The number to be rounded.
-#' @param digits The number of digits the number needs to be rounded to (defaults to \code{3}).
+#' @param dbl number to be rounded.
+#' @param digits number of digits the number needs to be rounded to (defaults to \code{3}).
 #'
 #' @return A string value of the number rounded to the specified amount of digits.
 #'
@@ -175,22 +175,22 @@ rnd_dbl = function(dbl, digits = 3) {
 #'
 #' @description Creates a nice string representation of a variable value.
 #'
-#' @param x The variable for which a string representation is created.
-#' @param show_class Whether to show the class of \code{x}. Defaults to \code{FALSE}.
-#' @param quotes Whether to use single quotation marks (default: \code{TRUE}).
+#' @param x variable for which a string representation is created.
+#' @param show_class whether to show the class of \code{x}. Defaults to \code{FALSE}.
+#' @param use_quotes whether to use single quotation marks (default: \code{TRUE}).
 #'
 #' @return A character vector with the string representation of \code{x}.
 #' @export
 #' @examples frmt(c(1,2,3))
-frmt = function(x, show_class = FALSE, quotes=TRUE) {
+frmt = function(x, show_class = FALSE, use_quotes=TRUE) {
   text = if (length(x) == 0L) {
     "{}"
   } else if (length(x) == 1) {
-    sprintf(ifelse(quotes,"'%s'","%s"), x)
+    sprintf(ifelse(use_quotes,"'%s'","%s"), x)
   } else if (is.atomic(x)) {
-    sprintf(ifelse(quotes,"['%s']","[%s]"), paste0(sort(x), collapse = ifelse(quotes,"','",",")))
+    sprintf(ifelse(use_quotes,"['%s']","[%s]"), paste0(sort(x), collapse = ifelse(use_quotes,"','",",")))
   } else {
-    sprintf(ifelse(quotes,"{'%s'}","{%s}"), paste0(x, collapse = ifelse(quotes,"','",",")))
+    sprintf(ifelse(use_quotes,"{'%s'}","{%s}"), paste0(x, collapse = ifelse(use_quotes,"','",",")))
   }
 
   if (show_class)
@@ -199,7 +199,7 @@ frmt = function(x, show_class = FALSE, quotes=TRUE) {
 
 #' Remove \code{NA}
 #'
-#' @param x Vector containing possible \code{NA} values.
+#' @param x vector containing possible \code{NA} values.
 #'
 #' @return Vector without \code{NA}
 #' @export
@@ -212,7 +212,7 @@ rm_na = function(x) {
 
 #' Remove empty rows
 #'
-#' @param dataframe A \code{data.frame}.
+#' @param dataframe \code{data.frame} object.
 #'
 #' @return A \code{data.frame} with rows removed that only contain \code{NA}.
 #' @export
@@ -226,8 +226,8 @@ rm_empty_rows = function(dataframe) {
 
 #' Discretize continuous numbers
 #'
-#' @param x A vector of numbers.
-#' @param min_size Specifies the minimum size of bins at the edges. Any bins smaller than this size are combined.
+#' @param x vector of numbers.
+#' @param min_size minimum size of bins at the edges. Any bins smaller than this size are combined.
 #' @inheritDotParams get_breaks -limits -include_bounds
 #' @details The function \code{get_breaks} is called to create the boundaries between groups.
 #' It is called on default with \code{limits = range(x)} and with \code{include_bounds = FALSE}.
@@ -242,6 +242,7 @@ rm_empty_rows = function(dataframe) {
 #' ages = round(rnorm(1000,50,10)); ages[1] = NA
 #' discretize_numbers(ages)
 #' @importFrom magrittr %>%
+#' @importFrom dplyr last
 discretize_numbers = function(x, min_size = 1, ...) {
   if (!is.numeric(x) & !is.logical(x))
     stop(sprintf("Argument 'x' must be a numeric or logical vector but is of type %s.", frmt(class(x))))
@@ -262,7 +263,7 @@ discretize_numbers = function(x, min_size = 1, ...) {
 
 #' S.T.F.U.: Stop Text From turning Up
 #'
-#' @param expr An expression to evaluate in silence.
+#' @param expr expression to evaluate in silence.
 #'
 #' @return Returns invisibly the result of \code{expr}.
 #' @section Warning:
@@ -279,16 +280,39 @@ stfu = function(expr) {
 
 #' Creates a text table
 #'
-#' @param text a vector of strings
-#' @param n_cols number of resulting columns
+#' @param n_cols number of resulting columns.
+#' @inheritParams stringr::str_wrap
 #'
-#' @return A vector of strings per row, forming together a table
+#' @return A vector of strings per row, forming together a table.
 #' @export
-#' @examples cat(create_text_table(c("A","B","C","D","E")),sep = "\n")
+#' @examples cat(create_text_table(LETTERS),sep = "\n")
 #' @importFrom stringr str_pad
-create_text_table = function(text, n_cols = get_square_grid(length(text))$columns) {
-  data = c(text, rep(NA, ceiling(length(text)/n_cols)*n_cols-length(text)))
+create_text_table = function(string, n_cols = get_square_grid(length(string))$columns) {
+  data = c(string, rep(NA, ceiling(length(string)/n_cols)*n_cols - length(string)))
   mat = matrix(data = data, ncol = n_cols, byrow = TRUE)
   max_width = max(nchar(mat), na.rm = TRUE)+2
   apply(mat, c(1,2), function(x) str_pad(x, max_width, side = "right")) %>% apply(1, function(x) paste0(rm_na(x),collapse = ""))
+}
+
+#' Wrap string table
+#'
+#' @param min_size minimal size where a table is constructed, otherwise elements are concatenated with ', '.
+#' @param n_cols number of resulting columns in the table.
+#' @inheritParams stringr::str_wrap
+#' @export
+#'
+#' @importFrom magrittr %>%
+#' @importFrom stringr str_replace_all str_wrap
+#'
+#' @return A character vector of a wrapped table where rows are separated by the newline character.
+#' @examples cat(wrap_text_table(LETTERS, exdent=0))
+#' @seealso \code{\link[stringr]{str_wrap}}.
+wrap_text_table = function(string, exdent, min_size = 9,
+                           n_cols = min(5, get_square_grid(length(string))$columns)) {
+  if (length(string) >= min_size) {
+    tab = create_text_table(string, n_cols = n_cols)
+    str_wrap(paste(tab %>% str_replace_all(" ","@_@"),collapse = "\n"), width=1, exdent=exdent) %>% str_replace_all("@_@"," ")
+  } else {
+    str_wrap(paste(string, collapse = ", "), width=80-exdent, exdent=exdent)
+  }
 }

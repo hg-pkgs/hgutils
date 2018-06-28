@@ -7,7 +7,7 @@
 redundant_packages(packages)
 }
 \arguments{
-\item{packages}{A list of package names}
+\item{packages}{list of package names.}
 }
 \value{
 A named list of packages names, where each value is a vector of packages already loading the corresponding package.

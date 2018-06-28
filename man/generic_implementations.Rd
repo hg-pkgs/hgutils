@@ -7,9 +7,9 @@
 generic_implementations(generic, remove_default = TRUE)
 }
 \arguments{
-\item{generic}{The name of the generic function.}
+\item{generic}{name of the generic function.}
 
-\item{remove_default}{Whether to keep the default generic implementation in the result.}
+\item{remove_default}{whether to keep the default generic implementation in the result.}
 }
 \value{
 A vector with class names for which argument '\code{generic}' has an implementation.

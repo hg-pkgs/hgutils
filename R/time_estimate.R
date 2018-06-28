@@ -2,9 +2,9 @@
 #'
 #' @description Get estimate of time points for a given survival probability.
 #'
-#' @param ... Further arguments passed to or from other methods.
-#' @param survival Vector of survival probabilities for which the time points are estimated.
-#' @param fit A \code{\link[=coxph]{survival fit}} object.
+#' @param ... further arguments passed to or from other methods.
+#' @param survival vector of survival probabilities for which the time points are estimated.
+#' @param fit \code{\link[=coxph]{survival fit}} object.
 #'
 #' @return A named list or matrix with elements \code{surv} (estimate), \code{lower} and \code{upper} (confidence interval).
 #' The attribute \code{survival} is added to the result and set to the argument survival probability.
@@ -68,7 +68,7 @@ time_estimate.list = function(fit, survival = 0.5, ...) {
     time_estimate(fit, survival = survival)
 }
 
-#' @param newdata A \code{data.frame} containing predictors for which predictors are desired. See \code{\link[survival]{survfit.coxph}}.
+#' @param newdata \code{data.frame} containing predictors for which predictors are desired. See \code{\link[survival]{survfit.coxph}}.
 #' @describeIn time_estimate A \code{\link[survival]{coxph}} object.
 #' @export
 time_estimate.coxph = function(fit, survival = 0.5, newdata = NULL, ...) {

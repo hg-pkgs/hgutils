@@ -4,19 +4,19 @@
 \alias{create_text_table}
 \title{Creates a text table}
 \usage{
-create_text_table(text, n_cols = get_square_grid(length(text))$columns)
+create_text_table(string, n_cols = get_square_grid(length(string))$columns)
 }
 \arguments{
-\item{text}{a vector of strings}
+\item{string}{character vector of strings to reformat.}
 
-\item{n_cols}{number of resulting columns}
+\item{n_cols}{number of resulting columns.}
 }
 \value{
-A vector of strings per row, forming together a table
+A vector of strings per row, forming together a table.
 }
 \description{
 Creates a text table
 }
 \examples{
-cat(create_text_table(c("A","B","C","D","E")),sep = "\\n")
+cat(create_text_table(LETTERS),sep = "\\n")
 }

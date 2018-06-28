@@ -7,7 +7,7 @@
 rm_na(x)
 }
 \arguments{
-\item{x}{Vector containing possible \code{NA} values.}
+\item{x}{vector containing possible \code{NA} values.}
 }
 \value{
 Vector without \code{NA}

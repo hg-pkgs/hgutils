@@ -7,7 +7,7 @@
 valid_pkgname(pkg)
 }
 \arguments{
-\item{pkg}{A character vector containing package names. Can be a vector of strings with size of at least 1.}
+\item{pkg}{string vector containing package names. Can be a vector of strings with size of at least 1.}
 }
 \value{
 A named logical indicating whether the package name is valid.

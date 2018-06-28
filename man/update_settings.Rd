@@ -7,9 +7,9 @@
 update_settings(default, ...)
 }
 \arguments{
-\item{default}{A named list of default values for settings.}
+\item{default}{named list of default values for settings.}
 
-\item{...}{Optional settings values to override the default settings.}
+\item{...}{optional settings values to override the default settings.}
 }
 \value{
 The updated list of settings with updated values.

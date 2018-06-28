@@ -19,13 +19,13 @@ time_estimate(fit, survival, ...)
 \method{time_estimate}{coxph}(fit, survival = 0.5, newdata = NULL, ...)
 }
 \arguments{
-\item{fit}{A \code{\link[=coxph]{survival fit}} object.}
+\item{fit}{\code{\link[=coxph]{survival fit}} object.}
 
-\item{survival}{Vector of survival probabilities for which the time points are estimated.}
+\item{survival}{vector of survival probabilities for which the time points are estimated.}
 
-\item{...}{Further arguments passed to or from other methods.}
+\item{...}{further arguments passed to or from other methods.}
 
-\item{newdata}{A \code{data.frame} containing predictors for which predictors are desired. See \code{\link[survival]{survfit.coxph}}.}
+\item{newdata}{\code{data.frame} containing predictors for which predictors are desired. See \code{\link[survival]{survfit.coxph}}.}
 }
 \value{
 A named list or matrix with elements \code{surv} (estimate), \code{lower} and \code{upper} (confidence interval).

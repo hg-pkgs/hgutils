@@ -8,13 +8,13 @@ crossref_description(skip_prompt = FALSE, update = TRUE,
   use_version_numbers = TRUE, rversion = "DEPENDENCIES_VERSION")
 }
 \arguments{
-\item{skip_prompt}{Whether to skip the confirmation prompt to change the \emph{DESCRIPTION} file. Defaults to \code{FALSE}.}
+\item{skip_prompt}{whether to skip the confirmation prompt to change the \emph{DESCRIPTION} file. Defaults to \code{FALSE}.}
 
-\item{update}{Whether the \emph{DESCRIPTION} file should be updated. Defaults to \code{TRUE}.}
+\item{update}{whether the \emph{DESCRIPTION} file should be updated. Defaults to \code{TRUE}.}
 
-\item{use_version_numbers}{Whether package version numbers should be included in the \emph{DESCRIPTION} file. Defaults to \code{TRUE}.}
+\item{use_version_numbers}{whether package version numbers should be included in the \emph{DESCRIPTION} file. Defaults to \code{TRUE}.}
 
-\item{rversion}{What version of R to be used in the \emph{DESCRIPTION} file.
+\item{rversion}{version of R to be used in the \emph{DESCRIPTION} file.
 Can be \code{DEPENDENCIES_VERSION} for the latest version in the package dependencies,
 \code{LATEST_VERSION} for the current R version or any valid version number.}
 }
@@ -29,6 +29,8 @@ Update the \emph{DESCRIPTION} file with all imported packages stated in the sour
 \dontrun{crossref_description(skip_prompt=TRUE)}
 }
 \seealso{
+\code{\link[base]{numeric_version}}
+
 Other developer functions: \code{\link{generic_implementations}},
   \code{\link{load_packages}},
   \code{\link{update_settings}},

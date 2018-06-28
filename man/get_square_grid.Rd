@@ -7,9 +7,9 @@
 get_square_grid(N, moreRows = TRUE)
 }
 \arguments{
-\item{N}{Number of objects.}
+\item{N}{number of objects.}
 
-\item{moreRows}{Whether there should be more rows than columns if the resulting grid is not square. Defaults to more rows (\code{TRUE}).}
+\item{moreRows}{whether there should be more rows than columns if the resulting grid is not square. Defaults to more rows (\code{TRUE}).}
 }
 \value{
 A named list with elements rows and columns specifying the size of the optimal grid.
