@@ -59,7 +59,6 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     stop(sprintf("The argument '...' contains the following invalid package names: %s.", invalid_names))
 
   #-- Define constants -------
-  blue = make_style("dodgerblue4")
   spaces = paste0(rep(" ",80),collapse = "")
   SUCCESS=      "Loaded succesfully:   "
   UPGRADED=     "Upgraded succesfully: "
@@ -145,11 +144,11 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   pkg_failed = str_wrap(paste(fail,collapse = ", "),width=80-exdent,exdent=exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
   pkg_dupl = str_wrap(paste(names(duplicates),collapse = ", "),width=80-exdent,exdent=exdent) %>% str_replace_all("(\\w+)",underline("\\1"))
 
-  if(length(success) > 0) cat_bullet(green(SUCCESS),pkg_success,"\n",bullet = "tick", bullet_col = "green")
-  if(length(upgraded) > 0) cat_bullet(green(UPGRADED),pkg_upgrade,"\n",bullet = "tick", bullet_col = "green")
-  if(length(upgrade_fail) > 0) cat_bullet(red(UPGRADE_FAIL),pkg_upgrade_failed,"\n", bullet = "cross", bullet_col = "red")
-  if(length(fail) > 0) cat_bullet(red(FAILED),pkg_failed,"\n", bullet = "cross", bullet_col = "red")
-  if(length(duplicates) > 0) cat_bullet(yellow(DUPLICATED),pkg_dupl, "\n", bullet = "warning", bullet_col = "yellow")
+  if(length(success) > 0) cat(green("\u25ba "),SUCCESS,pkg_success,"\n",sep = "")
+  if(length(upgraded) > 0) cat(green("\u25ba "),UPGRADED,pkg_upgrade,"\n",sep="")
+  if(length(upgrade_fail) > 0) cat_bullet(red(UPGRADE_FAIL),pkg_upgrade_failed, bullet = "cross", bullet_col = "red")
+  if(length(fail) > 0) cat_bullet(red(FAILED),pkg_failed, bullet = "cross", bullet_col = "red")
+  if(length(duplicates) > 0) cat_bullet(yellow(DUPLICATED),pkg_dupl, bullet = "warning", bullet_col = "yellow")
 
   if(length(redundant) > 0) {
     txt = sapply(names(redundant), function(x) paste0(underline(x), " (loaded by ", frmt(redundant[[x]]), ")"))
@@ -170,7 +169,7 @@ list_package_collections = function() {
     "ggplot" = c("ggthemes","ggmap","colorspace","reshape2","RColorBrewer","Cairo"),
     "grid" = c("gridExtra","gridGraphics"),
     "survival" = c("rms","mice"),
-    "processing" = c("magrittr","dplyr","stringr","lubridate","tibble","utils","mice", "Hmisc"),
+    "processing" = c("magrittr","dplyr","stringr","lubridate","tibble","utils","mice", "Hmisc","tidyr"),
     "shiny" = c("shiny","shinydashboard","shinyBS","shinyjs","plotly","shinycssloaders","shinyalert","shinythemes"),
     "development" = c("devtools","roxygen2","testthat","utils","rhub","cli","crayon")
   )
@@ -335,8 +334,7 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
           unlist %>% str_split("[ ,]") %>% unlist %>% str_replace_all("[\\'\"]","") %>%
           unique %>% {.[valid_pkgname(.)]} %>% sort
 
-  depen = depen[sapply(depen, function(x) suppressWarnings(suppressPackageStartupMessages(
-    require(x, character.only = TRUE, warn.conflicts = FALSE, quietly = TRUE)))) %>% unname]
+  depen = depen[sapply(depen, function(x) stfu(require(x, character.only = TRUE, warn.conflicts = FALSE, quietly = TRUE))) %>% unname]
 
   pack_version = depen %>% sapply(. %>% packageVersion %>% format) %>% paste0(depen," (>= ",.,")")
   pkgs = if(use_version_numbers) pack_version else depen
@@ -350,21 +348,24 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
              ifelse(identical(rversion, "DEPENDENCIES_VERSION"), dependencies_r, format(rversion)))
   RVersion = sprintf("R (>= %s)",rversion)
 
-  cat_rule(left = "Analyzing package usage", right=package_name, line = "bar4",
-           line_col = "dodgerblue4", col="dodgerblue4")
-  cat_bullet("R version: ",RVersion, background_col = "dodgerblue4", bullet_col = "white", col="white", bullet = "continue")
-  cat_bullet(pkgs, col = "dodgerblue4", bullet_col = "black", bullet = "continue")
+
+  IMPORT = "Imported packages: "
+  RVER =   "R version:         "
+  exdent = nchar(IMPORT)+2
+
+  tab = create_text_table(pkgs, n_cols = ifelse(use_version_numbers, 3, min(5, get_square_grid(length(pkgs))$columns)))
+  pkgs_str = str_wrap(paste(tab %>% str_replace_all(" ","_"),collapse = "\n"),width=1,exdent=exdent) %>%
+             str_replace_all("([[:alpha:]][[:alnum:]\\.]*[[:alnum:]])", ifelse(use_version_numbers, underline("\\1"), "\\1")) %>%
+             str_replace_all("_"," ") %>% str_replace_all(",","")
+  cat(blue("\u25ba "),RVER,RVersion,"\n",blue("\u25ba "),IMPORT,pkgs_str,"\n",sep = "")
 
   if (update && (skip_prompt || menu(c("Yes","No"),title="\nReplace DESCRIPTION imports?") == 1)) {
     desc %>% str_replace("R \\(.*?\\)",RVersion) %>%
              str_replace("(Imports:)(?:(?:.*\n)+?)(.*?:)",sprintf("\\1\n  %s\n\\2",paste0(pkgs,collapse=",\n  "))) %>%
              writeLines("DESCRIPTION")
-    cat("\n")
-    cat_rule(center="DESCRIPTION successfully updated",line="bar1", col="white", background_col = "green")
+    cat(green("\u25ba"),"DESCRIPTION successfully updated.\n\n\n")
   } else
-  cat_bullet("DESCRIPTION was not adjusted.",background_col = "red4", col="white", bullet_col = "white", bullet="warning")
-
-  cat("\n")
+  cat(red(underline(cli::symbol$warning,"DESCRIPTION was not adjusted.\n\n\n")))
   load_packages(depen)
 
   invisible(list(current_r_version=current_r, dependencies_r_version=dependencies_r,

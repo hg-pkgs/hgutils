@@ -276,3 +276,18 @@ stfu = function(expr) {
   sink(ifelse(.Platform$OS.type=="windows", "NUL", "/dev/null"))
   invisible(tryCatch(suppressWarnings(suppressMessages(expr)), finally = sink()))
 }
+
+#' Creates a text table
+#'
+#' @param text a vector of strings
+#' @param n_cols number of resulting columns
+#'
+#' @return A vector of strings per row, forming together a table
+#' @export
+#' @examples cat(create_text_table(c("A","B","C","D","E")),sep = "\n")
+create_text_table = function(text, n_cols = get_square_grid(length(text))$columns) {
+  data = c(text, rep(NA, ceiling(length(text)/n_cols)*n_cols-length(text)))
+  mat = matrix(data = data, ncol = n_cols, byrow = TRUE)
+  max_width = max(nchar(mat), na.rm = TRUE)+2
+  apply(mat, c(1,2), function(x) str_pad(x, max_width, side = "right")) %>% apply(1, function(x) paste0(rm_na(x),collapse = ""))
+}
