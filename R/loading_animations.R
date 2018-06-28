@@ -53,11 +53,6 @@ progressbar = function(format="[[|][|/-\\][ ]]", width = 25, refresh = 200, n_it
   progressbar
 }
 
-#' @param object
-#'
-
-#' @param ...
-#'
 #' @export
 #' @rdname progressbar
 update.progressbar = function(object, progress_ratio = NULL, progress_iter = NULL, ...) {

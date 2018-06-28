@@ -285,6 +285,7 @@ stfu = function(expr) {
 #' @return A vector of strings per row, forming together a table
 #' @export
 #' @examples cat(create_text_table(c("A","B","C","D","E")),sep = "\n")
+#' @importFrom stringr str_pad
 create_text_table = function(text, n_cols = get_square_grid(length(text))$columns) {
   data = c(text, rep(NA, ceiling(length(text)/n_cols)*n_cols-length(text)))
   mat = matrix(data = data, ncol = n_cols, byrow = TRUE)

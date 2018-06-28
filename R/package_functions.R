@@ -42,7 +42,7 @@
 #'
 #' @importFrom utils install.packages capture.output old.packages update.packages compareVersion installed.packages
 #' @importFrom cli rule symbol cat_bullet
-#' @importFrom crayon green red yellow make_style underline
+#' @importFrom crayon green red yellow blue make_style underline
 #' @importFrom dplyr mutate filter
 #' @importFrom magrittr %>% %<>%
 #' @importFrom stringr str_wrap
@@ -306,6 +306,7 @@ generic_implementations = function(generic, remove_default = TRUE) {
 #' @importFrom stringr str_match str_replace str_replace_all str_split
 #' @importFrom utils read.delim packageVersion menu packageDescription
 #' @importFrom cli rule cat_bullet cat_rule
+#' @importFrom crayon blue
 #' @importFrom dplyr last
 #' @importFrom stats update
 #'

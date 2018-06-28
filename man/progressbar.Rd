@@ -39,10 +39,6 @@ is then sufficient to specify the current iteration number.}
 \item{show_percentage}{show percentage progress to the right of the progress bar.}
 
 \item{show_iteration}{show progress as iteration number to the right of the progress bar.}
-
-\item{object}{}
-
-\item{...}{}
 }
 \description{
 Creates an animated progress bar
