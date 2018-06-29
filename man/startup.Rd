@@ -4,12 +4,14 @@
 \alias{startup}
 \title{Cleans R for use}
 \usage{
-startup(clean = TRUE, folder = NULL)
+startup(clean = TRUE, folder = NULL, verbose = TRUE)
 }
 \arguments{
 \item{clean}{whether to remove objects in the global environment, run garbage collection and to clear graphics. Defaults to \code{TRUE}.}
 
 \item{folder}{folder name to set the current working directory.}
+
+\item{verbose}{whether to print informative messages during cleaning.}
 }
 \description{
 Clears workspace, deletes all objects from global environment, clears graphics and (optionally) sets working directory.

@@ -1,10 +1,17 @@
 library(hgutils)
+startup()
 load_package_collection("processing")
 files = list.files("R","\\.[Rr]$", recursive = TRUE, full.names = TRUE)
-content = lapply(files, function(x) paste0(readLines(x), collapse = "\n")) %>% set_names(str_match(files, "/(.*?\\.R)$")[,-1])
+source_code = lapply(files, function(x) paste0(readLines(x), collapse = "\n")) %>% set_names(str_match(files, "/(.*?\\.R)$")[,-1])
 
-processed = lapply(content, function(c) {
-  str_match_all(c,"((?:#'.*?\n)+)[\n]*((?:(?!#').*\n)+)")[[1]][,-1] %>%
-  {cbind(str_match(.[,2], "\\b(.*?)[ ]*=")[,-1], .)} %>%
-  as.data.frame(stringsAsFactors=FALSE) %>% set_names(c("func_name","doc","function"))
-})
+functions = lapply(names(source_code), function(file_name) {
+  code_pattern = "((?:#'.*?\n)+)[\n]*((?:(?!#').*\n)*(?!#').*\\})"
+  file_content = source_code[file_name][[1]]
+  if(str_detect(file_content, code_pattern)) {
+    str_match_all(file_content, code_pattern)[[1]][,-1] %>%
+    {cbind("function_name" = str_match(.[,2], "\\b(.*?)[ ]*=")[,-1], "file_name" = file_name, "documentation"=.[,1], "source"=.[,2])} %>%
+    apply(1, as.list)
+  } else list()
+}) %>% set_names(names(source_code))
+
+single_list = unlist(functions, recursive=FALSE) %>% set_names(., sapply(., function(x) x$function_name))

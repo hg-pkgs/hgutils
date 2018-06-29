@@ -107,7 +107,7 @@ render.progressbar = function(object, show_percentage = FALSE, show_iteration = 
   paste0(progressbar$start, loaded, animation, unloaded, progressbar$end, progress_text)
 }
 
-#' Creates an animated progress bar
+#' Creates an animated spinner
 #'
 #' @param format character vector containing the format of the animation. See 'details' for more information.
 #' @param refresh refresh rate in milliseconds of the animation.

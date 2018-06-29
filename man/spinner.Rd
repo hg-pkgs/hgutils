@@ -4,7 +4,7 @@
 \alias{spinner}
 \alias{update.spinner}
 \alias{render.spinner}
-\title{Creates an animated progress bar}
+\title{Creates an animated spinner}
 \usage{
 spinner(format = "|/-\\\\", refresh = 200)
 
@@ -22,7 +22,7 @@ spinner(format = "|/-\\\\", refresh = 200)
 \item{...}{further arguments passed to or from other methods.}
 }
 \description{
-Creates an animated progress bar
+Creates an animated spinner
 }
 \details{
 The format of the spinner simply consists of the characters in order which the spinner cycles through.

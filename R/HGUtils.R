@@ -3,22 +3,32 @@
 #'
 #' @param clean whether to remove objects in the global environment, run garbage collection and to clear graphics. Defaults to \code{TRUE}.
 #' @param folder folder name to set the current working directory.
+#' @param verbose whether to print informative messages during cleaning.
 #'
 #' @return NULL
 #'
 #' @examples \dontrun{startup()}
 #' @export
 #' @importFrom magrittr %>%
+#' @importFrom crayon red blue
 #' @family initialization functions
-startup = function(clean = TRUE, folder = NULL) {
+startup = function(clean = TRUE, folder = NULL, verbose=TRUE) {
   if (clean) {
-    rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
+    objects = ls(pos = .GlobalEnv)
+    rm(list = objects, envir = .GlobalEnv)
+    if(verbose) cat(blue("\u25ba"), "Removed",length(objects),"objects from the global environment.\n")
     gc()
 
     if (requireNamespace("grDevices", quietly = TRUE)) {
-      grDevices::graphics.off()
+      n_devices = length(grDevices::dev.list())
+      if(n_devices > 0) {
+        grDevices::graphics.off()
+        if(verbose) cat(blue("\u25ba"), "Cleared",n_devices,"graphical devices.\n")
+      } else {
+        if(verbose) cat(blue("\u25ba"), "No graphical devices are in use.\n")
+      }
     } else {
-      cat(yellow("\u25ba"), "Could not clear graphics. Consider installing package 'grDevices'.")
+      cat(red("\u25ba"), "Could not clear graphics. Consider installing package 'grDevices'.\n")
     }
   }
 
