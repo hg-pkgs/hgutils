@@ -1,7 +1,10 @@
 #' Cleans R for use
-#' @description Clears workspace, deletes all objects from global environment, clears graphics and (optionally) sets working directory.
+#' @description Clears workspace, deletes all objects from global environment,
+#' clears graphics and (optionally) sets working directory.
 #'
-#' @param clean whether to remove objects in the global environment, run garbage collection and to clear graphics. Defaults to \code{TRUE}.
+#' @param clean whether to remove objects in the global environment,
+#' run garbage collection and to clear graphics. Defaults to \code{TRUE}.
+#'
 #' @param folder folder name to set the current working directory.
 #' @param verbose whether to print informative messages during cleaning.
 #'
@@ -16,26 +19,27 @@ startup = function(clean = TRUE, folder = NULL, verbose=TRUE) {
   if (clean) {
     objects = ls(pos = .GlobalEnv)
     rm(list = objects, envir = .GlobalEnv)
-    if(verbose) cat(blue("\u25ba"), "Removed",length(objects),"objects from the global environment.\n")
+    if(verbose) cat(blue(" \u25ba"), "Removed",length(objects),
+                    "objects from the global environment.\n")
     gc()
 
     if (requireNamespace("grDevices", quietly = TRUE)) {
       n_devices = length(grDevices::dev.list())
       if(n_devices > 0) {
         grDevices::graphics.off()
-        if(verbose) cat(blue("\u25ba"), "Cleared",n_devices,"graphical devices.\n")
+        if(verbose) cat(blue(" \u25ba"), "Cleared",n_devices,"graphical devices.\n")
       } else {
-        if(verbose) cat(blue("\u25ba"), "No graphical devices are in use.\n")
+        if(verbose) cat(blue(" \u25ba"), "No graphical devices are in use.\n")
       }
     } else {
-      cat(red("\u25ba"), "Could not clear graphics. Consider installing package 'grDevices'.\n")
+      cat(red(" \u25ba"), "Could not clear graphics. Consider installing package 'grDevices'.\n")
     }
   }
 
   if (!is.null(folder)) {
     ifelse(dir.exists(folder), setwd(folder), warning("Argument 'folder' does not refer to an existing directory."))
   }
-  cat(green("\u25ba"), "Done.")
+  cat(green(" \u25ba"), "Done.")
 }
 
 #' Create nice axis breaks for plots
@@ -65,6 +69,7 @@ startup = function(clean = TRUE, folder = NULL, verbose=TRUE) {
 #' @export
 #' @importFrom magrittr %>%
 #' @family break functions
+#' @export
 get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, multiples_only=FALSE, include_bounds=TRUE) {
   if (!is.vector(limits) || length(limits) > 2 || !is.numeric(limits))
     stop("Argument 'limits' must be a scalar or numeric vector.")
@@ -216,7 +221,7 @@ frmt = function(x, show_class = FALSE, use_quotes=TRUE) {
 #'
 #' @return Vector without \code{NA}
 #' @export
-#'
+#' @family NA functions
 #' @examples
 #' rm_na(c(1,2,NA,54))
 rm_na = function(x) {
@@ -229,7 +234,7 @@ rm_na = function(x) {
 #'
 #' @return A \code{data.frame} with rows removed that only contain \code{NA}.
 #' @export
-#'
+#' @family NA functions
 #' @examples
 #' data <- rbind(c(1,2,3), c(1, NA, 4), c(4,6,7), c(NA, NA, NA), c(4, 8, NA))
 #' rm_empty_rows(data)
@@ -252,46 +257,4 @@ rm_empty_rows = function(dataframe) {
 stfu = function(expr) {
   sink(ifelse(.Platform$OS.type=="windows", "NUL", "/dev/null"))
   invisible(tryCatch(suppressWarnings(suppressMessages(expr)), finally = sink()))
-}
-
-#' Creates a text table
-#'
-#' @param compact whether to take only the necessary space (\code{TRUE}) or to fill out the table_width (\code{FALSE}).
-#' @inheritParams wrap_text_table
-#'
-#' @return A vector of strings per row, forming together a table.
-#' @export
-#' @examples cat(create_text_table(LETTERS),sep = "\n")
-#' @importFrom stringr str_pad
-#' @seealso \code{\link{get_square_grid}}.
-create_text_table = function(string, table_width = 80, compact = TRUE) {
-  max_width = max(nchar(string))+2
-  n_cols = min(get_square_grid(length(string))$columns, floor(table_width/max_width))
-
-  data = c(string, rep(NA, ceiling(length(string)/n_cols)*n_cols - length(string)))
-  mat = matrix(data = data, ncol = n_cols, byrow = TRUE)
-  if(!compact) max_width = floor(table_width/n_cols)
-  apply(mat, c(1,2), function(x) str_pad(x, max_width, side = "right")) %>% apply(1, function(x) paste0(rm_na(x),collapse = ""))
-}
-
-#' Wrap string table
-#'
-#' @param min_size minimal size where a table is constructed, otherwise elements are concatenated with ', '.
-#' @param table_width table character width.
-#' @inheritParams stringr::str_wrap
-#' @export
-#'
-#' @importFrom magrittr %>%
-#' @importFrom stringr str_replace_all str_wrap
-#'
-#' @return A character vector of a wrapped table where rows are separated by the newline character.
-#' @examples cat(wrap_text_table(LETTERS, exdent=0))
-#' @seealso \code{\link[stringr]{str_wrap}}, \code{\link{get_square_grid}}.
-wrap_text_table = function(string, exdent, min_size = 9, table_width = 80-exdent) {
-  if (length(string) >= min_size) {
-    tab = create_text_table(string, table_width = table_width)
-    str_wrap(paste(tab %>% str_replace_all(" ","@_@"),collapse = "\n"), width=1, exdent=exdent) %>% str_replace_all("@_@"," ")
-  } else {
-    str_wrap(paste(string, collapse = ", "), width=80-exdent, exdent=exdent)
-  }
 }
