@@ -9,20 +9,23 @@
 #' @examples \dontrun{startup()}
 #' @export
 #' @importFrom magrittr %>%
-#' @importFrom grDevices graphics.off
 #' @family initialization functions
 startup = function(clean = TRUE, folder = NULL) {
-  if (clean)
-  {
+  if (clean) {
     rm(list = ls(pos = .GlobalEnv), envir = .GlobalEnv)
     gc()
-    graphics.off()
+
+    if (requireNamespace("grDevices", quietly = TRUE)) {
+      grDevices::graphics.off()
+    } else {
+      cat(yellow("\u25ba"), "Could not clear graphics. Consider installing package 'grDevices'.")
+    }
   }
 
-  if (!is.null(folder))
-  {
+  if (!is.null(folder)) {
     ifelse(dir.exists(folder), setwd(folder), warning("Argument 'folder' does not refer to an existing directory."))
   }
+  cat(green("\u25ba"), "Done.")
 }
 
 #' Create nice axis breaks for plots
@@ -51,7 +54,6 @@ startup = function(clean = TRUE, folder = NULL) {
 #'
 #' @export
 #' @importFrom magrittr %>%
-#' @importFrom numbers divisors
 #' @family break functions
 get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, multiples_only=FALSE, include_bounds=TRUE) {
   if (!is.vector(limits) || length(limits) > 2 || !is.numeric(limits))
@@ -59,11 +61,12 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, multiples_only
   if (length(limits) == 1) {xmin = 0; xmax = limits} else {xmin = limits[1]; xmax = limits[2]}
   if (xmax < xmin)
     stop("In argument 'limits', 'xmax' must be at least as large as 'xmin'.")
+  stopifnot(N >= 1)
   xmax = xmax - xmin
 
   lp = function(d) (xmax/(max_breaks*d)) %>% log10 %>% ceiling %>% ifelse(int_only, max(., 0), .)
   up = function(d) (xmax/d)              %>% log10 %>% floor   %>% ifelse(int_only, max(., 0), .)
-  intervals = {if(multiples_only) N else divisors(N)} %>% sapply(. %>% {. * 10^(lp(.):up(.))}) %>% unlist %>% unique %>% sort
+  intervals = {if(multiples_only) N else (1:N)[(N%%1:N) == 0]} %>% sapply(. %>% {. * 10^(lp(.):up(.))}) %>% unlist %>% unique %>% sort
   selected = intervals[xmax/intervals <= max_breaks][1]
 
   sq = seq(0, ceiling(xmax/selected)*selected, selected) + floor(xmin/selected)*selected
@@ -222,43 +225,6 @@ rm_na = function(x) {
 #' rm_empty_rows(data)
 rm_empty_rows = function(dataframe) {
   dataframe[rowSums(is.na(dataframe)) != ncol(dataframe),]
-}
-
-#' Discretize continuous numbers
-#'
-#' @param x vector of numbers.
-#' @param min_size minimum size of bins at the edges. Any bins smaller than this size are combined.
-#' @inheritDotParams get_breaks -limits -include_bounds
-#' @details The function \code{get_breaks} is called to create the boundaries between groups.
-#' It is called on default with \code{limits = range(x)} and with \code{include_bounds = FALSE}.
-#' This behavior may be overridden with the \code{...} argument, although it is advised not to do so to avoid empty groups.
-#'
-#' \code{NA} values are preserved in the result.
-#'
-#' @return A factor with the same length as \code{x}, with labels indicating bins.
-#' @export
-#'
-#' @examples
-#' ages = round(rnorm(1000,50,10)); ages[1] = NA
-#' discretize_numbers(ages)
-#' @importFrom magrittr %>%
-#' @importFrom dplyr last
-discretize_numbers = function(x, min_size = 1, ...) {
-  if (!is.numeric(x) & !is.logical(x))
-    stop(sprintf("Argument 'x' must be a numeric or logical vector but is of type %s.", frmt(class(x))))
-
-  if(length(unique(x)) <= 3)
-    return(factor(x))
-
-  breaks_args = list(...)
-  if (!"limits" %in% names(breaks_args)) breaks_args = c(breaks_args, list(limits=range(x,na.rm = TRUE)))
-  if (!"include_bounds" %in% names(breaks_args)) breaks_args = c(breaks_args, list(include_bounds=FALSE))
-  br = do.call(get_breaks, breaks_args) %>%
-       setdiff(., .[sapply(., function(y) sum(x < y, na.rm = TRUE) < min_size)]) %>%
-       setdiff(., .[sapply(., function(y) sum(x >= y, na.rm = TRUE) < min_size)])
-
-  labels = c(paste0("<",br[1]), paste0(br[-length(br)], "-",br[-1]), paste0(">=",last(br)))
-  cut(x, breaks=c(-Inf,br,Inf), right=FALSE, labels = labels)
 }
 
 #' S.T.F.U.: Stop Text From turning Up

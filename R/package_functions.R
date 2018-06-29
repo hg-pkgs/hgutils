@@ -41,9 +41,7 @@
 #' @family developer functions
 #'
 #' @importFrom utils install.packages old.packages update.packages compareVersion installed.packages
-#' @importFrom cli rule
 #' @importFrom crayon green red yellow blue underline
-#' @importFrom dplyr filter
 #' @importFrom magrittr %>% %<>%
 load_packages = function(..., install_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
 
@@ -69,11 +67,12 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   redundant = redundant_packages(packages)
   success = c(); fail=c(); upgraded=c(); upgrade_fail=c()
   L = length(packages)
-  progressbar = progressbar(format=">[*][][ ]<",refresh = 0.3, width = min(max(10,L),20), n_iterations = L) #"\u258f[\u2589][][\u2581]\u2595"
-  #install_packages = TRUE; force_install = FALSE; upgrade=FALSE
+  progressbar = progressbar(format=">[*][][ ]<",refresh = 0.3, width = min(max(10,L),20), n_iterations = L)
 
+  #-- show title -------
   name = paste("hgutils", packageVersion("hgutils"))
-  cat(rule(left = sprintf("Loading packages (total: %s packages)",length(packages)), right = blue(name), line = "bar4"),"\n")
+  left = sprintf("Loading packages (total: %s package%s)",length(packages), ifelse(length(packages)>1,"s",""))
+  cat("==", left, paste0(rep("=",80-nchar(left)-nchar(name)-8),collapse = ""), blue(name),"==\n")
 
   progressbar = update.progressbar(progressbar, progress_iter=0)
   cat("\r",render(progressbar)," Retrieving package info...",spaces, sep = "")
@@ -81,7 +80,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   inst = installed.packages()
   outdated_pkgs = old.packages(instPkgs = inst[row.names(inst) %in% packages,, drop=FALSE]) %>% data.frame(stringsAsFactors=FALSE)
   outdated_pkgs$Installed = sapply(outdated_pkgs$Package, function(x) packageVersion(x) %>% format)
-  outdated_pkgs %<>% filter(numeric_version(.$Installed) < numeric_version(.$ReposVer))
+  outdated_pkgs %<>% {.[numeric_version(.$Installed) < numeric_version(.$ReposVer)]}
 
   data_acc = data.frame(package=character(),action=character(),result=logical()); acc_i = 1
   for (p in 1:length(packages)) {
@@ -142,18 +141,18 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   pkg_upgrade = wrap_text_table(upgraded, exdent)
   pkg_upgrade_failed = wrap_text_table(upgrade_fail, exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
   pkg_failed = wrap_text_table(fail, exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
-  pkg_dupl = wrap_text_table(names(duplicates), exdent) %>% str_replace_all("(\\w+)",underline("\\1"))
+  pkg_dupl = wrap_text_table(names(duplicates), exdent) %>% str_replace_all("(\\w+)",yellow(underline("\\1")))
 
   if(length(success) > 0) cat(green("\u25ba "),SUCCESS,pkg_success,"\n",sep = "")
   if(length(upgraded) > 0) cat(green("\u25ba "),UPGRADED,pkg_upgrade,"\n",sep="")
   if(length(upgrade_fail) > 0) cat(red("\u25ba", UPGRADE_FAIL),pkg_upgrade_failed,"\n",sep="")
   if(length(fail) > 0) cat(red("\u25ba",FAILED),pkg_failed,"\n",sep="")
-  if(length(duplicates) > 0) cat(yellow("\u25ba", DUPLICATED),pkg_dupl,"\n",sep="")
+  if(length(duplicates) > 0) cat(yellow("\u25ba "), DUPLICATED,pkg_dupl,"\n",sep="")
 
   if(length(redundant) > 0) {
-    txt = sapply(names(redundant), function(x) paste0(underline(x), " (loaded by ", frmt(redundant[[x]]), ")"))
+    txt = sapply(names(redundant), function(x) paste0(yellow(underline(x)), " (loaded by ", frmt(redundant[[x]]), ")"))
     spaces = paste0(rep(" ",nchar(REDUNDANT)+2),collapse = "")
-    cat(yellow("\u25ba", REDUNDANT), paste0(txt,collapse = paste0("\n",spaces)),"\n", sep="")
+    cat(yellow("\u25ba "), REDUNDANT, paste0(txt,collapse = paste0("\n",spaces)),"\n", sep="")
   }
   cat(blue("\u25ba"),"Done.\n")
   invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
@@ -166,8 +165,8 @@ list_package_collections = function() {
   list(
     "data_import" = c("readxl","writexl","foreign","utils","haven","sas7bdat","Hmisc"),
     "image_import" = c("png","bmp","rtiff","rgdal"),
-    "ggplot" = c("ggthemes","ggmap","colorspace","reshape2","RColorBrewer","Cairo"),
-    "grid" = c("gridExtra","gridGraphics"),
+    "ggplot" = c("ggthemes","ggmap","colorspace","reshape2","RColorBrewer","Cairo","grDevices"),
+    "grid" = c("gridExtra","gridGraphics","grDevices"),
     "survival" = c("rms","mice"),
     "processing" = c("magrittr","dplyr","stringr","lubridate","tibble","utils","mice", "Hmisc","tidyr"),
     "shiny" = c("shiny","shinydashboard","shinyBS","shinyjs","plotly","shinycssloaders","shinyalert","shinythemes"),
@@ -321,9 +320,9 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
           sapply(. %>% read.delim(sep = "\n", stringsAsFactors = FALSE, quote="") %>% unlist %>%
                  str_match(., paste0("#'[ ]*@import[ ]+([[:alnum:] \\.]*)$|",
                            paste0("#\'[ ]*@importFrom[ ]+(",pkg_name_regex,")|"),
-                 paste0("[^#]*?(?:library|require)\\((",pkg_name_regex,")[ ]*[,\\)]|"),
-                 paste0("[^#]*?\\((",pkg_name_regex,")::[:]?[^(:)]+|"),
-                 "[^#]*?load_packages\\((?:c\\()?([[:alnum:] ,\"\\'\\.]*?)\\).*")) %>% .[, -1] %>% rm_na) %>%
+                 paste0("^[^#]*?(?:library|require)\\((",pkg_name_regex,")[ ]*[,\\)]|"),
+                 #paste0("[^#]*?\\((",pkg_name_regex,")::[:]?[^(:)]+|"),
+                 "^[^#]*?load_packages\\((?:c\\()?([[:alnum:] ,\"\\'\\.]*?)\\).*")) %>% .[, -1] %>% rm_na) %>%
           unlist %>% str_split("[ ,]") %>% unlist %>% str_replace_all("[\\'\"]","") %>%
           unique %>% {.[valid_pkgname(.)]} %>% sort
 
@@ -346,7 +345,7 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
   RVER =   "R version:         "
   exdent = nchar(IMPORT)+2
 
-  tab = wrap_text_table(pack_version, exdent=exdent)
+  tab = wrap_text_table(pack_version, exdent=exdent, min_size = 1)
   pkgs_str = tab %>%
              str_replace_all("([[:alpha:]][[:alnum:]\\.]*[[:alnum:]])", underline("\\1")) %>%
              str_replace_all("_"," ") %>% str_replace_all(",","")

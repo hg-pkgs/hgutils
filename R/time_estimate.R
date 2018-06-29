@@ -10,9 +10,6 @@
 #' The attribute \code{survival} is added to the result and set to the argument survival probability.
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr rename
-#' @importFrom survival survfit
-#' @importFrom rms survest
 #' @export
 #' @examples
 #' library(rms)
@@ -46,7 +43,8 @@ time_estimate.survRes = function(fit, survival = 0.5, ...) {
                   function(x) fit$time[fit[[x]][, i] < s][1])})) %>%
       do.call(rbind,.)}) %>% {do.call(rbind, .)}
     }
-    results = data.frame(results) %>% rename(time = "surv")
+    results = data.frame(results)
+    names(results)[names(results)=="surv"] = "time"
     attr(results, "survival") = survival
     results
 }
@@ -72,19 +70,22 @@ time_estimate.list = function(fit, survival = 0.5, ...) {
 #' @describeIn time_estimate A \code{\link[survival]{coxph}} object.
 #' @export
 time_estimate.coxph = function(fit, survival = 0.5, newdata = NULL, ...) {
+    if (!requireNamespace("rms", quietly = TRUE) || !requireNamespace("survival", quietly = TRUE)) {
+      stop("Packages \"rms\" and \"survival\" are needed for this function to work. Please install it.", call. = FALSE)
+    }
     if (is.null(newdata)) newdata = fit$means
 
     SF = if ("x" %in% names(fit) && "y" %in% names(fit)) {
-        survfit(fit, newdata = newdata)
+        survival::survfit(fit, newdata = newdata)
     } else if ("surv" %in% names(fit)) {
-        se = suppressWarnings(survest(fit, times = fit$time[-1], newdata = newdata))
+        se = suppressWarnings(rms::survest(fit, times = fit$time[-1], newdata = newdata))
         if (!is.null(dim(se$surv)))
         {
             for (n in c("surv", "lower", "upper")) se[[n]] = t(se[[n]])
         }  #make it consistent with survfit by transposing data
         se
     } else {
-        stop("Argument 'fit' must specify either both x and y or surv. Rerun fit with x=TRUE and y=TRUE or surv=TRUE.")
+      stop("Argument 'fit' must specify either both x and y or surv. Rerun fit with x=TRUE and y=TRUE or surv=TRUE.")
     }
 
     time_estimate(SF, survival = survival)

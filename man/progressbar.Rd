@@ -19,7 +19,7 @@ render(object, ...)
   show_iteration = FALSE, ...)
 }
 \arguments{
-\item{format}{character vector containing format of the resulting progress bar. See 'details' for more information.}
+\item{format}{character vector containing the format of the animation. See 'details' for more information.}
 
 \item{width}{progress bar width.}
 
@@ -28,9 +28,9 @@ render(object, ...)
 \item{n_iterations}{optional parameter, specifies the number of total iterations. When updating the progress bar it
 is then sufficient to specify the current iteration number.}
 
-\item{object}{animated object (such as a progress bar).}
+\item{object}{animated progress bar.}
 
-\item{progress_ratio}{proportion progress the bar should be set at.}
+\item{progress_ratio}{proportion progress the progress bar should be set at.}
 
 \item{progress_iter}{current iteration number if \code{n_iterations} is not \code{NULL}.}
 
@@ -56,9 +56,9 @@ The format follows the following regular expression: \code{^.*?[.?][.*?][.?].*$}
 }
 \examples{
 \dontrun{
-#simple progressbar
+# simple progressbar
 bar = progressbar(format = "[[|][|/-\\\\][ ]]")
-#fancy progressbar using UTF-8 codes
+# fancy progressbar using UTF-8 codes
 bar2 = progressbar(format="\\u25ba[\\u2589][\\u2580\\u2584][\\u3000]\\u25c4")
 n_operations = 1000
 

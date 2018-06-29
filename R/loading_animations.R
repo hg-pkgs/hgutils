@@ -1,13 +1,13 @@
 #' Creates an animated progress bar
 #'
-#' @param format character vector containing format of the resulting progress bar. See 'details' for more information.
+#' @param format character vector containing the format of the animation. See 'details' for more information.
 #' @param width progress bar width.
 #' @param n_iterations optional parameter, specifies the number of total iterations. When updating the progress bar it
 #' is then sufficient to specify the current iteration number.
 #' @param refresh refresh rate in milliseconds of the animation.
 #' @param ... further arguments passed to or from other methods.
-#' @param object animated object (such as a progress bar).
-#' @param progress_ratio proportion progress the bar should be set at.
+#' @param object animated progress bar.
+#' @param progress_ratio proportion progress the progress bar should be set at.
 #' @param progress_iter current iteration number if \code{n_iterations} is not \code{NULL}.
 #' @param show_percentage whether to show percentage progress to the right of the progress bar.
 #' @param show_iteration whether to show progress as iteration number to the right of the progress bar.
@@ -22,9 +22,9 @@
 #' }
 #' The format follows the following regular expression: \code{^.*?[.?][.*?][.?].*$}
 #' @examples \dontrun{
-#' #simple progressbar
+#' # simple progressbar
 #' bar = progressbar(format = "[[|][|/-\\][ ]]")
-#' #fancy progressbar using UTF-8 codes
+#' # fancy progressbar using UTF-8 codes
 #' bar2 = progressbar(format="\u25ba[\u2589][\u2580\u2584][\u3000]\u25c4")
 #' n_operations = 1000
 #'
@@ -49,7 +49,7 @@ progressbar = function(format="[[|][|/-\\][ ]]", width = 25, refresh = 200, n_it
   progressbar = list(width=width, start=matches[1], ls=matches[2], anim=str_split(matches[3],"")[[1]],
                 us=matches[4], end=matches[5], speed=refresh, index=1,
                 time=Sys.time(), progress = 0, n_iterations = n_iterations, iteration = NULL)
-  class(progressbar) = "progressbar"
+  class(progressbar) = c("progressbar","progress")
   progressbar
 }
 
@@ -105,4 +105,50 @@ render.progressbar = function(object, show_percentage = FALSE, show_iteration = 
   unloaded = paste0(rep(progressbar$us, max(progressbar$width-loaded_width-animation_width,0)), collapse = "")
   animation = paste0(rep(progressbar$anim[progressbar$index],animation_width), collapse = "")
   paste0(progressbar$start, loaded, animation, unloaded, progressbar$end, progress_text)
+}
+
+#' Creates an animated progress bar
+#'
+#' @param format character vector containing the format of the animation. See 'details' for more information.
+#' @param refresh refresh rate in milliseconds of the animation.
+#' @param ... further arguments passed to or from other methods.
+#' @param object animated spinner.
+#' @export
+#' @details The format of the spinner simply consists of the characters in order which the spinner cycles through.
+#' @examples \dontrun{
+#' sp = spinner("|/-\\")
+#' n_operations = 100
+#'
+#' for(i in 1:n_operations) {
+#'   sp = update(sp)
+#'   cat("\r", render(sp))
+#'   Sys.sleep(0.01)
+#' }}
+spinner = function(format="|/-\\", refresh = 200) {
+  stopifnot(refresh > 0)
+
+  spinner = list(anim=str_split(format,"")[[1]], speed=refresh, index=1, time=Sys.time())
+  class(spinner) = c("spinner","progress")
+  spinner
+}
+
+#' @export
+#' @rdname spinner
+update.spinner = function(object, ...) {
+  spinner = object
+
+  if (Sys.time() >= spinner$time+spinner$speed/1000)
+  {
+    spinner$time = Sys.time()
+    spinner$index = (spinner$index %% length(spinner$anim)) + 1
+  }
+  spinner
+}
+
+#' @rdname spinner
+#' @export
+render.spinner = function(object, ...) {
+  spinner = object
+
+  spinner$anim[spinner$index]
 }
