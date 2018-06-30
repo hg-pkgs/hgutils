@@ -32,9 +32,11 @@ for (fname in names(source_code)) {
   writeClipboard(B[[1]])
 
   parsed=getParseData(parse(text=single_list$load_packages))
-  parsed$text[parsed$token %in% c("SYMBOL_FUNCTION_CALL","SPECIAL")] %>% unique %>% setdiff(names(single_list)) %>% sort
+  used_funcs = parsed$text[parsed$token %in% c("SYMBOL_FUNCTION_CALL","SPECIAL")] %>% unique %>% setdiff(names(single_list)) %>% sort
+  lsf.str(pos=which(search()=="package:hgutils"))
 }
 
 #hadley styles
 #check if imports occur in code
 # check if code occurs in imports
+

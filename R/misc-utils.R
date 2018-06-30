@@ -115,9 +115,21 @@ ggplot_breaks = function(...) {
 #'         with the minimum allowed distance between subsequent values.
 #' @export
 #'
-#' @examples separate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
-#' @importFrom limSolve lsei
+#' @examples \dontrun{separate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)}
 separate_values = function(X, distance = 0.05, min = 0, max = 1) {
+  if(!requireNamespace("limSolve", quietly = TRUE)) {
+    cat(.bullets()$warn,"Package ",underline("limSolve")," is required to run 'separate_values'. However, it is not installed.\n\n",sep = "")
+    res = readline("Would you like to install it (Y/N)? ")
+    if (str_detect(res, "[Yy]")) {
+      load_packages("limSolve")
+    }
+
+    if(!requireNamespace("limSolve", quietly = TRUE)) {
+      cat(.bullets()$fail,"Please install 'limSolve' before calling 'separate_values'.",sep = "")
+      invisible(return())
+    }
+  }
+
   if (!is.vector(X) || !is.numeric(X))
       stop(sprintf("Argument 'X' must be a numerical vector of real numbers, but is %s.",frmt(X)))
   if (!is.numeric(distance))
@@ -154,7 +166,7 @@ separate_values = function(X, distance = 0.05, min = 0, max = 1) {
   H = c(rep(c(min, -max), N), distance)  #solution vectors
 
   # constraint on limits, spacing and distance to original value
-  lsei(A = diag(N), B = X, G = rbind(upper, lower), H = H, type = 2)$X
+  limSolve::lsei(A = diag(N), B = X, G = rbind(upper, lower), H = H, type = 2)$X
 }
 
 #' Specifies a square grid which fits N objects.
@@ -187,6 +199,22 @@ get_square_grid = function(N, moreRows = TRUE) {
 #' @export
 rnd_dbl = function(dbl, digits = 3) {
   sprintf(paste0("%.", digits, "f"), round(dbl, digits))
+}
+
+#' Format time duration
+#'
+#' @param start,end datetime objects as obtained via \code{\link[base]{Sys.time}}
+#'
+#' @return A string representation of the duration.
+#' @export
+#'
+#' @importFrom magrittr %>% multiply_by
+format_duration = function(start, end) {
+  ms = difftime(end,start,units="secs") %>% as.double %>% multiply_by(1000) %>% round
+  if (ms < 1000) return(sprintf("[%s ms.]", rnd_dbl(ms, 0)))
+  if (ms < 60000) return(sprintf("[%s sec.]", rnd_dbl(ms/1000, 2)))
+  if (ms < 86400000) return(sprintf("[~%s min.]", rnd_dbl(ms/60000, 1)))
+  return(sprintf("[~%s days]", rnd_dbl(ms/86400000, 1)))
 }
 
 #' Format variable value
@@ -257,4 +285,20 @@ rm_empty_rows = function(dataframe) {
 stfu = function(expr) {
   sink(ifelse(.Platform$OS.type=="windows", "NUL", "/dev/null"))
   invisible(tryCatch(suppressWarnings(suppressMessages(expr)), finally = sink()))
+}
+
+#' Creates a title bar
+#'
+#' @param left The text on the left side of the title bar, may be \code{NULL}
+#'
+#' @return A string vector of a title bar of 80 characters.
+.get_title_bar = function(left = NULL) {
+  pack_name = ifelse(requireNamespace("methods", quietly = TRUE), methods::getPackageName(), "hgutils")
+
+  name = pack_name %>% paste(packageVersion(.))
+  if (is.null(left)) {
+    paste(paste0(rep("=",80-nchar(name)-4), collapse = ""), .cmess(name), "==")
+  } else {
+    paste("==", left, paste0(rep("=",80-nchar(left)-nchar(name)-8),collapse = ""), .cmess(name), "==")
+  }
 }

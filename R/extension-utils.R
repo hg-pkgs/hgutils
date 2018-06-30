@@ -118,12 +118,16 @@ generic_implementations = function(generic, remove_default = TRUE) {
 #' @family developer functions
 #' @seealso \code{\link[base]{numeric_version}}
 crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numbers=TRUE, rversion = "DEPENDENCIES_VERSION") {
+  start = Sys.time()
+  bull = .bullets()
   if (!dir.exists("R/") || !file.exists("DESCRIPTION"))
     stop("Working directory not set to an R project folder.")
 
   rversion_const = c("DEPENDENCIES_VERSION","LATEST_VERSION")
   if (!rversion %in% rversion_const && !str_detect(rversion,"[[:digit:]]+([\\.-][[:digit:]]+)+"))
     stop(sprintf("Argument 'rversion' must be either a valid version number or one of %s.",frmt(rversion_const)))
+
+  cat(.get_title_bar("Updating DESCRIPTION"),"\n")
 
   desc = readLines("DESCRIPTION") %>% paste0(collapse = "\n")
   package_name = desc %>% {str_match(., "Package:[ ]*(.*?)\n(?:.*\n)+Version:[ ]*(.*?)\n")[-1]} %>% paste(collapse = " ")
@@ -134,10 +138,11 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
   depen = list.files("R/", ".*\\.[rR]$", full.names = TRUE, recursive = TRUE) %>%
           sapply(. %>% read.delim(sep = "\n", stringsAsFactors = FALSE, quote="") %>% unlist %>%
                  str_match(., paste0("#'[ ]*@import[ ]+([[:alnum:] \\.]*)$|",
-                           paste0("#\'[ ]*@importFrom[ ]+(",pkg_name_regex,")|"),
-                 paste0("^[^#]*?(?:library|require)\\((",pkg_name_regex,")[ ]*[,\\)]|"),
+                           paste0("#\'[ ]*@importFrom[ ]+(",pkg_name_regex,")|"))) %>%
+                 #paste0("^[^#]*?(?:library|require)\\((",pkg_name_regex,")[ ]*[,\\)]|"),
                  #paste0("[^#]*?\\((",pkg_name_regex,")::[:]?[^(:)]+|"),
-                 "^[^#]*?load_packages\\((?:c\\()?([[:alnum:] ,\"\\'\\.]*?)\\).*")) %>% .[, -1] %>% rm_na) %>%
+                 #"^[^#]*?load_packages\\((?:c\\()?([[:alnum:] ,\"\\'\\.]*?)\\).*")
+                   .[, -1] %>% rm_na) %>%
           unlist %>% str_split("[ ,]") %>% unlist %>% str_replace_all("[\\'\"]","") %>%
           unique %>% {.[valid_pkgname(.)]} %>% sort
 
@@ -164,16 +169,17 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
   pkgs_str = tab %>%
              str_replace_all("([[:alpha:]][[:alnum:]\\.]*[[:alnum:]])", underline("\\1")) %>%
              str_replace_all("_"," ") %>% str_replace_all(",","")
-  cat(blue(" \u25ba "),RVER,RVersion,"\n",blue(" \u25ba "),IMPORT,pkgs_str,"\n",sep = "")
+  cat(bull$numb,RVER,.cnumb(RVersion),"\n",bull$mess,IMPORT,pkgs_str,"\n",sep = "")
 
   ## Replace DESCRIPTION file #####################
   desc %>% str_replace("R \\(.*?\\)",RVersion) %>%
            str_replace("(Imports:)(?:(?:.*\n)+?)(.*?:)",sprintf("\\1\n  %s\n\\2",paste0(pkgs,collapse=",\n  "))) %>%
            writeLines("DESCRIPTION")
-  cat(green("\n \u25ba"),"DESCRIPTION successfully updated.\n")
+  cat("\n",bull$succ,"DESCRIPTION successfully updated.\n",sep = "")
 
   depen = stfu({Filter(function(x) !require(x, character.only = TRUE), depen)}) #check if needs installation
-  if (length(depen) > 0) {cat("\n\n"); load_packages(depen)} else cat(blue(" \u25ba"),"Done.\n")
+  end = Sys.time()
+  if (length(depen) > 0) {cat("\n\n"); load_packages(depen)} else cat(bull$mess,"Done. ",.cnumb(format_duration(start,end)),"\n",sep="")
 
   invisible(list(current_r_version=current_r, dependencies_r_version=dependencies_r,
             packages=depen, packages_version=pack_version))

@@ -3,10 +3,19 @@
 \name{message_colors}
 \alias{message_colors}
 \alias{.cmess}
+\alias{.cmess_bg}
 \alias{.cwarn}
+\alias{.cwarn_bg}
 \alias{.csucc}
+\alias{.csucc_bg}
 \alias{.cfail}
+\alias{.cfail_bg}
+\alias{.cnumb}
+\alias{.cnumb_bg}
 \title{Standardized message colors}
+\arguments{
+\item{...}{the text to be colored.}
+}
 \value{
 A function to color text
 }
@@ -17,10 +26,22 @@ Standardized message colors
 \itemize{
 \item \code{.cmess}: For warning messages.
 
+\item \code{.cmess_bg}: For warning messages.
+
 \item \code{.cwarn}: For warning messages.
+
+\item \code{.cwarn_bg}: For warning messages.
 
 \item \code{.csucc}: For success messages.
 
+\item \code{.csucc_bg}: For success messages.
+
 \item \code{.cfail}: For fail messages.
+
+\item \code{.cfail_bg}: For fail messages.
+
+\item \code{.cnumb}: For fail messages.
+
+\item \code{.cnumb_bg}: For fail messages.
 }}
 

@@ -1,6 +1,7 @@
 context("time_estimate - NO NEWDATA")
 suppressWarnings(library(rms))
 library(hgutils)
+library("magrittr")
 
 test_that("Same estimates in time_estimate for survest and survfit with no newdata", {
     fit1 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = TRUE, y = TRUE, surv = TRUE)

@@ -41,10 +41,11 @@
 #' @family developer functions
 #'
 #' @importFrom utils install.packages old.packages update.packages compareVersion installed.packages
-#' @importFrom crayon green red yellow blue underline
+#' @importFrom crayon underline
 #' @importFrom magrittr %>% %<>%
 load_packages = function(..., install_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
-
+  start = Sys.time()
+  bull = .bullets()
   #-- Check for extra arguments in '...' -------
   packages = list(...) %>% unlist
   duplicates = .pkg_duplicated(packages)
@@ -70,9 +71,8 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   progressbar = progressbar(format=">[*][][ ]<",refresh = 0.3, width = min(max(10,L),20), n_iterations = L)
 
   #-- show title -------
-  name = paste("hgutils", packageVersion("hgutils"))
   left = sprintf("Loading packages (total: %s package%s)",length(packages), ifelse(length(packages)>1,"s",""))
-  cat("==", left, paste0(rep("=",80-nchar(left)-nchar(name)-8),collapse = ""), blue(name),"==\n")
+  cat(.get_title_bar(left),"\n")
 
   progressbar = update.progressbar(progressbar, progress_iter=0)
   cat("\r",render(progressbar)," Retrieving package info...",spaces, sep = "")
@@ -80,7 +80,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   inst = installed.packages()
   outdated_pkgs = old.packages(instPkgs = inst[row.names(inst) %in% packages,, drop=FALSE]) %>% data.frame(stringsAsFactors=FALSE)
   outdated_pkgs$Installed = sapply(outdated_pkgs$Package, function(x) packageVersion(x) %>% format)
-  outdated_pkgs %<>% {.[numeric_version(.$Installed) < numeric_version(.$ReposVer)]}
+  outdated_pkgs %<>% .[numeric_version(.$Installed) < numeric_version(.$ReposVer),]
 
   data_acc = data.frame(package=character(),action=character(),result=logical()); acc_i = 1
   for (p in 1:length(packages)) {
@@ -134,27 +134,29 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
         data_acc = rbind(data_acc, data.frame(package=package, action="LOAD", result=TRUE, stringsAsFactors = FALSE))
     }
   }
-  cat(green("\r",spaces,"\r"))
+  cat(.csucc("\r",spaces,"\r"))
 
   ## Output status ####################
   pkg_success = wrap_text_table(success, exdent)
   pkg_upgrade = wrap_text_table(upgraded, exdent)
-  pkg_upgrade_failed = wrap_text_table(upgrade_fail, exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
-  pkg_failed = wrap_text_table(fail, exdent) %>% str_replace_all("(\\w+)",red(underline("\\1")))
-  pkg_dupl = wrap_text_table(names(duplicates), exdent) %>% str_replace_all("(\\w+)",yellow(underline("\\1")))
+  pkg_upgrade_failed = wrap_text_table(upgrade_fail, exdent) %>% str_replace_all("(\\w+)",.cfail(underline("\\1")))
+  pkg_failed = wrap_text_table(fail, exdent) %>% str_replace_all("(\\w+)",.cfail(underline("\\1")))
+  pkg_dupl = wrap_text_table(names(duplicates), exdent) %>% str_replace_all("(\\w+)",.cwarn(underline("\\1")))
 
-  if(length(success) > 0) cat(green(" \u25ba "),SUCCESS,pkg_success,"\n",sep = "")
-  if(length(upgraded) > 0) cat(green(" \u25ba "),UPGRADED,pkg_upgrade,"\n",sep="")
-  if(length(upgrade_fail) > 0) cat(red(" \u25ba", UPGRADE_FAIL),pkg_upgrade_failed,"\n",sep="")
-  if(length(fail) > 0) cat(red(" \u25ba",FAILED),pkg_failed,"\n",sep="")
-  if(length(duplicates) > 0) cat(yellow(" \u25ba "), DUPLICATED,pkg_dupl,"\n",sep="")
+  if(length(success) > 0) cat(bull$succ,SUCCESS,pkg_success,"\n",sep = "")
+  if(length(upgraded) > 0) cat(bull$succ,UPGRADED,pkg_upgrade,"\n",sep="")
+  if(length(upgrade_fail) > 0) cat(bull$fail, .cfail(UPGRADE_FAIL),pkg_upgrade_failed,"\n",sep="")
+  if(length(fail) > 0) cat(bull$fail,.cfail(FAILED),pkg_failed,"\n",sep="")
+  if(length(duplicates) > 0) cat(bull$warn, DUPLICATED,pkg_dupl,"\n",sep="")
 
   if(length(redundant) > 0) {
-    txt = sapply(names(redundant), function(x) paste0(yellow(underline(x)), " (loaded by ", frmt(redundant[[x]]), ")"))
+    txt = sapply(names(redundant), function(x) paste0(.cwarn(underline(x)), " (loaded by ", frmt(redundant[[x]]), ")"))
     spaces = paste0(rep(" ",nchar(REDUNDANT)+3),collapse = "")
-    cat(yellow(" \u25ba "), REDUNDANT, paste0(txt,collapse = paste0("\n",spaces)),"\n", sep="")
+    cat(bull$warn, REDUNDANT, paste0(txt,collapse = paste0("\n",spaces)),"\n", sep="")
   }
-  cat(blue("\n \u25ba"),"Done.\n")
+
+  end = Sys.time()
+  cat(sprintf("\n%sDone. %s\n",bull$mess, .cnumb(format_duration(start, end))))
   invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
 }
 
