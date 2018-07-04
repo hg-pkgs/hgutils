@@ -16,7 +16,6 @@ functions = lapply(names(source_code), function(file_name) {
 }) %>% set_names(names(source_code))
 
 single_list = unlist(functions, recursive=FALSE) %>% set_names(., sapply(., function(x) x$function_name))
-
 #set spaces after comma's
 for (fname in names(source_code)) {
   A = str_replace_all(source_code[[fname]],",(?! )",", ") %>% #put space behind comma
@@ -36,7 +35,39 @@ for (fname in names(source_code)) {
   lsf.str(pos=which(search()=="package:hgutils"))
 }
 
+files = list.files("tools/exercise/","\\.[Rr]$", recursive = TRUE, full.names = TRUE)
+source_code = lapply(files, function(x) paste0(readLines(x), collapse = "\n")) %>% set_names(str_match(files, ".*/(.*?\\.R)$")[,-1])
+sum(sapply(A, function(x) str_count(x,",(?! )")))
+source_code %>% lapply(. %>% {str_split(source_code[[1]],"\n") %>%
+                sapply(. %>% str_replace_all("(\\G(?:(?!#).)*?),(?! )","\\1, ")) %>%
+                sapply(. %>% str_replace_all("(\\G(?:(?!#).)*?) (?= )","\\1")) %>%
+                paste0(collapse = "\n")}) %>% .[[1]] %>% cat
+
+# %>% as.data.frame(stringsAsFactors=FALSE) %>% set_names("line")
+line = A$line[7]
+B=str_replace_all(A[[1]],"(\\G(?:(?!#).)*?)(,(?! ))","\\1, ")
+regmatches(line, gregexpr("\\G(?:(?!#).)*?(,(?! ))",line,perl = TRUE))
 #hadley styles
 #check if imports occur in code
 # check if code occurs in imports
+
+fnames="tools/exercise/ex.R"
+fix_comments=FALSE
+source_code = lapply(fnames, function(x) readLines(x)) %>% set_names(str_match(fnames,"([^/]*\\.R)$")[,-1])
+
+n_total = sapply(source_code, function(file) sapply(file, function(line) ifelse(fix_comments,
+                                                                                str_count(line, ","),
+                                                                                str_count(line, "(\\G(?:(?!#).)*?),")))) %>% sum
+n_to_fix = sapply(source_code, function(file) sapply(file, function(line) ifelse(fix_comments,
+                                                                                 str_count(line, ",(?! )"),
+                                                                                 str_count(line, "(\\G(?:(?!#).)*?),(?! )")))) %>% sum
+
+
+source_code %>% lapply(. %>% {str_split(source_code[[1]],"\n") %>%
+    sapply(. %>% str_replace_all("(\\G(?:(?!#).)*?),(?! )","\\1, ")) %>% #add space after comma
+    sapply(. %>% str_replace_all("(\\G(?:(?!#).)*?) (?= )","\\1")) %>% #remove space before comma
+    sapply(. %>% str_replace_all("(\\G(?:(?!#).)*?)=(?! )","\\1= ")) %>% #add space after equals sign
+    sapply(. %>% str_replace_all("(\\G(?:(?!#).)*?)(?<! )=","\\1 =")) %>% #add space before equals sign
+    sapply(. %>% str_replace_all("(\\G(?:(?!#).)*?)\\(=","\\1=")) %>% #remove spaces when between parentheses
+    paste0(collapse = "\n")}) %>% .[[1]] %>% cat
 

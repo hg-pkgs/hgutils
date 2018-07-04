@@ -7,7 +7,7 @@
 .bullets()
 }
 \value{
-A list of various coloured bullets
+A list of various colored bullets
 }
 \description{
 Bullets

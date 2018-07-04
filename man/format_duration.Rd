@@ -7,7 +7,7 @@
 format_duration(start, end)
 }
 \arguments{
-\item{start, end}{datetime objects as obtained via \code{\link[base]{Sys.time}}}
+\item{start, end}{date-time objects as obtained via \code{\link[base]{Sys.time}}}
 }
 \value{
 A string representation of the duration.

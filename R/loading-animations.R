@@ -7,10 +7,9 @@
 #' @param refresh refresh rate in milliseconds of the animation.
 #' @param ... further arguments passed to or from other methods.
 #' @param object animated progress bar.
-#' @param progress_ratio proportion progress the progress bar should be set at.
-#' @param progress_iter current iteration number if \code{n_iterations} is not \code{NULL}.
-#' @param show_percentage whether to show percentage progress to the right of the progress bar.
-#' @param show_iteration whether to show progress as iteration number to the right of the progress bar.
+#' @param progress either the iteration number (if n_iterations is set), or the progress fraction (in [0,1]).
+#' @param show_progress how to show the progress. Either not to show it (default),
+#' show a percentage or if \code{n_iterations} is set to show the number of iterations.
 #' @export
 #' @details The format of the progress bar is given by a character vector. It consists of 5 parts:
 #' \enumerate{
@@ -25,15 +24,14 @@
 #' # simple progressbar
 #' bar = progressbar(format = "[[|][|/-\\][ ]]")
 #' # fancy progressbar using UTF-8 codes
-#' bar2 = progressbar(format="\u25ba[\u2589][\u2580\u2584][\u3000]\u25c4")
 #' n_operations = 1000
+#' bar2 = progressbar(format="\u25ba[\u2589][\u2580\u2584][\u3000]\u25c4", n_iterations=n_operations)
 #'
 #' for(i in 1:n_operations) {
-#'   bar = update(bar, i/n_operations)
-#'   cat("\r", render(bar))
+#'   cat("\r", render(bar),sep="")
 #'   Sys.sleep(0.01)
 #' }}
-progressbar = function(format="[[|][|/-\\][ ]]", width = 25, refresh = 200, n_iterations = NULL) {
+progressbar = function(format="[[|][|/-\\][ ]]", width = 20, refresh = 200, n_iterations = NULL) {
   stopifnot(width > 0)
   if(!width%%1 == 0) stop("Argument 'width' must be an integer.")
   stopifnot(refresh > 0)
@@ -48,33 +46,12 @@ progressbar = function(format="[[|][|/-\\][ ]]", width = 25, refresh = 200, n_it
 
   progressbar = list(width=width, start=matches[1], ls=matches[2], anim=str_split(matches[3],"")[[1]],
                 us=matches[4], end=matches[5], speed=refresh, index=1,
-                time=Sys.time(), progress = 0, n_iterations = n_iterations, iteration = NULL)
-  class(progressbar) = c("progressbar","progress")
-  progressbar
-}
+                time=Sys.time(), progress = 0)
+  class(progressbar) = c("fraction_progressbar","progressbar","progress_animation")
 
-#' @export
-#' @rdname progressbar
-update.progressbar = function(object, progress_ratio = NULL, progress_iter = NULL, ...) {
-  progressbar = object
-  if(!is.null(progress_iter) && !is.null(progress_ratio)) {
-    stop("Only one of 'progress_ratio' or 'progress_iter' can be specified.")
-  }
-  if(!is.null(progressbar$n_iterations) && !is.null(progress_iter)) {
-    progressbar$iteration = progress_iter
-    progress = progress_iter/progressbar$n_iterations
-  } else if(!is.null(progress_ratio) && progress_ratio >= 0 && progress_ratio <= 1) {
-    progress = progress_ratio
-  } else {
-    stop("Either argument 'progress_ratio' or 'progress_iter' must be specified.")
-  }
-  stopifnot(progress >= 0 && progress <= 1)
-  progressbar$progress = progress
-
-  if (Sys.time() >= progressbar$time+progressbar$speed/1000)
-  {
-    progressbar$time = Sys.time()
-    progressbar$index = (progressbar$index %% length(progressbar$anim)) + 1
+  if(!is.null(n_iterations)) {
+    progressbar = c(progressbar, list(n_iterations = n_iterations, iteration = 0))
+    class(progressbar) = c("iteration_progressbar","progressbar","progress_animation")
   }
   progressbar
 }
@@ -87,16 +64,57 @@ render = function(object, ...) {
 
 #' @rdname progressbar
 #' @export
-render.progressbar = function(object, show_percentage = FALSE, show_iteration = FALSE, ...) {
+render.fraction_progressbar = function(object, progress, show_progress=c("nothing", "percentage"), ...) {
   progressbar = object
+  if (Sys.time() >= progressbar$time+progressbar$speed/1000)
+  {
+    progressbar$time = Sys.time()
+    progressbar$index = (progressbar$index %% length(progressbar$anim)) + 1
+  }
+  progressbar$progress = progress
+  eval.parent(substitute(object<-progressbar))
+
+  render.progressbar(object, show_progress = match.arg(show_progress), ...)
+}
+
+#' @rdname progressbar
+#' @export
+render.iteration_progressbar = function(object, progress, show_progress=c("nothing", "percentage", "iteration"), ...) {
+  progressbar = object
+  if (Sys.time() >= progressbar$time+progressbar$speed/1000)
+  {
+    progressbar$time = Sys.time()
+    progressbar$index = (progressbar$index %% length(progressbar$anim)) + 1
+  }
+  progressbar$iteration = progress
+  progressbar$progress = progress/progressbar$n_iterations
+  eval.parent(substitute(object<-progressbar))
+
+  render.progressbar(object, show_progress = match.arg(show_progress), ...)
+}
+
+#' @rdname progressbar
+#' @export
+render.progressbar = function(object, show_progress=c("nothing", "percentage", "iteration"), ...) {
+  progressbar = object
+
+  show_pr = match.arg(show_progress)
+
+  if(is.null(progressbar$progress))
+    stop("Progress must be specified.")
+  if(is.null(progressbar$n_iterations) && show_pr=="iteration")
+    stop("The total number of iterations has not been specified.")
+  if(progressbar$progress < 0 || progressbar$progress > 1)
+    stop("Progress must be in [0,1].")
+
   progress_text = ""
-  if(show_percentage && show_iteration)
-    stop("Either 'show_percentage' or 'show_iteration' can be TRUE, not both.")
-  if(show_iteration) {
-    stopifnot(!is.null(progressbar$iteration))
-    progress_text = sprintf(" [%s/%s]", progressbar$iteration, progressbar$n_iterations)
-  } else if(show_percentage) {
-    progress_text = paste0(" ",round(progressbar$progress*100),"%")
+  progress_text = if(show_pr=="iteration") {
+      stopifnot(!is.null(progressbar$iteration))
+      sprintf(" [%s/%s]", progressbar$iteration, progressbar$n_iterations)
+  } else if(show_pr=="percentage") {
+      progress_text = paste0(" ",round(progressbar$progress*100),"%")
+  } else {
+      ""
   }
 
   loaded_width = round(progressbar$width*progressbar$progress)
@@ -120,28 +138,14 @@ render.progressbar = function(object, show_percentage = FALSE, show_iteration = 
 #' n_operations = 100
 #'
 #' for(i in 1:n_operations) {
-#'   sp = update(sp)
-#'   cat("\r", render(sp))
+#'   cat("\r", render(sp),sep="")
 #'   Sys.sleep(0.01)
 #' }}
 spinner = function(format="|/-\\", refresh = 200) {
   stopifnot(refresh > 0)
 
   spinner = list(anim=str_split(format,"")[[1]], speed=refresh, index=1, time=Sys.time())
-  class(spinner) = c("spinner","progress")
-  spinner
-}
-
-#' @export
-#' @rdname spinner
-update.spinner = function(object, ...) {
-  spinner = object
-
-  if (Sys.time() >= spinner$time+spinner$speed/1000)
-  {
-    spinner$time = Sys.time()
-    spinner$index = (spinner$index %% length(spinner$anim)) + 1
-  }
+  class(spinner) = c("spinner","progress_animation")
   spinner
 }
 
@@ -149,6 +153,13 @@ update.spinner = function(object, ...) {
 #' @export
 render.spinner = function(object, ...) {
   spinner = object
+
+  if (Sys.time() >= spinner$time+spinner$speed/1000)
+  {
+    spinner$time = Sys.time()
+    spinner$index = (spinner$index %% length(spinner$anim)) + 1
+  }
+  eval.parent(substitute(object<-spinner))
 
   spinner$anim[spinner$index]
 }

@@ -39,7 +39,7 @@ startup = function(clean = TRUE, folder = NULL, verbose=TRUE) {
   if (!is.null(folder)) {
     ifelse(dir.exists(folder), setwd(folder), warning("Argument 'folder' does not refer to an existing directory."))
   }
-  cat(green(" \u25ba"), "Done.")
+  cat(green(" \u25ba"), "Done.\n")
 }
 
 #' Create nice axis breaks for plots
@@ -153,14 +153,14 @@ separate_values = function(X, distance = 0.05, min = 0, max = 1) {
   #constraint for limits [min-max]
   upper = matrix(nrow = 2 * N, ncol = N, 0)
   for (i in 1:N) {
-      upper[(i * 2 - 1):(i * 2), i] = c(1, -1)
+      upper[(i*2 - 1):(i*2), i] = c(1, -1)
   }
 
   if(N > 1) {
     #constraint for distances between elements
     lower = matrix(nrow = N - 1, ncol = N, 0)
     for (i in 1:(N - 1)) {
-        lower[i, i:(i + 1)] = c(-1, 1)
+        lower[i, i:(i+1)] = c(-1, 1)
     }
   } else {lower = NULL}
   H = c(rep(c(min, -max), N), distance)  #solution vectors
@@ -203,7 +203,7 @@ rnd_dbl = function(dbl, digits = 3) {
 
 #' Format time duration
 #'
-#' @param start,end datetime objects as obtained via \code{\link[base]{Sys.time}}
+#' @param start,end date-time objects as obtained via \code{\link[base]{Sys.time}}
 #'
 #' @return A string representation of the duration.
 #' @export

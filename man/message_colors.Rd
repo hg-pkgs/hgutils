@@ -6,6 +6,8 @@
 \alias{.cmess_bg}
 \alias{.cwarn}
 \alias{.cwarn_bg}
+\alias{.chint}
+\alias{.chint_bg}
 \alias{.csucc}
 \alias{.csucc_bg}
 \alias{.cfail}
@@ -31,6 +33,10 @@ Standardized message colors
 \item \code{.cwarn}: For warning messages.
 
 \item \code{.cwarn_bg}: For warning messages.
+
+\item \code{.chint}: For warning messages.
+
+\item \code{.chint_bg}: For warning messages.
 
 \item \code{.csucc}: For success messages.
 

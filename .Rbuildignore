@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^CONDUCT\.md$
 ^dev
+^.travis.yml$
+^README\.Rmd$

@@ -2,7 +2,7 @@
 
 Sys.setenv(PATH = paste(Sys.getenv("PATH"), "C:/Program Files/MiKTeX 2.9/miktex/bin/x64",
                         sep=.Platform$path.sep))
-
+#install.packages("badgecreatr")
 .rs.restartR()
 hgutils::startup()
 hgutils::crossref_description(skip_prompt=TRUE, use_version_numbers=FALSE,
@@ -13,7 +13,13 @@ devtools::spell_check()
 devtools::run_examples(fresh=TRUE, run = FALSE)
 devtools::test()
 devtools::check(check_version=FALSE)
-
+#usethis::use_readme_rmd()
+badgecreatr::badgeplacer(status="wip",githubaccount = "hvdboorn", githubrepo = "hgutils")
+results = badgecreatr::findbadges(".")
+badgecreatr::minimal_r_version_badge(results$R_version)
+badgecreatr::packageversionbadge(results$packageversion)
+badgecreatr::projectstatusbadge("wip")
+badgecreatr:::travisbadge(ghaccount = "hvdboorn", ghrepo = "hgutils",branch = "master")
 #installr::updateR(TRUE)
 devtools::check_win_devel()
 devtools::check_win_release()

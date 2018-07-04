@@ -45,7 +45,6 @@
 #' @importFrom magrittr %>% %<>%
 load_packages = function(..., install_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
   start = Sys.time()
-  bull = .bullets()
   #-- Check for extra arguments in '...' -------
   packages = list(...) %>% unlist
   duplicates = .pkg_duplicated(packages)
@@ -57,49 +56,53 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     stop(sprintf("The argument '...' contains the following invalid package names: %s.", invalid_names))
 
   #-- Define constants -------
+  bull = .bullets()
+  show_progress = "iteration"
   spaces = paste0(rep(" ",80),collapse = "")
-  SUCCESS=      "Loaded succesfully:   "
-  UPGRADED=     "Upgraded succesfully: "
-  UPGRADE_FAIL= "Upgraded failed:      "
-  FAILED =      "Loading failed:       "
-  REDUNDANT =   "Redundant packages:   "
-  DUPLICATED =  "Duplicate packages:   "
+  SUCCESS=         "Loaded succesfully:   "
+  UPGRADED=        "Upgraded succesfully: "
+  UPGRADE_FAIL=    "Upgrading failed:     "
+  FAILED =         "Loading failed:       "
+  REDUNDANT =      "Redundant packages:   "
+  DUPLICATED =     "Duplicate packages:   "
+  CONSIDER_UPGR =  "Consider upgrading:   "
   exdent = nchar(SUCCESS) + 3
   redundant = redundant_packages(packages)
   success = c(); fail=c(); upgraded=c(); upgrade_fail=c()
-  L = length(packages)
-  progressbar = progressbar(format=">[*][][ ]<",refresh = 0.3, width = min(max(10,L),20), n_iterations = L)
+  n_packages = length(packages)
+  prog = if(length(setdiff(packages,rownames(installed.packages()))) > 0){
+    progressbar(format=">[*][][ ]<",refresh = 1/24, width = min(max(10,n_packages),20), n_iterations = n_packages)
+  } else {
+    spinner(refresh = 1/24)
+  }
 
   #-- show title -------
   left = sprintf("Loading packages (total: %s package%s)",length(packages), ifelse(length(packages)>1,"s",""))
   cat(.get_title_bar(left),"\n")
 
-  progressbar = update.progressbar(progressbar, progress_iter=0)
-  cat("\r",render(progressbar)," Retrieving package info...",spaces, sep = "")
+  cat("\r",render(prog, progress=0)," Retrieving package info...",spaces, sep = "")
 
   inst = installed.packages()
   outdated_pkgs = old.packages(instPkgs = inst[row.names(inst) %in% packages,, drop=FALSE]) %>% data.frame(stringsAsFactors=FALSE)
-  outdated_pkgs$Installed = sapply(outdated_pkgs$Package, function(x) packageVersion(x) %>% format)
-  outdated_pkgs %<>% .[numeric_version(.$Installed) < numeric_version(.$ReposVer),]
-
+  outdated_pkgs$Installed = sapply(row.names(outdated_pkgs), function(x) format(packageVersion(x))) #other installed is old
+  outdated_pkgs %<>% {.[package_version(.$Installed) < package_version(.$ReposVer),]}
+  consider_upgrade = row.names(outdated_pkgs)
   data_acc = data.frame(package=character(),action=character(),result=logical()); acc_i = 1
   for (p in 1:length(packages)) {
     package = packages[p]
 
-    progressbar = update.progressbar(progressbar, progress_iter=p)
-    cat("\r",render(progressbar, show_iteration = TRUE)," loading ",package,spaces, sep = "")
+    cat("\r",render(prog, p, show_progress)," loading ",package,"...",spaces, sep = "")
     stfu({package_exists = require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
 
     will_install = !package_exists && install_packages || force_install
-    will_upgrade = upgrade && package %in% outdated_pkgs$Package
+    will_upgrade = upgrade && package %in% consider_upgrade
 
     can_load = TRUE
     added_res = FALSE
     if(!package_exists && !install_packages) fail = c(fail, package)
 
     if (will_install) {
-      progressbar = update.progressbar(progressbar, progress_iter=p)
-      cat("\r",render(progressbar, show_iteration = TRUE)," installing ",package,spaces, sep = "")
+      cat("\r",render(prog, p, show_progress)," installing ",package,"...",spaces, sep = "")
       stfu({install.packages(package, verbose = FALSE, quiet = TRUE)})
 
       stfu({can_load = require(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
@@ -109,15 +112,14 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
       added_res = TRUE
     }
 
-    if (upgrade && package %in% outdated_pkgs$Package) #upgrade package
+    if (will_upgrade) #upgrade package
     {
       sel = outdated_pkgs[outdated_pkgs$Package==package,]
-      progressbar = update.progressbar(progressbar, progress_iter=p)
-      cat("\r",render(progressbar, show_iteration = TRUE)," upgrading ",package,spaces, sep = "")
-      stfu({update.packages(oldPkgs=package, ask=FALSE, verbose = FALSE, quiet = TRUE)})
+      cat("\r",render(prog, p, show_progress)," upgrading ",package,"...",spaces, sep = "")
+      stfu({install.packages(package, verbose = FALSE, quiet = TRUE)})
 
       current_ver = format(packageVersion(package))
-      if (compareVersion(current_ver, sel$ReposVer) < 0) {upgrade_fail=c(upgrade_fail, package)} else {upgraded=c(upgraded, package)}
+      if (compareVersion(current_ver, sel$Installed) <= 0) {upgrade_fail=c(upgrade_fail, package)} else {upgraded=c(upgraded, package)}
 
       data_acc = rbind(data_acc, data.frame(package=package, action="UPGRADE",
                                             result=compareVersion(current_ver, sel$ReposVer) < 0, stringsAsFactors = FALSE))
@@ -125,8 +127,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     }
 
     if (can_load) {
-      progressbar = update.progressbar(progressbar, progress_iter=p)
-      cat("\r",render(progressbar, show_iteration = TRUE)," loading ",package,spaces, sep = "")
+      cat("\r",render(prog, p, show_progress)," loading ",package,"...",spaces, sep = "")
       stfu({library(package, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)})
       success = c(success,package)
 
@@ -134,7 +135,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
         data_acc = rbind(data_acc, data.frame(package=package, action="LOAD", result=TRUE, stringsAsFactors = FALSE))
     }
   }
-  cat(.csucc("\r",spaces,"\r"))
+  cat("\r",spaces,"\r")
 
   ## Output status ####################
   pkg_success = wrap_text_table(success, exdent)
@@ -142,11 +143,12 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   pkg_upgrade_failed = wrap_text_table(upgrade_fail, exdent) %>% str_replace_all("(\\w+)",.cfail(underline("\\1")))
   pkg_failed = wrap_text_table(fail, exdent) %>% str_replace_all("(\\w+)",.cfail(underline("\\1")))
   pkg_dupl = wrap_text_table(names(duplicates), exdent) %>% str_replace_all("(\\w+)",.cwarn(underline("\\1")))
+  pkg_cons = wrap_text_table(consider_upgrade, exdent) %>% str_replace_all("(\\w+)", .chint(underline("\\1")))
 
   if(length(success) > 0) cat(bull$succ,SUCCESS,pkg_success,"\n",sep = "")
   if(length(upgraded) > 0) cat(bull$succ,UPGRADED,pkg_upgrade,"\n",sep="")
   if(length(upgrade_fail) > 0) cat(bull$fail, .cfail(UPGRADE_FAIL),pkg_upgrade_failed,"\n",sep="")
-  if(length(fail) > 0) cat(bull$fail,.cfail(FAILED),pkg_failed,"\n",sep="")
+  if(length(fail) > 0) cat(bull$fail, .cfail(FAILED),pkg_failed,"\n",sep="")
   if(length(duplicates) > 0) cat(bull$warn, DUPLICATED,pkg_dupl,"\n",sep="")
 
   if(length(redundant) > 0) {
@@ -154,9 +156,10 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     spaces = paste0(rep(" ",nchar(REDUNDANT)+3),collapse = "")
     cat(bull$warn, REDUNDANT, paste0(txt,collapse = paste0("\n",spaces)),"\n", sep="")
   }
+  if(length(consider_upgrade) > 0) cat(bull$hint, CONSIDER_UPGR, pkg_cons,"\n",sep="")
 
   end = Sys.time()
-  cat(sprintf("\n%sDone. %s\n",bull$mess, .cnumb(format_duration(start, end))))
+  cat(sprintf("\n%sDone. %s\n", bull$mess, .cnumb(format_duration(start, end))))
   invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
 }
 

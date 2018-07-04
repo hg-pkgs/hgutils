@@ -2,13 +2,10 @@
 % Please edit documentation in R/loading-animations.R
 \name{spinner}
 \alias{spinner}
-\alias{update.spinner}
 \alias{render.spinner}
 \title{Creates an animated spinner}
 \usage{
 spinner(format = "|/-\\\\", refresh = 200)
-
-\method{update}{spinner}(object, ...)
 
 \method{render}{spinner}(object, ...)
 }
@@ -33,8 +30,7 @@ sp = spinner("|/-\\\\")
 n_operations = 100
 
 for(i in 1:n_operations) {
-  sp = update(sp)
-  cat("\\r", render(sp))
+  cat("\\r", render(sp),sep="")
   Sys.sleep(0.01)
 }}
 }

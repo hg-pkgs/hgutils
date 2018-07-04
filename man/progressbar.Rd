@@ -2,21 +2,25 @@
 % Please edit documentation in R/loading-animations.R
 \name{progressbar}
 \alias{progressbar}
-\alias{update.progressbar}
 \alias{render}
+\alias{render.fraction_progressbar}
+\alias{render.iteration_progressbar}
 \alias{render.progressbar}
 \title{Creates an animated progress bar}
 \usage{
-progressbar(format = "[[|][|/-\\\\][ ]]", width = 25, refresh = 200,
+progressbar(format = "[[|][|/-\\\\][ ]]", width = 20, refresh = 200,
   n_iterations = NULL)
-
-\method{update}{progressbar}(object, progress_ratio = NULL,
-  progress_iter = NULL, ...)
 
 render(object, ...)
 
-\method{render}{progressbar}(object, show_percentage = FALSE,
-  show_iteration = FALSE, ...)
+\method{render}{fraction_progressbar}(object, progress,
+  show_progress = c("nothing", "percentage"), ...)
+
+\method{render}{iteration_progressbar}(object, progress,
+  show_progress = c("nothing", "percentage", "iteration"), ...)
+
+\method{render}{progressbar}(object, show_progress = c("nothing",
+  "percentage", "iteration"), ...)
 }
 \arguments{
 \item{format}{character vector containing the format of the animation. See 'details' for more information.}
@@ -30,15 +34,12 @@ is then sufficient to specify the current iteration number.}
 
 \item{object}{animated progress bar.}
 
-\item{progress_ratio}{proportion progress the progress bar should be set at.}
-
-\item{progress_iter}{current iteration number if \code{n_iterations} is not \code{NULL}.}
-
 \item{...}{further arguments passed to or from other methods.}
 
-\item{show_percentage}{whether to show percentage progress to the right of the progress bar.}
+\item{progress}{either the iteration number (if n_iterations is set), or the progress fraction (in [0,1]).}
 
-\item{show_iteration}{whether to show progress as iteration number to the right of the progress bar.}
+\item{show_progress}{how to show the progress. Either not to show it (default),
+show a percentage or if \code{n_iterations} is set to show the number of iterations.}
 }
 \description{
 Creates an animated progress bar
@@ -59,12 +60,11 @@ The format follows the following regular expression: \code{^.*?[.?][.*?][.?].*$}
 # simple progressbar
 bar = progressbar(format = "[[|][|/-\\\\][ ]]")
 # fancy progressbar using UTF-8 codes
-bar2 = progressbar(format="\\u25ba[\\u2589][\\u2580\\u2584][\\u3000]\\u25c4")
 n_operations = 1000
+bar2 = progressbar(format="\\u25ba[\\u2589][\\u2580\\u2584][\\u3000]\\u25c4", n_iterations=n_operations)
 
 for(i in 1:n_operations) {
-  bar = update(bar, i/n_operations)
-  cat("\\r", render(bar))
+  cat("\\r", render(bar),sep="")
   Sys.sleep(0.01)
 }}
 }

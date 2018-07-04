@@ -23,6 +23,14 @@ NULL
 .cwarn_bg = function(...) {make_style("chocolate1", bg = TRUE)(paste0(list(...),collapse = ""))}
 
 #' @usage NULL
+#' @describeIn message_colors For warning messages.
+.chint = function(...) {make_style("yellow")(paste0(list(...),collapse = ""))}
+
+#' @usage NULL
+#' @describeIn message_colors For warning messages.
+.chint_bg = function(...) {make_style("yellow", bg = TRUE)(paste0(list(...),collapse = ""))}
+
+#' @usage NULL
 #' @describeIn message_colors For success messages.
 .csucc = function(...) {make_style("green")(paste0(list(...),collapse = ""))}
 
@@ -50,9 +58,9 @@ BULLET_LENGTH = 3
 
 #' Bullets
 #'
-#' @return A list of various coloured bullets
+#' @return A list of various colored bullets
 .bullets = function() {
   list(mess=.cmess(" \u25ba "), succ=.csucc(" \u25ba "), fail=.cfail(" \u25ba "),
-       warn=.cwarn(" \u25ba "), numb=.cnumb(" \u25ba "))
+       warn=.cwarn(" \u25ba "), numb=.cnumb(" \u25ba "), hint=.chint(" \u25ba "))
 }
 #bull = list(mess=.cmess(" \u25ba "), succ=.csucc(" \u221a "), fail=paste0(" ",.cfail(" \u078 ")," "), warn = paste0(" ",.cwarn_bg("\u203c")," "))

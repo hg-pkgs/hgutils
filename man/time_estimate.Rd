@@ -46,8 +46,8 @@ Get estimate of time points for a given survival probability.
 }}
 
 \examples{
-library(rms)
-fit = cph(Surv(time=time, event=status) ~ age + sex,
+\dontrun{
+fit = rms::cph(Surv(time=time, event=status) ~ age + sex,
   data=lung, x=TRUE, y=TRUE, surv=TRUE)
 
 #get population time estimates
@@ -56,7 +56,8 @@ pop = time_estimate(fit)
 #get median survival for patients 1-20 seperately.
 sub = time_estimate(fit, survival=seq(0.1,0.9,0.1), newdata=lung[1:20,])
 
-fit2 = cph(Surv(time=time, event=status) ~ age + sex,
+fit2 = rms::cph(Surv(time=time, event=status) ~ age + sex,
   data=lung, x=FALSE, y=FALSE, surv=TRUE) #no x nor y
 pop2 = time_estimate(fit2, survival=seq(0.1,0.9,0.01)) #get cox.ph estimate
+}
 }
