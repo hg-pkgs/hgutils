@@ -1,40 +1,35 @@
-[![packageversion](https://img.shields.io/badge/version-0.0.0.9007-orange.svg)](commits/master)
-[![Project Status: WIP ? Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
-[![Build Status](https://travis-ci.org/hvdboorn/hgutils.svg?branch=master)](https://travis-ci.org/hvdboorn/hgutils)
-[![codecov](https://codecov.io/gh/hvdboorn/hgutils/branch/master/graph/badge.svg)](https://codecov.io/gh/hvdboorn/hgutils)  
-[![minimal R version](https://img.shields.io/badge/R%3E=-3.1-6666ff.svg)](https://cran.r-project.org/)
-[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/hgutils)](https://cran.r-project.org/package=hgutils)
-[![Licence](https://img.shields.io/badge/licence-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
+<!-- START_HGUTILS -->
+[![Package version](https://img.shields.io/badge/version-v0.0.9007-lightgrey.svg?logo=github)]
+[![last_update](https://img.shields.io/badge/last%20update-2018--07--05-orange.svg?logo=github)]
+[![minimal R version](https://img.shields.io/badge/R-3.1+-blue.svg)](https://cran.r-project.org/)  
+[![Project Status](http://www.repostatus.org/badges/latest/wip.svg)](http://www.repostatus.org/#wip)
+[![Travis](https://travis-ci.org/hvdboorn/hgutils.svg)](https://travis-ci.org/hvdboorn/hgutils)
+[![Codecov](https://img.shields.io/codecov/c/github/hvdboorn/hgutils.svg)](https://codecov.io/gh/hvdboorn/hgutils)
 ---
- 
+<!-- END_HGUTILS -->
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-```{r setup, include = FALSE}
+```{r, echo = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
+  fig.path = "README-"
 )
 ```
+
 # hgutils
 
 The goal of hgutils is to ...
 
 ## Installation
 
-You can install the released version of hgutils from [CRAN](https://CRAN.R-project.org) with:
+You can install hgutils from github with:
 
-``` r
-install.packages("hgutils")
-```
-
-And the development version from [GitHub](https://github.com/) with:
-
-``` r
+```{r gh-installation, eval = FALSE}
 # install.packages("devtools")
-devtools::install_github("hvdboorn/hgutils")
+devtools::install_github("hg-pkgs/hgutils")
 ```
+
 ## Example
 
 This is a basic example which shows you how to solve a common problem:
@@ -42,19 +37,3 @@ This is a basic example which shows you how to solve a common problem:
 ```{r example}
 ## basic example code
 ```
-
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
-
-```{r cars}
-summary(cars)
-```
-
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub!

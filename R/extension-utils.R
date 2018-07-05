@@ -153,11 +153,12 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
 
   #-- Determine R versions -------------------------------
   current_r = format(getRversion())
-  dependencies_r = do.call(rbind, sapply(depen, function(x) packageDescription(x)$Depends)) %>% .[,1] %>%
+  dep_rvers = sapply(depen, function(x) packageDescription(x)$Depends)
+  dependencies_r = do.call(rbind, dep_rvers) %>% unlist %>%
                    unname %>% {str_match(.,"R \\(>= (.*?)\\)")[,-1]} %>% rm_na %>% numeric_version %>% max %>% format
+  if(length(dependencies_r)==0) dependencies_r = current_r
 
-  rversion = ifelse(identical(rversion, "LATEST_VERSION"), current_r,
-             ifelse(identical(rversion, "DEPENDENCIES_VERSION"), dependencies_r, format(rversion)))
+  rversion = ifelse(identical(rversion, "LATEST_VERSION"), current_r, dependencies_r)
   RVersion = sprintf("R (>= %s)",rversion)
 
 
