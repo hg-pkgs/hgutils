@@ -20,7 +20,7 @@ add_shields = function() {
   dformat = "%Y-%m-%d"
   #dformat = "%B %m %Y"
 
-  version = paste0("[![Package version](https://img.shields.io/badge/version-v",desc$Version,"-",ifelse(is_dev,"lightgrey","blue"),".svg)]()")
+  version = paste0("[![Package version](https://img.shields.io/badge/version-v",desc$Version,"-901913.svg)]()")
   travis = paste0("[![Travis](https://travis-ci.org/",github_pkg,".svg)](https://travis-ci.org/",github_pkg,")")
   codecov = paste0("[![Codecov](https://img.shields.io/codecov/c/github/",github_pkg,".svg)](https://codecov.io/gh/",github_pkg,")")
   min_r = paste0("[![minimal R version](https://img.shields.io/badge/R-",rvers,"+-blue.svg)](https://cran.r-project.org/)")
