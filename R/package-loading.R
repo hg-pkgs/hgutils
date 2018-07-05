@@ -70,7 +70,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   redundant = redundant_packages(packages)
   success = c(); fail=c(); upgraded=c(); upgrade_fail=c()
   n_packages = length(packages)
-  prog = if(length(setdiff(packages,rownames(installed.packages()))) > 0){
+  prog = if(length(setdiff(packages,installed.packages()[,"Package"])) > 0){
     progressbar(format=">[*][][ ]<",refresh = 1/24, width = min(max(10,n_packages),20), n_iterations = n_packages)
   } else {
     spinner(refresh = 1/24)
@@ -83,8 +83,8 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   cat("\r",render(prog, progress=0)," Retrieving package info...",spaces, sep = "")
 
   inst = installed.packages()
-  outdated_pkgs = old.packages(instPkgs = inst[row.names(inst) %in% packages,, drop=FALSE]) %>% data.frame(stringsAsFactors=FALSE)
-  outdated_pkgs$Installed = sapply(row.names(outdated_pkgs), function(x) format(packageVersion(x))) #other installed is old
+  outdated_pkgs = old.packages(instPkgs = inst[inst[,"Package"] %in% packages,, drop=FALSE]) %>% data.frame(stringsAsFactors=FALSE)
+  outdated_pkgs$Installed = sapply(outdated_pkgs$Package, function(x) format(packageVersion(x))) #other installed is old
   outdated_pkgs %<>% {.[package_version(.$Installed) < package_version(.$ReposVer),]}
   consider_upgrade = outdated_pkgs$Package
   data_acc = data.frame(package=character(),action=character(),result=logical()); acc_i = 1
