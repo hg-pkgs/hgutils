@@ -19,7 +19,6 @@ Suggests:
     grDevices,
     limSolve,
     methods,
-    rms,
     survival,
     testthat
 Language: en-US

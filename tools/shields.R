@@ -46,7 +46,7 @@ library(crayon)
 #url="https://api.travis-ci.org/hvdboorn/hgutils.svg"
 url = "https://img.shields.io/badge/version-v0.0.0.9007-901913.svg"
 data = xmlParse(readLines(url))
-dl = xmlToList(data)
+dl2 = xmlToList(data)
 
 fix_col = function(x) ifelse (str_detect(x,"^#[[:xdigit:]]{3}$"), str_replace_all(x,"([[:xdigit:]])","\\1\\1"), x)
 col_left = dl$rect['fill'] %>% fix_col %>% col2rgb
