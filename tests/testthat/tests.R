@@ -1,11 +1,10 @@
-context("time_estimate - NO NEWDATA")
 library(hgutils)
-library("magrittr")
-library("rms")
-library("stringi")
-library("stringr")
-library("crayon")
+library(magrittr)
+library(rms)
+library(stringr)
+library(crayon)
 
+context("time_estimate - NO NEWDATA")
 test_that("Same estimates in time_estimate for survest and survfit with no newdata", {
     fit1 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = TRUE, y = TRUE, surv = TRUE)
     fit2 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = FALSE, y = FALSE, surv = TRUE)
@@ -60,13 +59,11 @@ test_that("get_bounds includes limits", {
 
 context("Title bar")
 test_that("Length equals 80 and regex", {
-  N = 1000
-  left = stri_rand_strings(N,round(runif(N,0,20)))
-  for (i in 1:N) {
-    bar = hgutils:::.get_title_bar(left = left[i])
-    expect_equal(col_nchar(bar),80)
-    expect_true(str_detect(bar,"^== .*? =+ .*? ==$"))
-  }
+  left = "Test case"
+  bar = hgutils:::.get_title_bar(left)
+  expect_equal(col_nchar(bar),80)
+  expect_true(str_detect(bar,"^== .*? =+ .*? ==$"))
+
   bar = hgutils:::.get_title_bar()
   expect_equal(col_nchar(bar),80)
   expect_true(str_detect(bar,"^=+ .*? ==$"))
