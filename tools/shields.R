@@ -28,9 +28,10 @@ add_shields = function() {
   travis = paste0("[![Travis](https://travis-ci.org/",github_pkg,".svg)](https://travis-ci.org/",github_pkg,")")
   repo_status = paste0("[![Project Status](http://www.repostatus.org/badges/latest/",status,".svg)](http://www.repostatus.org/#",status,")")
   codecov = paste0("[![Codecov](https://img.shields.io/codecov/c/github/",github_pkg,".svg)](https://codecov.io/gh/",github_pkg,")")
+  cran = paste0("[![CRAN](https://img.shields.io/cran/v/",desc$Package,".svg)](https://cran.r-project.org/package=",desc$Package,")")
 
   badges = paste0(paste0(c(version, min_r, last_update),collapse="\n"),"  \n",
-                  paste0(c(travis, repo_status, codecov),"\n",collapse = ""),"---")
+                  paste0(c(travis, codecov, repo_status, cran),"\n",collapse = ""),"---")
 
   readme = paste0(readLines("README.Rmd"),collapse = "\n")
   if(!(str_detect(readme,"<!-- START_HGUTILS -->") && str_detect(readme,"<!-- END_HGUTILS -->"))) {
