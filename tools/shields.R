@@ -3,6 +3,8 @@ library(hgutils)
 startup()
 load_package_collection()
 
+#cat(bgBlack(white(" build ")), bgGreen(white(" passing ")),sep = "")
+
 add_shields = function() {
   github = "https://github.com/hvdboorn/hgutils/"
   desc = read.description()
