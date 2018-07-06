@@ -302,8 +302,8 @@ stfu = function(expr) {
 
   name = pack_name %>% paste(packageVersion(.))
   if (is.null(left)) {
-    paste(paste0(rep("=",80-nchar(name)-4), collapse = ""), .cmess(name), "==")
+    paste(paste0(rep("=",80-nchar(name)-4), collapse = ""), .cinfo(name), "==")
   } else {
-    paste("==", left, paste0(rep("=",80-nchar(left)-nchar(name)-8),collapse = ""), .cmess(name), "==")
+    paste("==", left, paste0(rep("=",80-nchar(left)-nchar(name)-8),collapse = ""), .cinfo(name), "==")
   }
 }

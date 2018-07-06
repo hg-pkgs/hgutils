@@ -159,7 +159,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   if(length(consider_upgrade) > 0) cat(bull$hint, CONSIDER_UPGR, pkg_cons,"\n",sep="")
 
   end = Sys.time()
-  cat(sprintf("\n%sDone. %s\n", bull$mess, .cnumb(format_duration(start, end))))
+  cat(sprintf("\n%sDone. %s\n", bull$info, .cnumb(format_duration(start, end))))
   invisible(list(packages=packages, actions=data_acc, outdated=outdated_pkgs))
 }
 

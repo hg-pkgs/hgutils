@@ -6,61 +6,64 @@
 #' @name message_colors
 NULL
 
-#' @usage NULL
-#' @describeIn message_colors For warning messages.
-.cmess = function(...) {make_style("dodgerblue4")(paste0(list(...),collapse = ""))}
-
-#' @usage NULL
-#' @describeIn message_colors For warning messages.
-.cmess_bg = function(...) {make_style("white")(make_style("dodgerblue4", bg = TRUE)(paste0(list(...),collapse = "")))}
-
-#' @usage NULL
-#' @describeIn message_colors For warning messages.
+#' @rdname message_colors
+.cinfo = function(...) {make_style("dodgerblue4")(paste0(list(...),collapse = ""))}
+#' @rdname message_colors
+.cinfo_bg = function(...) {make_style("white")(make_style("dodgerblue4", bg = TRUE)(paste0(list(...),collapse = "")))}
+#' @rdname message_colors
 .cwarn = function(...) {make_style("chocolate1")(paste0(list(...),collapse = ""))}
-
-#' @usage NULL
-#' @describeIn message_colors For warning messages.
+#' @rdname message_colors
 .cwarn_bg = function(...) {make_style("chocolate1", bg = TRUE)(paste0(list(...),collapse = ""))}
-
-#' @usage NULL
-#' @describeIn message_colors For warning messages.
-.chint = function(...) {make_style("yellow")(paste0(list(...),collapse = ""))}
-
-#' @usage NULL
-#' @describeIn message_colors For warning messages.
-.chint_bg = function(...) {make_style("yellow", bg = TRUE)(paste0(list(...),collapse = ""))}
-
-#' @usage NULL
-#' @describeIn message_colors For success messages.
+#' @rdname message_colors
+.chint = function(...) {make_style("deeppink")(paste0(list(...),collapse = ""))}
+#' @rdname message_colors
+.chint_bg = function(...) {make_style("deeppink", bg = TRUE)(paste0(list(...),collapse = ""))}
+#' @rdname message_colors
 .csucc = function(...) {make_style("green")(paste0(list(...),collapse = ""))}
-
-#' @usage NULL
-#' @describeIn message_colors For success messages.
+#' @rdname message_colors
 .csucc_bg = function(...) {make_style("green", bg = TRUE)(paste0(list(...),collapse = ""))}
-
-#' @usage NULL
-#' @describeIn message_colors For fail messages.
+#' @rdname message_colors
 .cfail = function(...) {make_style("red")(paste0(list(...),collapse = ""))}
-
-#' @usage NULL
-#' @describeIn message_colors For fail messages.
+#' @rdname message_colors
 .cfail_bg = function(...) {make_style("white")((make_style("red", bg = TRUE)(paste0(list(...), collapse = ""))))}
-
-#' @usage NULL
-#' @describeIn message_colors For fail messages.
+#' @rdname message_colors
 .cnumb = function(...) {make_style("cyan")(paste0(list(...),collapse = ""))}
-
-#' @usage NULL
-#' @describeIn message_colors For fail messages.
+#' @rdname message_colors
 .cnumb_bg = function(...) {make_style("cyan", bg = TRUE)(paste0(list(...),collapse = ""))}
 
-BULLET_LENGTH = 3
+#' Display colored messages
+#'
+#' @param header message title.
+#' @param message the message.
+#' @param pre optional string to be displayed before the message bullet (such as \code{'\n'}).
+#'
+#' @return A colored message.
+#' @name messages
+NULL
+
+#' @rdname messages
+#' @export
+mess_info = function(header, message, pre=""){cat(pre, .cinfo(.bullets()$info),header,message,sep = "")}
+#' @rdname messages
+#' @export
+mess_succ = function(header, message, pre=""){cat(pre, .csucc(.bullets()$succ),header,message,sep = "")}
+#' @rdname messages
+#' @export
+mess_fail = function(header, message, pre=""){cat(pre, .cfail(.bullets()$fail),.cfail(header), .cfail(message),sep = "")}
+#' @rdname messages
+#' @export
+mess_warn = function(header, message, pre=""){cat(pre, .cwarn(.bullets()$warn),.cwarn(header), .cwarn(message),sep = "")}
+#' @rdname messages
+#' @export
+mess_numb = function(header, message, pre=""){cat(pre, .cnumb(.bullets()$numb),header, .cnumb(message),sep = "")}
+#' @rdname messages
+#' @export
+mess_hint = function(message, header="", pre=""){cat(pre, .chint(.bullets()$hint),.chint(header), .chint(message),sep = "")}
 
 #' Bullets
 #'
 #' @return A list of various colored bullets
 .bullets = function() {
-  list(mess=.cmess(" \u25ba "), succ=.csucc(" \u25ba "), fail=.cfail(" \u25ba "),
+  list(info=.cinfo(" \u25ba "), succ=.csucc(" \u25ba "), fail=.cfail(" \u25ba "),
        warn=.cwarn(" \u25ba "), numb=.cnumb(" \u25ba "), hint=.chint(" \u25ba "))
 }
-#bull = list(mess=.cmess(" \u25ba "), succ=.csucc(" \u221a "), fail=paste0(" ",.cfail(" \u078 ")," "), warn = paste0(" ",.cwarn_bg("\u203c")," "))

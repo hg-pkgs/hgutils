@@ -55,11 +55,24 @@ test_that("get_bounds includes limits", {
   }
 })
 
-# context("pkg_genre")
-# test_that("All packages in pkg_genre exist", {
-#   pg = hgutils::pkg_genre
-#   for(p in unlist(pg$packages))
-#   {
-#     expect_true(suppressWarnings(require(p, character.only = TRUE, quietly = TRUE)), info = p)
-#   }
-# })
+context("Title bar")
+test_that("Length equals 80 and regex", {
+  N = 1000
+  left = stringi::stri_rand_strings(N,round(runif(N,0,20)))
+  for (i in 1:N) {
+    bar = hgutils:::.get_title_bar(left = left[i])
+    expect_equal(crayon::col_nchar(bar),80)
+    expect_true(stringr::str_detect(bar,"^== .*? =+ .*? ==$"))
+  }
+  bar = hgutils:::.get_title_bar()
+  expect_equal(crayon::col_nchar(bar),80)
+  expect_true(stringr::str_detect(bar,"^=+ .*? ==$"))
+})
+
+context("rm_na")
+test_that("All NA is removed", {
+  a=c(1,2,3,NA,4,5,6,NA,7,8,NA,9,10)
+  expect_equal(length(rm_na(a)), 10)
+  expect_equal(1:10, rm_na(a))
+  expect_equal(sort(rm_na(a)), rm_na(a))
+})

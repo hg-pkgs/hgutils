@@ -4,14 +4,8 @@ startup()
 load_package_collection()
 
 add_shields = function() {
-  desc = readLines("DESCRIPTION") %>% paste0(collapse = "\n") %>% str_split("\n(?=.*?:)") %>% .[[1]] %>%
-         lapply(. %>% str_split(":")) %>%
-         {sapply(., function(x) list(str_replace_all(x[[1]][2],"^ +","")) %>% set_names(x[[1]][1]))}
   github = "https://github.com/hvdboorn/hgutils/"
-
-
-  # Processing -----------------------------------------------------------------
-
+  desc = read.description()
   states = c("abandoned","active","concept","inactive","moved","suspended","unsupported","wip")
   github_pkg = str_match(github,"github\\.com\\/([^\\/]*\\/[^\\/]*)")[-1]
   is_dev = str_extract(desc$Version,"(?<=[\\.-])\\d+$") %>% as.numeric %>% {. >= 9000}

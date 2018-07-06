@@ -2,8 +2,8 @@
 % Please edit documentation in R/annotation-utils.R
 \name{message_colors}
 \alias{message_colors}
-\alias{.cmess}
-\alias{.cmess_bg}
+\alias{.cinfo}
+\alias{.cinfo_bg}
 \alias{.cwarn}
 \alias{.cwarn_bg}
 \alias{.chint}
@@ -15,6 +15,31 @@
 \alias{.cnumb}
 \alias{.cnumb_bg}
 \title{Standardized message colors}
+\usage{
+.cinfo(...)
+
+.cinfo_bg(...)
+
+.cwarn(...)
+
+.cwarn_bg(...)
+
+.chint(...)
+
+.chint_bg(...)
+
+.csucc(...)
+
+.csucc_bg(...)
+
+.cfail(...)
+
+.cfail_bg(...)
+
+.cnumb(...)
+
+.cnumb_bg(...)
+}
 \arguments{
 \item{...}{the text to be colored.}
 }
@@ -24,30 +49,3 @@ A function to color text
 \description{
 Standardized message colors
 }
-\section{Functions}{
-\itemize{
-\item \code{.cmess}: For warning messages.
-
-\item \code{.cmess_bg}: For warning messages.
-
-\item \code{.cwarn}: For warning messages.
-
-\item \code{.cwarn_bg}: For warning messages.
-
-\item \code{.chint}: For warning messages.
-
-\item \code{.chint_bg}: For warning messages.
-
-\item \code{.csucc}: For success messages.
-
-\item \code{.csucc_bg}: For success messages.
-
-\item \code{.cfail}: For fail messages.
-
-\item \code{.cfail_bg}: For fail messages.
-
-\item \code{.cnumb}: For fail messages.
-
-\item \code{.cnumb_bg}: For fail messages.
-}}
-

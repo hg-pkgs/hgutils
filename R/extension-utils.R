@@ -170,7 +170,7 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
   pkgs_str = tab %>%
              str_replace_all("([[:alpha:]][[:alnum:]\\.]*[[:alnum:]])", underline("\\1")) %>%
              str_replace_all("_"," ") %>% str_replace_all(",","")
-  cat(bull$numb,RVER,.cnumb(RVersion),"\n",bull$mess,IMPORT,pkgs_str,"\n",sep = "")
+  cat(bull$numb,RVER,.cnumb(RVersion),"\n",bull$info,IMPORT,pkgs_str,"\n",sep = "")
 
   ## Replace DESCRIPTION file #####################
   desc %>% str_replace("R \\(.*?\\)",RVersion) %>%
@@ -180,7 +180,7 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
 
   depen = stfu({Filter(function(x) !require(x, character.only = TRUE), depen)}) #check if needs installation
   end = Sys.time()
-  if (length(depen) > 0) {cat("\n\n"); load_packages(depen)} else cat(bull$mess,"Done. ",.cnumb(format_duration(start,end)),"\n",sep="")
+  if (length(depen) > 0) {cat("\n\n"); load_packages(depen)} else cat(bull$info,"Done. ",.cnumb(format_duration(start,end)),"\n",sep="")
 
   invisible(list(current_r_version=current_r, dependencies_r_version=dependencies_r,
             packages=depen, packages_version=pack_version))
@@ -223,4 +223,58 @@ redundant_packages = function(packages){
                   }) %>% unlist %>% unique
               })
   redundant[!sapply(redundant, is.null)]
+}
+
+#' Reads the DESCRIPTION file
+#'
+#' @return The DESCRIPTION file as a named list.
+#' @export
+#'
+#' @examples \dontrun{description = read.description()}
+#' @importFrom crayon bold
+#' @importFrom magrittr %>%
+#' @importFrom stringr str_split
+read.description = function() {
+  if(!file.exists("DESCRIPTION")){
+    mess_hint(paste0("Try creating a DESCRIPTION file with with ",bold("usethis::use_description()\n")))
+    stop("the DESCRIPTION file does not exists.")
+  }
+  desc = readLines("DESCRIPTION") %>% paste0(collapse = "\n") %>% str_split("\n(?=.*?:)") %>% .[[1]] %>%
+    sapply(. %>% str_split(":"), USE.NAMES = FALSE) %>% do.call(rbind, .)
+  desc = desc[,2] %>% set_names(desc[,1]) %>% as.list
+  desc = lapply(desc, function(x) sapply(str_split(trimws(x), "\n")[[1]], trimws, USE.NAMES = FALSE))
+  class(desc) = "description"
+  desc
+}
+
+#' Writes the DESCRIPTION file
+#'
+#' @param description the DESCRIPTION file
+#' @export
+#' @details The 'Depends', 'Imports' and 'Suggests' fields are sorted before writing the DESCRIPTION file.
+#'
+#' @examples \dontrun{write.description(read.description)}
+#' @importFrom crayon bold
+#' @importFrom magrittr %>% %<>% extract2
+#' @importFrom stringr str_replace_all str_split
+write.description = function(description) {
+  if(!"description" %in% class(description)) {
+    mess_hint(paste0("The argument 'description' must be created with ",bold("hgutils::read.description()\n")))
+    stop("Argument 'description' must be of class 'description'")
+  }
+
+  sort_values = function(desc, name) {
+    for (nm in name) {
+      if (nm %in% names(desc)) {
+        desc[[nm]] %<>% str_replace_all(",","") %>% sort %>%
+        paste0(collapse = ",\n") %>% str_split("\n") %>% extract2(1)
+      }
+    }
+    desc
+  }
+  description %<>% sort_values(c("Depends", "Imports", "Suggests"))
+
+  sapply(names(description), function(x) {
+    if(length(description[[x]])==1) {paste0(x,": ",description[[x]])} else {paste0(x,":",paste0("\n    ",description[[x]],collapse = ""))}
+  }) %>% writeLines("DESCRIPTION")
 }
