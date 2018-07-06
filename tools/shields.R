@@ -38,3 +38,26 @@ add_shields = function() {
   new_readme = paste0(pieces[1],"\n",badges,"\n",pieces[2]) %>% str_split("\n") %>% .[[1]]
   writeLines(new_readme, "README.Rmd")
 }
+
+library(XML)
+library(magrittr)
+library(stringr)
+library(crayon)
+#url="https://api.travis-ci.org/hvdboorn/hgutils.svg"
+url = "https://img.shields.io/badge/version-v0.0.0.9007-901913.svg"
+data = xmlParse(readLines(url))
+dl = xmlToList(data)
+
+fix_col = function(x) ifelse (str_detect(x,"^#[[:xdigit:]]{3}$"), str_replace_all(x,"([[:xdigit:]])","\\1\\1"), x)
+col_left = dl$rect['fill'] %>% fix_col %>% col2rgb
+col_right = dl$path['fill'] %>% fix_col %>% col2rgb
+txt_col = dl$g$.attrs['fill'] %>% fix_col %>% col2rgb
+gradient = dl$linearGradient$stop['stop-color'] %>% fix_col %>% col2rgb
+opacity = dl$linearGradient$stop['stop-opacity'] %>% as.numeric
+texts = c(dl$g[[1]]$text, dl$g[[3]]$text) %>% paste0(" ", ., " ")
+
+col_left = (1-opacity)*col_left + opacity*gradient
+col_right = (1-opacity)*col_right + opacity*gradient
+lft = function(x) make_style(txt_col)(make_style(col_left,bg=TRUE)(x))
+rgt = function(x) make_style(txt_col)(make_style(col_right,bg=TRUE)(x))
+cat(lft(texts[1]),rgt(texts[2]),sep = "")
