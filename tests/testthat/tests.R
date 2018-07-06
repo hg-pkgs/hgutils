@@ -76,3 +76,11 @@ test_that("All NA is removed", {
   expect_equal(1:10, rm_na(a))
   expect_equal(sort(rm_na(a)), rm_na(a))
 })
+
+context("valid names")
+test_that("valid package names", {expect_true(all(hgutils::valid_pkgname(rm_na(str_match(search(),"package\\:(.*)$")[,2]))))})
+# test_that("valid function names", {
+#   pkgs=rm_na(str_match(search(),"package\\:(.*)$")[,1])
+#   functions = sapply(pkgs,lsf.str) %>% unlist %>% unique
+#   expect_true(all(valid_funcname(functions)))
+# })
