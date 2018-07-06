@@ -1,13 +1,12 @@
 context("time_estimate - NO NEWDATA")
-suppressWarnings(library(rms))
 library(hgutils)
-library("magrittr")
+load_packages("magrittr","rms","stringi","stringr","crayon")
 
 test_that("Same estimates in time_estimate for survest and survfit with no newdata", {
     fit1 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = TRUE, y = TRUE, surv = TRUE)
     fit2 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = FALSE, y = FALSE, surv = TRUE)
 
-    for (i in 1:100) {
+    for (i in 1:25) {
         surv = runif(2)
         expect_identical(time_estimate(fit1, surv)$time, time_estimate(fit2, surv)$time)
     }
@@ -18,7 +17,7 @@ test_that("Same estimates in time_estimate for survest and survfit with newdata"
     fit1 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = TRUE, y = TRUE, surv = TRUE)
     fit2 = cph(Surv(time = time, event = status == 2) ~ age + sex, data = lung, x = FALSE, y = FALSE, surv = TRUE)
 
-    for (i in 1:100) {
+    for (i in 1:25) {
         surv = runif(2)
         newdata = lung[sample(1:nrow(lung), 10 + round(runif(1,max=0.2) * (nrow(lung) - 10))), ]
         expect_identical(time_estimate(fit1, surv, newdata)$time, time_estimate(fit2, surv, newdata)$time)
@@ -27,7 +26,7 @@ test_that("Same estimates in time_estimate for survest and survfit with newdata"
 
 context("separate_values")
 test_that("Values are nicely seperated and in range", {
-    for (i in 1:100) {
+    for (i in 1:50) {
         space = runif(1, 0, 0.49)
         max_n = floor(1/space)
         y0 = runif(2 + round(runif(1) * (max_n - 2)))
@@ -58,15 +57,15 @@ test_that("get_bounds includes limits", {
 context("Title bar")
 test_that("Length equals 80 and regex", {
   N = 1000
-  left = stringi::stri_rand_strings(N,round(runif(N,0,20)))
+  left = stri_rand_strings(N,round(runif(N,0,20)))
   for (i in 1:N) {
     bar = hgutils:::.get_title_bar(left = left[i])
-    expect_equal(crayon::col_nchar(bar),80)
-    expect_true(stringr::str_detect(bar,"^== .*? =+ .*? ==$"))
+    expect_equal(col_nchar(bar),80)
+    expect_true(str_detect(bar,"^== .*? =+ .*? ==$"))
   }
   bar = hgutils:::.get_title_bar()
-  expect_equal(crayon::col_nchar(bar),80)
-  expect_true(stringr::str_detect(bar,"^=+ .*? ==$"))
+  expect_equal(col_nchar(bar),80)
+  expect_true(str_detect(bar,"^=+ .*? ==$"))
 })
 
 context("rm_na")
@@ -78,7 +77,7 @@ test_that("All NA is removed", {
 })
 
 context("valid names")
-test_that("valid package names", {expect_true(all(hgutils::valid_pkgname(rm_na(str_match(search(),"package\\:(.*)$")[,2]))))})
+test_that("valid package names", {expect_true(all(valid_pkgname(rm_na(str_match(search(),"package\\:(.*)$")[,2]))))})
 # test_that("valid function names", {
 #   pkgs=rm_na(str_match(search(),"package\\:(.*)$")[,1])
 #   functions = sapply(pkgs,lsf.str) %>% unlist %>% unique
