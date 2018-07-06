@@ -38,7 +38,7 @@ multiples of \code{N} when \code{multiples_only} is \code{TRUE}. Defaults to 10.
 }}
 }
 \value{
-A sorted numerical vector with breaks of length \code{|max_breaks|+1} when \code{include_bounds} is \code{TRUE}
+A sorted numerical vector with breaks of length \code{|max_breaks|+2} when \code{include_bounds} is \code{TRUE}
 and of size \code{|max_breaks|} otherwise.
 }
 \description{

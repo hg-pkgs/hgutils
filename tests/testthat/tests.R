@@ -41,6 +41,20 @@ test_that("Values are nicely seperated and in range", {
     }
 })
 
+context("ggplot bounds")
+test_that("get_bounds includes limits", {
+  for (i in 1:250){
+    lower = round(runif(1,1,20))
+    upper = round(runif(1,0,20))+lower
+
+    breaks = ggplot_breaks(include_bounds=TRUE)(c(lower,upper))
+    breaks2 = ggplot_breaks(include_bounds=FALSE)(c(lower,upper))
+    expect_true(lower >= min(breaks) && upper <= max(breaks))
+    expect_true(length(breaks) <= 12 && length(breaks) >= 0)
+    expect_true(length(breaks2) <= 11 && length(breaks2) >= 0)
+  }
+})
+
 # context("pkg_genre")
 # test_that("All packages in pkg_genre exist", {
 #   pg = hgutils::pkg_genre

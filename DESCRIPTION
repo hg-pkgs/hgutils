@@ -1,6 +1,6 @@
 Package: hgutils
 Title: Collection of Utility Functions
-Version: 0.0.9007
+Version: 0.0.0.9007
 Authors@R: person("H.G.", "van den Boorn", email = "hvdboorn@gmail.com", role = c("aut", "cre"))
 Description:
    A handy collection of utility 

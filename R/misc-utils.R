@@ -57,7 +57,7 @@ startup = function(clean = TRUE, folder = NULL, verbose=TRUE) {
 #' @param multiples_only whether only multiples of \code{N} can be used as breaks, defaults to \code{FALSE}.
 #' @param include_bounds whether the resulting breaks should encompass \code{min} and \code{max}. Defaults to \code{TRUE}.
 #'
-#' @return A sorted numerical vector with breaks of length \code{|max_breaks|+1} when \code{include_bounds} is \code{TRUE}
+#' @return A sorted numerical vector with breaks of length \code{|max_breaks|+2} when \code{include_bounds} is \code{TRUE}
 #' and of size \code{|max_breaks|} otherwise.
 #'
 #' @examples
@@ -84,7 +84,12 @@ get_breaks = function(limits, N=10, max_breaks=10, int_only=TRUE, multiples_only
   intervals = {if(multiples_only) N else (1:N)[(N%%1:N) == 0]} %>% sapply(. %>% {. * 10^(lp(.):up(.))}) %>% unlist %>% unique %>% sort
   selected = intervals[xmax/intervals <= max_breaks][1]
 
-  sq = seq(0, ceiling(xmax/selected)*selected, selected) + floor(xmin/selected)*selected
+  #sq = seq(0, floor(xmax/selected + 1)*selected, selected) + ceil(xmin/selected - 1)*selected
+  compl = seq(xmin-selected,xmax+xmin+selected, selected) - xmin%%selected
+  lb = max(compl[xmin >= compl])
+  ub = min(compl[(xmax+xmin) <= compl])
+  sq = compl[compl >= lb & compl <= ub]
+
   if (!include_bounds) sq = sq[sq>=xmin & sq<=(xmin+xmax)]
   sq
 }
