@@ -74,7 +74,7 @@ render.fraction_progressbar = function(object, progress, show_progress=c("nothin
   progressbar$progress = progress
   eval.parent(substitute(object<-progressbar))
 
-  render.progressbar(object, show_progress = match.arg(show_progress), ...)
+  render.progressbar(progressbar, show_progress = match.arg(show_progress), ...)
 }
 
 #' @rdname progressbar
@@ -90,7 +90,7 @@ render.iteration_progressbar = function(object, progress, show_progress=c("nothi
   progressbar$progress = progress/progressbar$n_iterations
   eval.parent(substitute(object<-progressbar))
 
-  render.progressbar(object, show_progress = match.arg(show_progress), ...)
+  render.progressbar(progressbar, show_progress = match.arg(show_progress), ...)
 }
 
 #' @rdname progressbar

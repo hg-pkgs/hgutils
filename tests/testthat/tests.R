@@ -74,3 +74,24 @@ test_that("Remove empty rows", {
   data = rm_empty_rows(data)
   expect_equal(data, rbind(c(1,2,3), c(1, NA, 4), c(4,6,7), c(4, 8, NA)))
 })
+
+
+context("Loading animations")
+test_that("Loading bar", {
+  bar = progressbar(n_iterations = 10,format = "[[*][][ ]]")
+  bar2 = progressbar(format = "[[*][][ ]]")
+  expect_equal(render(bar,progress=0,show_progress="iteration"),"[                    ] [0/10]")
+  expect_equal(render(bar,progress=5,show_progress="iteration"),"[**********          ] [5/10]")
+  expect_equal(render(bar,progress=5,show_progress="percentage"),"[**********          ] 50%")
+  expect_error(render(bar2,progress=0,show_progress="iteration"))
+  expect_equal(render(bar2,progress=0,show_progress="percentage"),"[                    ] 0%")
+  expect_equal(render(bar2,progress=0.5),"[**********          ]")
+})
+
+test_that("Spinner", {
+  sp = spinner("-|")
+  for(i in 1:100){
+    expect_true(render(sp) %in% c("-","|"))
+    Sys.sleep(0.001)
+  }
+})
