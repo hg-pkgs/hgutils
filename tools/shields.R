@@ -16,10 +16,10 @@ add_shields = function() {
   dformat = "%d-%m-%Y"
   #dformat = "%B %m %Y"
 
-  version = paste0("[![Package version](https://img.shields.io/badge/version-v",desc$Version,"-901913.svg)]()")
+  version = paste0("[![Package version](https://img.shields.io/badge/version-v",desc$Version,"-blue.svg)]()")
   min_r = paste0("[![minimal R version](https://img.shields.io/badge/R-",rvers,"+-blue.svg)](https://cran.r-project.org/)")
   last_update = paste0("[![last_update](https://img.shields.io/badge/last%20update-",
-                       format(Sys.Date(), dformat) %>% str_replace_all("-","--"),"-8323a0.svg)]()")
+                       format(Sys.Date(), dformat) %>% str_replace_all("-","--"),"-red.svg)]()")
 
   travis = paste0("[![Travis](https://travis-ci.org/",github_pkg,".svg)](https://travis-ci.org/",github_pkg,")")
   repo_status = paste0("[![Project Status](http://www.repostatus.org/badges/latest/",status,".svg)](http://www.repostatus.org/#",status,")")
@@ -44,37 +44,47 @@ library(magrittr)
 library(stringr)
 library(crayon)
 url=c("https://api.travis-ci.org/hvdboorn/hgutils.svg",
-"https://img.shields.io/badge/version-v0.0.0.9007-901913.svg",
-"https://img.shields.io/badge/last%20update-06--07--2018-8323a0.svg",
+"https://img.shields.io/badge/version-v0.0.0.9007-blue.svg",
+"https://img.shields.io/badge/last%20update-07--07--2018-red.svg",
 "https://img.shields.io/cran/v/hgutils.svg",
 "https://img.shields.io/codecov/c/github/hvdboorn/hgutils.svg",
-"http://www.repostatus.org/badges/latest/wip.svg")
+"http://www.repostatus.org/badges/latest/wip.svg",
+"https://img.shields.io/badge/R-3.1+-blue.svg")
 
-print_badge = function(url) {
-  svg = suppressWarnings(readLines(url))
-  data = xmlParse(svg)
-  dl = xmlToList(data)
+badge2text = function(svg_badge_url, full_color=TRUE) {
+  if(!str_detect(svg_badge_url,"https?://.*\\.svg$"))
+    stop("Argument 'svg_badge_url' must be a valid url to an .svg file")
+  svg = suppressWarnings(readLines(svg_badge_url))
+  dl = svg %>% xmlParse %>% xmlToList
 
-  fix_col = function(x) ifelse (str_detect(x,"^#[[:xdigit:]]{3}$"), str_replace_all(x,"([[:xdigit:]])","\\1\\1"), x)
-  col_left = "#555" %>% fix_col %>% col2rgb
-  col_right = str_match_all(svg,"<(?=path)[^<]*?fill=\"(#.*?)\"")[[1]][,2] %>% unique %>% tail(1) %>% fix_col %>% col2rgb
-  txt_col = dl$g$.attrs['fill'] %>% fix_col %>% col2rgb
-  gradient = dl$linearGradient$stop['stop-color'] %>% fix_col %>% col2rgb
-  opacity = dl$linearGradient$stop['stop-opacity'] %>% as.numeric
   texts = str_match_all(svg,"<text.*?>(.*?)<\\/text>")[[1]][,2] %>% unique %>% paste0(" ", ., " ")
+  badge = if(!full_color) {
+    paste0(texts, collapse = "|")
+  } else {
+    repair_hex = function(x) ifelse (str_detect(x,"^#[[:xdigit:]]{3}$"), str_replace_all(x,"([[:xdigit:]])","\\1\\1"), x)
+    to_linear = function(X) sapply(X, function(x) ifelse(x<=0.04045, x/12.92, ((x+0.055)/(1+0.055))^2.4))
+    left_box = function(x) make_style(col_left*0.9,bg=TRUE)(make_style(txt_col*0.97)(x))
+    right_box = function(x, text_color) make_style(col_right,bg=TRUE)(make_style(text_color*0.97)(x))
 
-  to_linear = function(X) {
-    sapply(X, function(x) {
-      ifelse(x<=0.04045, x/12.92, ((x+0.055)/(1+0.055))^2.4)
-    })
+    col_left = col2rgb("#555555")
+    col_right = str_match_all(svg,"<(?=path)[^<]*?fill=\"(#.*?)\"")[[1]][,2] %>% unique %>%
+                tail(1) %>% repair_hex %>% col2rgb %>% multiply_by(0.9)
+    txt_col = dl$g$.attrs['fill'] %>% repair_hex %>% col2rgb
+
+    Y = t(to_linear(col_right/255)) %*% c(0.2126,0.7152,0.0722)
+    s = rgb2hsv(col_right)['s',]
+
+    tcolor = if(s >= 0.5 && Y >= 0.3) col2rgb("#000000") else col2rgb("#ffffff")
+    paste0(left_box(texts[1]), right_box(texts[2],tcolor), sep = "")
   }
-  Y = t(to_linear(col_right/255)) %*% c(0.2126,0.7152,0.0722)
-  s = rgb2hsv(col_right)['s',]
 
-  cr = if(s>= 0.5 && Y >= 0.3) col2rgb("#000000") else col2rgb("#ffffff")#(mean(col_right)+128)%%256 %>% {col2rgb(rgb(.,.,.,maxColorValue = 255))}
-  lft = function(x) make_style(col_left*0.9,bg=TRUE)(make_style(txt_col*0.97)(x))
-  rgt = function(x) make_style(col_right,bg=TRUE)(make_style(cr*0.97)(x))
-  cat(lft(texts[1]),rgt(texts[2]),sep = "")
+  class(badge) = "badge"
+  badge
 }
 
-for(u in url) {print_badge(u); cat("\n")}
+print.badge = function(x, ...) {
+  cat(x)
+  invisible(x)
+}
+
+for(u in url) cat(badge2text(u,full_color = TRUE))

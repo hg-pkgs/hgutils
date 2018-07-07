@@ -207,7 +207,7 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
 #' @examples
 #' \dontrun{
 #' #grid does not have be loaded since gridGraphics already does so.
-#' redundant_packages("gridGraphics","grid")
+#' redundant_packages(c("gridGraphics","grid"))
 #' }
 #' @importFrom magrittr set_names
 #' @importFrom stringr str_detect

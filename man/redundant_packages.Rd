@@ -22,6 +22,6 @@ This function finds those packages and returns them in a named list. For each na
 \examples{
 \dontrun{
 #grid does not have be loaded since gridGraphics already does so.
-redundant_packages("gridGraphics","grid")
+redundant_packages(c("gridGraphics","grid"))
 }
 }

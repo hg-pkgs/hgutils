@@ -4,6 +4,18 @@ library(crayon)
 
 context("test-misc-utils.R")
 
+test_that("valid_pkgname:valid package names", {
+  expect_true(search() %>% str_match("package\\:(.*)$") %>% .[,2] %>% rm_na %>%
+              valid_pkgname %>% all)
+  expect_error(valid_pkgname(2))
+})
+
+test_that("valid_funcname", {
+  expect_true(valid_funcname("test_that"))
+  expect_false(valid_funcname("2test_that"))
+  expect_error(valid_funcname(2))
+})
+
 test_that(".get_title_bar: Length equals 80 and regex", {
   left = "Test case"
   bar = hgutils:::.get_title_bar(left)
