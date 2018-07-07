@@ -19,7 +19,7 @@ add_shields = function() {
   version = paste0("[![Package version](https://img.shields.io/badge/version-v",desc$Version,"-901913.svg)]()")
   min_r = paste0("[![minimal R version](https://img.shields.io/badge/R-",rvers,"+-blue.svg)](https://cran.r-project.org/)")
   last_update = paste0("[![last_update](https://img.shields.io/badge/last%20update-",
-                       format(Sys.Date(), dformat) %>% str_replace_all("-","--"),"-698774.svg)]()")
+                       format(Sys.Date(), dformat) %>% str_replace_all("-","--"),"-8323a0.svg)]()")
 
   travis = paste0("[![Travis](https://travis-ci.org/",github_pkg,".svg)](https://travis-ci.org/",github_pkg,")")
   repo_status = paste0("[![Project Status](http://www.repostatus.org/badges/latest/",status,".svg)](http://www.repostatus.org/#",status,")")
@@ -43,21 +43,38 @@ library(XML)
 library(magrittr)
 library(stringr)
 library(crayon)
-#url="https://api.travis-ci.org/hvdboorn/hgutils.svg"
-url = "https://img.shields.io/badge/version-v0.0.0.9007-901913.svg"
-data = xmlParse(readLines(url))
-dl2 = xmlToList(data)
+url=c("https://api.travis-ci.org/hvdboorn/hgutils.svg",
+"https://img.shields.io/badge/version-v0.0.0.9007-901913.svg",
+"https://img.shields.io/badge/last%20update-06--07--2018-8323a0.svg",
+"https://img.shields.io/cran/v/hgutils.svg",
+"https://img.shields.io/codecov/c/github/hvdboorn/hgutils.svg",
+"http://www.repostatus.org/badges/latest/wip.svg")
 
-fix_col = function(x) ifelse (str_detect(x,"^#[[:xdigit:]]{3}$"), str_replace_all(x,"([[:xdigit:]])","\\1\\1"), x)
-col_left = dl$rect['fill'] %>% fix_col %>% col2rgb
-col_right = dl$path['fill'] %>% fix_col %>% col2rgb
-txt_col = dl$g$.attrs['fill'] %>% fix_col %>% col2rgb
-gradient = dl$linearGradient$stop['stop-color'] %>% fix_col %>% col2rgb
-opacity = dl$linearGradient$stop['stop-opacity'] %>% as.numeric
-texts = c(dl$g[[1]]$text, dl$g[[3]]$text) %>% paste0(" ", ., " ")
+print_badge = function(url) {
+  svg = suppressWarnings(readLines(url))
+  data = xmlParse(svg)
+  dl = xmlToList(data)
 
-col_left = (1-opacity)*col_left + opacity*gradient
-col_right = (1-opacity)*col_right + opacity*gradient
-lft = function(x) make_style(txt_col)(make_style(col_left,bg=TRUE)(x))
-rgt = function(x) make_style(txt_col)(make_style(col_right,bg=TRUE)(x))
-cat(lft(texts[1]),rgt(texts[2]),sep = "")
+  fix_col = function(x) ifelse (str_detect(x,"^#[[:xdigit:]]{3}$"), str_replace_all(x,"([[:xdigit:]])","\\1\\1"), x)
+  col_left = "#555" %>% fix_col %>% col2rgb
+  col_right = str_match_all(svg,"<(?=path)[^<]*?fill=\"(#.*?)\"")[[1]][,2] %>% unique %>% tail(1) %>% fix_col %>% col2rgb
+  txt_col = dl$g$.attrs['fill'] %>% fix_col %>% col2rgb
+  gradient = dl$linearGradient$stop['stop-color'] %>% fix_col %>% col2rgb
+  opacity = dl$linearGradient$stop['stop-opacity'] %>% as.numeric
+  texts = str_match_all(svg,"<text.*?>(.*?)<\\/text>")[[1]][,2] %>% unique %>% paste0(" ", ., " ")
+
+  to_linear = function(X) {
+    sapply(X, function(x) {
+      ifelse(x<=0.04045, x/12.92, ((x+0.055)/(1+0.055))^2.4)
+    })
+  }
+  Y = t(to_linear(col_right/255)) %*% c(0.2126,0.7152,0.0722)
+  s = rgb2hsv(col_right)['s',]
+
+  cr = if(s>= 0.5 && Y >= 0.3) col2rgb("#000000") else col2rgb("#ffffff")#(mean(col_right)+128)%%256 %>% {col2rgb(rgb(.,.,.,maxColorValue = 255))}
+  lft = function(x) make_style(col_left*0.9,bg=TRUE)(make_style(txt_col*0.97)(x))
+  rgt = function(x) make_style(col_right,bg=TRUE)(make_style(cr*0.97)(x))
+  cat(lft(texts[1]),rgt(texts[2]),sep = "")
+}
+
+for(u in url) {print_badge(u); cat("\n")}

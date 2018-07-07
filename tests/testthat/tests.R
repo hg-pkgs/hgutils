@@ -45,7 +45,7 @@ test_that("Length equals 80 and regex", {
   expect_true(str_detect(bar,"^=+ .*? ==$"))
 })
 
-context("rm_na")
+context("Misc utils")
 test_that("All NA is removed", {
   a=c(1,2,3,NA,4,5,6,NA,7,8,NA,9,10)
   expect_equal(length(rm_na(a)), 10)
@@ -53,10 +53,24 @@ test_that("All NA is removed", {
   expect_equal(sort(rm_na(a)), rm_na(a))
 })
 
-context("valid names")
 test_that("valid package names", {expect_true(all(valid_pkgname(rm_na(str_match(search(),"package\\:(.*)$")[,2]))))})
-# test_that("valid function names", {
-#   pkgs=rm_na(str_match(search(),"package\\:(.*)$")[,1])
-#   functions = sapply(pkgs,lsf.str) %>% unlist %>% unique
-#   expect_true(all(valid_funcname(functions)))
-# })
+test_that("Empty workspace", {expect_true({startup(verbose = FALSE); length(ls())==0})})
+test_that("Square grid", {
+  for(i in 1:100){
+    g = get_square_grid(i)
+    expect_true(g$rows >= g$columns)
+    expect_true(g$rows*g$columns >= i)
+  }
+})
+test_that("Round double",{expect_equal(rnd_dbl(1.26564,digits = 2),"1.27")})
+test_that("Round double",{expect_equal(rnd_dbl(1.2,digits = 2),"1.20")})
+test_that("Format duration", {s=Sys.time(); expect_equal(format_duration(s,s+90),"[~1.5 min.]")})
+test_that("Format duration", {s=Sys.time(); expect_equal(format_duration(s,s+.90),"[900 ms.]")})
+test_that("Frmt", {expect_equal(frmt(c(1,2,3)),"['1','2','3']")})
+test_that("Frmt", {expect_equal(frmt(1),"'1'")})
+test_that("Frmt", {expect_equal(frmt(1, show_class = TRUE),"'1' (class: numeric)")})
+test_that("Remove empty rows", {
+  data = rbind(c(1,2,3), c(1, NA, 4), c(4,6,7), c(NA, NA, NA), c(4, 8, NA))
+  data = rm_empty_rows(data)
+  expect_equal(data, rbind(c(1,2,3), c(1, NA, 4), c(4,6,7), c(4, 8, NA)))
+})
