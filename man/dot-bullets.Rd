@@ -12,3 +12,4 @@ A list of various colored bullets
 \description{
 Bullets
 }
+\keyword{internal}

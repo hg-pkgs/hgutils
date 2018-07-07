@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{An object of class \code{percentage_table}}
 
-\item{...}{unused}
+\item{...}{further arguments passed to or from other methods.}
 }
 \description{
 Print a formatted percentage table

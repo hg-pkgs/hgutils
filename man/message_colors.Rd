@@ -49,3 +49,4 @@ A function to color text
 \description{
 Standardized message colors
 }
+\keyword{internal}

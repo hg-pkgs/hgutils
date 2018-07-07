@@ -42,7 +42,6 @@
 #'
 #' @importFrom utils install.packages old.packages update.packages compareVersion installed.packages
 #' @importFrom crayon underline
-#' @importFrom magrittr %>% %<>%
 load_packages = function(..., install_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
   start = Sys.time()
   #-- Check for extra arguments in '...' -------
@@ -181,7 +180,6 @@ list_package_collections = function() {
 
 #' @export
 #' @rdname load_packages
-#' @importFrom magrittr %>%
 load_package_collection = function(collection_name = names(list_package_collections()), ...)
 {
   col_names = unique(match.arg(collection_name, several.ok = TRUE))

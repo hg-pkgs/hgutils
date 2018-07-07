@@ -15,3 +15,4 @@ A string vector of a title bar of 80 characters.
 \description{
 Creates a title bar
 }
+\keyword{internal}

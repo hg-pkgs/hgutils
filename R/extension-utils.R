@@ -17,7 +17,7 @@
 #' valid_funcname("ggplot2") # valid
 #' valid_funcname(".2pkg") # invalid
 #' @importFrom stringr str_detect
-#' @importFrom magrittr %>% set_names
+#' @importFrom magrittr set_names
 #' @family developer functions
 valid_pkgname = function(pkg) {
   regex = "^[[:alpha:]][[:alnum:]\\.]*[[:alnum:]]$"
@@ -81,7 +81,6 @@ update_settings = function(default, ...) {
 #' impls = generic_implementations('plot')
 #'
 #' @note Removes the default generic implementation
-#' @importFrom magrittr %>%
 #' @importFrom stringr str_match
 #' @importFrom utils methods
 #' @family developer functions
@@ -110,7 +109,6 @@ generic_implementations = function(generic, remove_default = TRUE) {
 #' @export
 #'
 #' @examples \dontrun{crossref_description(skip_prompt=TRUE)}
-#' @importFrom magrittr %>%
 #' @importFrom stringr str_match str_replace str_replace_all str_split
 #' @importFrom utils packageVersion packageDescription read.delim
 #' @importFrom crayon blue green red underline
@@ -191,10 +189,10 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
 #' @param pkgs A list of packages names
 #'
 #' @return A named list of duplicated names and number of occurrences
-#' @importFrom magrittr %>% set_names
+#' @importFrom magrittr set_names
 .pkg_duplicated = function(pkgs)
 {
-  unique(pkgs[duplicated(pkgs)]) %>% set_names(., .) %>% lapply(. %>% {sum(pkgs==.)})
+  pkgs[duplicated(pkgs)] %>% unique %>% set_names(., .) %>% lapply(. %>% {sum(pkgs==.)})
 }
 
 #' Find redundant packages
@@ -211,7 +209,7 @@ crossref_description = function(skip_prompt=FALSE, update=TRUE, use_version_numb
 #' #grid does not have be loaded since gridGraphics already does so.
 #' redundant_packages("gridGraphics","grid")
 #' }
-#' @importFrom magrittr %>% set_names
+#' @importFrom magrittr set_names
 #' @importFrom stringr str_detect
 redundant_packages = function(packages){
   packages = unique(packages)
@@ -232,7 +230,6 @@ redundant_packages = function(packages){
 #'
 #' @examples \dontrun{description = read.description()}
 #' @importFrom crayon bold
-#' @importFrom magrittr %>%
 #' @importFrom stringr str_split
 read.description = function() {
   if(!file.exists("DESCRIPTION")){
@@ -255,7 +252,7 @@ read.description = function() {
 #'
 #' @examples \dontrun{write.description(read.description)}
 #' @importFrom crayon bold
-#' @importFrom magrittr %>% %<>% extract2
+#' @importFrom magrittr extract2
 #' @importFrom stringr str_replace_all str_split
 write.description = function(description) {
   if(!"description" %in% class(description)) {

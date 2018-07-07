@@ -14,7 +14,6 @@ create_table_one = function(df) {
 
 #' @return A matrix with distinct (factor) labels and corresponding counts and percentages.
 #' @export
-#' @importFrom magrittr %>%
 #' @rdname create_table_one
 create_contigency_table = function(df, x, max_size = 8, ...) {
   sub = df[,x]
@@ -59,7 +58,7 @@ percentage_table = function(x, n_digits=2) {
 #' Print a formatted percentage table
 #'
 #' @param x An object of class \code{percentage_table}
-#' @param ... unused
+#' @param ... further arguments passed to or from other methods.
 #'
 #' @return NULL
 #' @export
@@ -87,7 +86,6 @@ print.percentage_table = function(x, ...) {
 #' @examples
 #' ages = round(rnorm(1000,50,10)); ages[1] = NA
 #' discretize_numbers(ages)
-#' @importFrom magrittr %>%
 discretize_numbers = function(x, min_size = 1, ...) {
   if (!is.numeric(x) & !is.logical(x))
     stop(sprintf("Argument 'x' must be a numeric or logical vector but is of type %s.", frmt(class(x))))
@@ -133,7 +131,6 @@ create_text_table = function(string, table_width = 80, compact = TRUE) {
 #' @inheritParams stringr::str_wrap
 #' @export
 #'
-#' @importFrom magrittr %>%
 #' @importFrom stringr str_replace_all str_wrap
 #'
 #' @return A character vector of a wrapped table where rows are separated by the newline character.

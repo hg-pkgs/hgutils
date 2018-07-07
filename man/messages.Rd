@@ -35,3 +35,4 @@ A colored message.
 \description{
 Display colored messages
 }
+\keyword{internal}
