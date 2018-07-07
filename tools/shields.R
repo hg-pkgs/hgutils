@@ -13,7 +13,7 @@ add_shields = function() {
   is_dev = str_extract(desc$Version,"(?<=[\\.-])\\d+$") %>% as.numeric %>% {. >= 9000}
   rvers  = str_match(desc$Depends,"R[ ]+\\(>=[ ]+(.*)\\)")[-1]
   status="wip"
-  dformat = "%d-%m-%Y"
+  dformat = "%Y%-%m-%d"
   #dformat = "%B %m %Y"
 
   version = paste0("[![Package version](https://img.shields.io/badge/version-v",desc$Version,"-blue.svg)]()")
@@ -51,40 +51,4 @@ url=c("https://api.travis-ci.org/hvdboorn/hgutils.svg",
 "http://www.repostatus.org/badges/latest/wip.svg",
 "https://img.shields.io/badge/R-3.1+-blue.svg")
 
-badge2text = function(svg_badge_url, full_color=TRUE) {
-  if(!str_detect(svg_badge_url,"https?://.*\\.svg$"))
-    stop("Argument 'svg_badge_url' must be a valid url to an .svg file")
-  svg = suppressWarnings(readLines(svg_badge_url))
-  dl = svg %>% xmlParse %>% xmlToList
-
-  texts = str_match_all(svg,"<text.*?>(.*?)<\\/text>")[[1]][,2] %>% unique %>% paste0(" ", ., " ")
-  badge = if(!full_color) {
-    paste0(texts, collapse = "|")
-  } else {
-    repair_hex = function(x) ifelse (str_detect(x,"^#[[:xdigit:]]{3}$"), str_replace_all(x,"([[:xdigit:]])","\\1\\1"), x)
-    to_linear = function(X) sapply(X, function(x) ifelse(x<=0.04045, x/12.92, ((x+0.055)/(1+0.055))^2.4))
-    left_box = function(x) make_style(col_left*0.9,bg=TRUE)(make_style(txt_col*0.97)(x))
-    right_box = function(x, text_color) make_style(col_right,bg=TRUE)(make_style(text_color*0.97)(x))
-
-    col_left = col2rgb("#555555")
-    col_right = str_match_all(svg,"<(?=path)[^<]*?fill=\"(#.*?)\"")[[1]][,2] %>% unique %>%
-                tail(1) %>% repair_hex %>% col2rgb %>% multiply_by(0.9)
-    txt_col = dl$g$.attrs['fill'] %>% repair_hex %>% col2rgb
-
-    Y = t(to_linear(col_right/255)) %*% c(0.2126,0.7152,0.0722)
-    s = rgb2hsv(col_right)['s',]
-
-    tcolor = if(s >= 0.5 && Y >= 0.3) col2rgb("#000000") else col2rgb("#ffffff")
-    paste0(left_box(texts[1]), right_box(texts[2],tcolor), sep = "")
-  }
-
-  class(badge) = "badge"
-  badge
-}
-
-print.badge = function(x, ...) {
-  cat(x)
-  invisible(x)
-}
-
-for(u in url) cat(badge2text(u,full_color = TRUE))
+for(u in url) cat(badge2text(u,full_colour = TRUE))

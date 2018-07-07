@@ -13,6 +13,7 @@
 #' @examples \dontrun{startup()}
 #' @export
 #' @importFrom crayon red blue
+#' @importFrom grDevices graphics.off dev.list
 #' @family initialization functions
 startup = function(clean = TRUE, folder = NULL, verbose=TRUE) {
   if (clean) {
@@ -22,16 +23,12 @@ startup = function(clean = TRUE, folder = NULL, verbose=TRUE) {
                     "objects from the global environment.\n")
     gc()
 
-    if (requireNamespace("grDevices", quietly = TRUE)) {
-      n_devices = length(grDevices::dev.list())
-      if(n_devices > 0) {
-        grDevices::graphics.off()
-        if(verbose) cat(blue(" \u25ba"), "Cleared",n_devices,"graphical devices.\n")
-      } else {
-        if(verbose) cat(blue(" \u25ba"), "No graphical devices are in use.\n")
-      }
+    n_devices = length(dev.list())
+    if(n_devices > 0) {
+      graphics.off()
+      if(verbose) cat(blue(" \u25ba"), "Cleared",n_devices,"graphical devices.\n")
     } else {
-      cat(red(" \u25ba"), "Could not clear graphics. Consider installing package 'grDevices'.\n")
+      if(verbose) cat(blue(" \u25ba"), "No graphical devices are in use.\n")
     }
   }
 

@@ -65,7 +65,7 @@ ggplot_breaks = function(...) {
 #' @param distance minimum distance between subsequent numbers. Must be a scalar or vector of size \code{|X|}.
 #' @param min,max lower and upper limits.
 #' @details This function can be used for example to separate labels that are too close to one another.
-#' The resulting vector will create enough space, such that the labels do not overlap anymore, yet are still close to their original values.
+#' The resulting vector will create enough space, such that the labels do not overlap any more, yet are still close to their original values.
 #'
 #' The output vector has the following properties. For all elements \code{e_i}, \code{min <= e_i <= max}.
 #' For the distance \code{D} between \code{e_i} and \code{e_(i+1)}, \code{D >= max(d_i, d_(i+1))}. And finally, the distance
@@ -76,20 +76,8 @@ ggplot_breaks = function(...) {
 #' @export
 #'
 #' @examples \dontrun{separate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)}
+#' @importFrom limSolve lsei
 separate_values = function(X, distance = 0.05, min = 0, max = 1) {
-  if(!requireNamespace("limSolve", quietly = TRUE)) {
-    cat(.bullets()$warn,"Package ",underline("limSolve")," is required to run 'separate_values'. However, it is not installed.\n\n",sep = "")
-    res = readline("Would you like to install it (Y/N)? ")
-    if (str_detect(res, "[Yy]")) {
-      load_packages("limSolve")
-    }
-
-    if(!requireNamespace("limSolve", quietly = TRUE)) {
-      cat(.bullets()$fail,"Please install 'limSolve' before calling 'separate_values'.",sep = "")
-      invisible(return())
-    }
-  }
-
   if (!is.vector(X) || !is.numeric(X))
     stop(sprintf("Argument 'X' must be a numerical vector of real numbers, but is %s.",frmt(X)))
   if (!is.numeric(distance))
@@ -126,7 +114,7 @@ separate_values = function(X, distance = 0.05, min = 0, max = 1) {
   H = c(rep(c(min, -max), N), distance)  #solution vectors
 
   # constraint on limits, spacing and distance to original value
-  limSolve::lsei(A = diag(N), B = X, G = rbind(upper, lower), H = H, type = 2)$X
+  lsei(A = diag(N), B = X, G = rbind(upper, lower), H = H, type = 2)$X
 }
 
 #' Specifies a square grid which fits N objects.

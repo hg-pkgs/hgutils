@@ -24,7 +24,7 @@ close as possible to their original values.
 }
 \details{
 This function can be used for example to separate labels that are too close to one another.
-The resulting vector will create enough space, such that the labels do not overlap anymore, yet are still close to their original values.
+The resulting vector will create enough space, such that the labels do not overlap any more, yet are still close to their original values.
 
 The output vector has the following properties. For all elements \code{e_i}, \code{min <= e_i <= max}.
 For the distance \code{D} between \code{e_i} and \code{e_(i+1)}, \code{D >= max(d_i, d_(i+1))}. And finally, the distance

@@ -8,7 +8,7 @@
 \alias{mess_warn}
 \alias{mess_numb}
 \alias{mess_hint}
-\title{Display colored messages}
+\title{Display coloured messages}
 \usage{
 mess_info(header, message, pre = "")
 
@@ -30,9 +30,9 @@ mess_hint(message, header = "", pre = "")
 \item{pre}{optional string to be displayed before the message bullet (such as \code{'\n'}).}
 }
 \value{
-A colored message.
+A coloured message.
 }
 \description{
-Display colored messages
+Display coloured messages
 }
 \keyword{internal}
