@@ -51,4 +51,5 @@ url=c("https://api.travis-ci.org/hvdboorn/hgutils.svg",
 "http://www.repostatus.org/badges/latest/wip.svg",
 "https://img.shields.io/badge/R-3.1+-blue.svg")
 
-for(u in url) cat(badge2text(u,full_colour = TRUE))
+badges = url %>% lapply(. %>% badge2text)
+do.call(cat, c(badges, sep="\n"))
