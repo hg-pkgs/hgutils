@@ -23,7 +23,14 @@ test_that("read.description/write.description/update_description", {
     }
   }
 
-  N = round(runif(1,0,1000))
-  update_description("Random",N)
-  expect_equal(read.description()[["Random"]], as.character(N))
+  N = as.character(round(runif(1,0,1000)))
+  update_description("Random",N) #update field
+  update_description(N, "Hello World!") #new field
+  new_desc = read.description()
+  expect_equal(new_desc[["Random"]], N)
+  expect_equal(new_desc[[N]], "Hello World!")
+
+  new_desc = new_desc[!grepl("^\\d+$", names(new_desc))]
+  class(new_desc) = "description"
+  write.description(new_desc)
 })

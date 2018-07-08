@@ -18,7 +18,7 @@
 #'
 #' @details The 'Depends', 'Imports' and 'Suggests' fields are sorted before writing the DESCRIPTION file.
 #' @importFrom crayon bold
-#' @importFrom stringr str_split str_replace_all
+#' @importFrom stringr str_split str_replace_all str_trim
 #' @importFrom magrittr extract2
 #' @name description-functions
 NULL
@@ -33,7 +33,7 @@ read.description = function() {
   desc = readLines("DESCRIPTION") %>% paste0(collapse = "\n") %>% str_split("\n(?=.*?:)") %>% .[[1]] %>%
     sapply(. %>% str_split(":", 2), USE.NAMES = FALSE) %>% do.call(rbind, .)
   desc = desc[,2] %>% set_names(desc[,1]) %>% as.list
-  desc = lapply(desc, function(x) sapply(str_split(trimws(x), "\n")[[1]], trimws, USE.NAMES = FALSE))
+  desc = lapply(desc, function(x) sapply(str_split(str_trim(x), "\n")[[1]], str_trim, USE.NAMES = FALSE))
   class(desc) = "description"
   desc
 }

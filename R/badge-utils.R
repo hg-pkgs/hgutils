@@ -34,7 +34,7 @@ badge2text = function(svg_badge_url, full_colour=TRUE) {
     s = rgb2hsv(col_right)['s',]
 
     tcolour = if(s >= 0.5 && Y >= 0.3) col2rgb("#000000") else col2rgb("#ffffff")
-    cat(paste0(left_box(texts[1]), right_box(texts[2],tcolour), sep = ""))
+    paste0(left_box(texts[1]), right_box(texts[2],tcolour), sep = "")
   }
 
   class(badge) = "badge"
