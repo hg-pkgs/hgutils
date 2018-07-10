@@ -27,8 +27,7 @@ add_shields = function() {
   cran = paste0("[![CRAN](http://www.r-pkg.org/badges/version/",desc$Package,")](https://cran.r-project.org/package=",desc$Package,")")
 
   badges = paste0(paste0(c(repo_status, cran, version, min_r),collapse="\n"),"  \n",
-                  paste0(c(travis, codecov),collapse="\n"),"  \n",
-                  paste0(c(),"\n",collapse = ""),"---")
+                  paste0(c(travis, codecov),collapse="\n"),"---")
 
   readme = paste0(readLines("README.Rmd"),collapse = "\n")
   if(!(str_detect(readme,"<!-- START_HGUTILS -->") && str_detect(readme,"<!-- END_HGUTILS -->"))) {
