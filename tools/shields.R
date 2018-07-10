@@ -19,16 +19,16 @@ add_shields = function() {
   version = paste0("[![Package version](https://img.shields.io/badge/GitHub-",desc$Version,"-orange.svg)]()")
   min_r = paste0("[![minimal R version](https://img.shields.io/badge/R-v",rvers,"+-blue.svg)](https://cran.r-project.org/)")
   last_update = paste0("[![last_update](https://img.shields.io/badge/last%20update-",
-                       format(Sys.Date(), dformat) %>% str_replace_all("-","--"),"-orange.svg)]()")
+                       format(Sys.Date(), dformat) %>% str_replace_all("-","--"),"-blue.svg)]()")
 
   travis = paste0("[![Travis](https://travis-ci.org/",github_pkg,".svg)](https://travis-ci.org/",github_pkg,")")
   repo_status = paste0("[![Project Status](http://www.repostatus.org/badges/latest/",status,".svg)](http://www.repostatus.org/#",status,")")
   codecov = paste0("[![Codecov](https://img.shields.io/codecov/c/github/",github_pkg,".svg)](https://codecov.io/gh/",github_pkg,")")
   cran = paste0("[![CRAN](http://www.r-pkg.org/badges/version/",desc$Package,")](https://cran.r-project.org/package=",desc$Package,")")
 
-  badges = paste0(paste0(c(version, min_r, last_update),collapse="\n"),"  \n",
+  badges = paste0(paste0(c(cran, version, min_r),collapse="\n"),"  \n",
                   paste0(c(travis, codecov),collapse="\n"),"  \n",
-                  paste0(c(repo_status, cran),"\n",collapse = ""),"---")
+                  paste0(c(repo_status),"\n",collapse = ""),"---")
 
   readme = paste0(readLines("README.Rmd"),collapse = "\n")
   if(!(str_detect(readme,"<!-- START_HGUTILS -->") && str_detect(readme,"<!-- END_HGUTILS -->"))) {
