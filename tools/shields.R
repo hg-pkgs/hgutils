@@ -26,7 +26,7 @@ add_shields = function() {
   codecov = paste0("[![Codecov](https://img.shields.io/codecov/c/github/",github_pkg,".svg)](https://codecov.io/gh/",github_pkg,")")
   cran = paste0("[![CRAN](http://www.r-pkg.org/badges/version/",desc$Package,")](https://cran.r-project.org/package=",desc$Package,")")
 
-  badges = paste0(paste0(c(cran, version, min_r, repo_status),collapse="\n"),"  \n",
+  badges = paste0(paste0(c(repo_status, cran, version, min_r),collapse="\n"),"  \n",
                   paste0(c(travis, codecov),collapse="\n"),"  \n",
                   paste0(c(),"\n",collapse = ""),"---")
 
