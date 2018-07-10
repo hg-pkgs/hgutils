@@ -1,5 +1,6 @@
 #' Description functions
-#' Read, write and update the DESCRIPTION file. \code{read.description} reads the
+#'
+#' @description Read, write and update the DESCRIPTION file. \code{read.description} reads the
 #' DESCRIPTION file in the current project directory and returns a named list.
 #' \code{write.description} writes the named list back to disk, overwriting the
 #' current DESCRIPTION file. Finally, \code{update_description} combines both functions

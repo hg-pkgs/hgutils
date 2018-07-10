@@ -16,15 +16,15 @@ add_shields = function() {
   dformat = "%Y%-%m-%d"
   #dformat = "%B %m %Y"
 
-  version = paste0("[![Package version](https://img.shields.io/badge/version-v",desc$Version,"-blue.svg)]()")
-  min_r = paste0("[![minimal R version](https://img.shields.io/badge/R-",rvers,"+-blue.svg)](https://cran.r-project.org/)")
+  version = paste0("[![Package version](https://img.shields.io/badge/GitHub-",desc$Version,"-orange.svg)]()")
+  min_r = paste0("[![minimal R version](https://img.shields.io/badge/R-v",rvers,"+-blue.svg)](https://cran.r-project.org/)")
   last_update = paste0("[![last_update](https://img.shields.io/badge/last%20update-",
-                       format(Sys.Date(), dformat) %>% str_replace_all("-","--"),"-red.svg)]()")
+                       format(Sys.Date(), dformat) %>% str_replace_all("-","--"),"-orange.svg)]()")
 
   travis = paste0("[![Travis](https://travis-ci.org/",github_pkg,".svg)](https://travis-ci.org/",github_pkg,")")
   repo_status = paste0("[![Project Status](http://www.repostatus.org/badges/latest/",status,".svg)](http://www.repostatus.org/#",status,")")
   codecov = paste0("[![Codecov](https://img.shields.io/codecov/c/github/",github_pkg,".svg)](https://codecov.io/gh/",github_pkg,")")
-  cran = paste0("[![CRAN](https://img.shields.io/cran/v/",desc$Package,".svg)](https://cran.r-project.org/package=",desc$Package,")")
+  cran = paste0("[![CRAN](http://www.r-pkg.org/badges/version/",desc$Package,")](https://cran.r-project.org/package=",desc$Package,")")
 
   badges = paste0(paste0(c(version, min_r, last_update),collapse="\n"),"  \n",
                   paste0(c(travis, codecov),collapse="\n"),"  \n",
@@ -43,6 +43,7 @@ library(XML)
 library(magrittr)
 library(stringr)
 library(crayon)
+library(hgutils)
 url=c("https://api.travis-ci.org/hvdboorn/hgutils.svg",
 "https://img.shields.io/badge/version-v0.0.0.9007-blue.svg",
 "https://img.shields.io/badge/last%20update-07--07--2018-red.svg",
