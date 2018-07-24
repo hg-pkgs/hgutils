@@ -36,4 +36,3 @@ Other developer functions: \code{\link{generic_implementations}},
   \code{\link{update_settings}},
   \code{\link{valid_pkgname}}
 }
-\concept{developer functions}

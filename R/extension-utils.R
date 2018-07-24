@@ -217,7 +217,7 @@ redundant_packages = function(packages){
               lapply(. %>% {
                 sapply(packages, function(other) {
                   desc = packageDescription(other)
-                  if("Depends" %in% names(desc) && str_detect(desc$Depends, .)) other else NULL
+                  if("Depends" %in% names(desc) && str_detect(desc$Depends, paste0("\\b",.,"\\b"))) other else NULL
                   }) %>% unlist %>% unique
               })
   redundant[!sapply(redundant, is.null)]

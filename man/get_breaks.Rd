@@ -56,4 +56,3 @@ get_breaks(24, N=12, max_breaks=15)
 ggplot() + scale_x_continuous(breaks = ggplot_breaks(N=12, max_breaks=15))}
 
 }
-\concept{break functions}

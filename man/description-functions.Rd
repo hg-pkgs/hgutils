@@ -5,13 +5,7 @@
 \alias{read.description}
 \alias{write.description}
 \alias{update_description}
-\title{Description functions
-Read, write and update the DESCRIPTION file. \code{read.description} reads the
-DESCRIPTION file in the current project directory and returns a named list.
-\code{write.description} writes the named list back to disk, overwriting the
-current DESCRIPTION file. Finally, \code{update_description} combines both functions
-by reading the DESCRIPTION file, updating or creating a field and writing the result
-back to disk.}
+\title{Description functions}
 \usage{
 read.description()
 
@@ -29,7 +23,6 @@ update_description(fieldname, value, after = NULL)
 \item{after}{if the field name is new, the name of the field after which the element is placed.}
 }
 \description{
-Description functions
 Read, write and update the DESCRIPTION file. \code{read.description} reads the
 DESCRIPTION file in the current project directory and returns a named list.
 \code{write.description} writes the named list back to disk, overwriting the
