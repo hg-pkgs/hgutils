@@ -30,3 +30,4 @@ Other developer functions: \code{\link{crossref_description}},
   \code{\link{generic_implementations}},
   \code{\link{load_packages}}, \code{\link{valid_pkgname}}
 }
+\concept{developer functions}

@@ -21,3 +21,4 @@ clears graphics and (optionally) sets working directory.
 \examples{
 \dontrun{startup()}
 }
+\concept{initialization functions}

@@ -21,3 +21,4 @@ rm_na(c(1,2,NA,54))
 \seealso{
 Other NA functions: \code{\link{rm_empty_rows}}
 }
+\concept{NA functions}

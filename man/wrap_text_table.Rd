@@ -4,7 +4,8 @@
 \alias{wrap_text_table}
 \title{Wrap string table}
 \usage{
-wrap_text_table(string, exdent, min_size = 9, table_width = 80 - exdent)
+wrap_text_table(string, exdent, min_size = 9, table_width = 80 -
+  exdent)
 }
 \arguments{
 \item{string}{character vector of strings to reformat.}

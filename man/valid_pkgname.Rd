@@ -40,3 +40,4 @@ Other developer functions: \code{\link{crossref_description}},
   \code{\link{load_packages}},
   \code{\link{update_settings}}
 }
+\concept{developer functions}

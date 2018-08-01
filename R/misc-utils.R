@@ -93,6 +93,19 @@ frmt = function(x, show_class = FALSE, use_quotes=TRUE) {
     sprintf("%s (class: %s)", text, class(x)) else text
 }
 
+#' Adds comma's to separate thousands in numbers
+#'
+#' @param n a real number
+#'
+#' @return A string with the number and thousands separated by comma's.
+#' @export
+#'
+#' @examples sep_thousands(13243.33) #13,243.33
+#' @importFrom stringr str_replace_all
+sep_thousands = function(n) {
+  str_replace_all(n, "(\\d{1,3})(?=(?:\\d{3})+\\b)","\\1,")
+}
+
 #' Remove \code{NA}
 #'
 #' @param x vector containing possible \code{NA} values.

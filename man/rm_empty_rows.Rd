@@ -22,3 +22,4 @@ rm_empty_rows(data)
 \seealso{
 Other NA functions: \code{\link{rm_na}}
 }
+\concept{NA functions}

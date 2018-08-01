@@ -13,7 +13,8 @@ load_packages(..., install_packages = TRUE, force_install = FALSE,
 
 list_package_collections()
 
-load_package_collection(collection_name = names(list_package_collections()),
+
+  load_package_collection(collection_name = names(list_package_collections()),
   ...)
 
 list_common_packages()
@@ -38,8 +39,6 @@ Returns invisibly a list with additional package information and results of inst
 \description{
 Utility function to load and optionally install packages if they are missing. When the function terminates,
 packages are installed (if necessary), upgraded to the latest version (if necessary) and loaded.
-
-List package collections
 }
 \details{
 \code{load_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
@@ -74,3 +73,4 @@ Other developer functions: \code{\link{crossref_description}},
   \code{\link{update_settings}},
   \code{\link{valid_pkgname}}
 }
+\concept{developer functions}
