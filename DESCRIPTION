@@ -9,13 +9,13 @@ Description:
     development, plotting and scientific research.
 Depends: R (>= 3.1)
 Imports:
-    crayon,
-    grDevices,
-    limSolve,
-    magrittr,
-    stringr,
-    utils,
-    XML
+  crayon,
+  grDevices,
+  limSolve,
+  magrittr,
+  stringr,
+  utils,
+  XML
 Suggests:
     methods,
     testthat
