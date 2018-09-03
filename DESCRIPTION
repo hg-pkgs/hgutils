@@ -1,12 +1,12 @@
 Package: hgutils
-Version: 0.0.0.9013
-Date: 2018-08-01
+Version: 0.2.3
+Date: 2018-09-04
 Title: Collection of Utility Functions
 Authors@R: person("H.G.", "van den Boorn", email = "hvdboorn@gmail.com", role = c("aut", "cre"))
 Description:
     A handy collection of utility
     functions designed to aid in package
-    development.
+    development, plotting and scientific research.
 Depends: R (>= 3.1)
 Imports:
     crayon,

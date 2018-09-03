@@ -12,7 +12,7 @@ add_shields = function() {
   github_pkg = str_match(github,"github\\.com\\/([^\\/]*\\/[^\\/]*)")[-1]
   is_dev = str_extract(desc$Version,"(?<=[\\.-])\\d+$") %>% as.numeric %>% {. >= 9000}
   rvers  = str_match(desc$Depends,"R[ ]+\\(>=[ ]+(.*)\\)")[-1]
-  status="wip"
+  status="active"
   dformat = "%Y%-%m-%d"
   #dformat = "%B %m %Y"
 
