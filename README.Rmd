@@ -27,5 +27,5 @@ You can install hgutils from github with:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("devtools")
-devtools::install_github("hg-pkgs/hgutils")
+devtools::install_github("hvdboorn/hgutils")
 ```
