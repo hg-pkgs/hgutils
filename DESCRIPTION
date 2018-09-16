@@ -23,6 +23,7 @@ Suggests:
     testthat
 License: GPL-3
 URL: https://github.com/hvdboorn/hgutils
+BugReports: https://github.com/hvdboorn/hgutils/issues
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
