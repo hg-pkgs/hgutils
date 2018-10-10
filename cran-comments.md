@@ -11,6 +11,10 @@
 
 * This is a new release.
 
+## Additional info
+
+Uwe Ligges e-mailed me to elaborate more in the description file, so this submission is the same as previously but with a different description file.
+
 ## Reverse dependencies
 
 This is a new release, so there are no reverse dependencies.

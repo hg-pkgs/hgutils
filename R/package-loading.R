@@ -81,8 +81,11 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
 
   cat("\r",render(prog, progress=0)," Retrieving package info...",spaces, sep = "")
 
-  inst = installed.packages()
-  outdated_pkgs = old.packages(instPkgs = inst[inst[,"Package"] %in% packages,, drop=FALSE]) %>% data.frame(stringsAsFactors=FALSE)
+  inst = installed.packages() %>% set_rownames(NULL)
+  inst = inst[order(package_version(inst[,"Version"]),decreasing = TRUE),]
+  current_versions = lapply(packages,function(x) inst[inst[,"Package"]==x,][1,]) %>% do.call(rbind,.)
+
+  outdated_pkgs = old.packages(instPkgs = current_versions) %>% data.frame(stringsAsFactors=FALSE)
   outdated_pkgs$Installed = sapply(outdated_pkgs$Package, function(x) format(packageVersion(x))) #other installed is old
   outdated_pkgs %<>% {.[package_version(.$Installed) < package_version(.$ReposVer),]}
   consider_upgrade = outdated_pkgs$Package
@@ -115,7 +118,7 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
     {
       sel = outdated_pkgs[outdated_pkgs$Package==package,]
       cat("\r",render(prog, p, show_progress)," upgrading ",package,"...",spaces, sep = "")
-      stfu({install.packages(package, verbose = FALSE, quiet = TRUE)})
+      stfu({update.packages(oldPkgs=package, verbose = FALSE, quiet = TRUE,ask = FALSE)})
 
       current_ver = format(packageVersion(package))
       if (compareVersion(current_ver, sel$Installed) <= 0) {upgrade_fail=c(upgrade_fail, package)} else {upgraded=c(upgraded, package)}
