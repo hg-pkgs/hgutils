@@ -31,5 +31,5 @@ For the distance \code{D} between \code{e_i} and \code{e_(i+1)}, \code{D >= max(
 between \code{e_i} and \code{X_i} is minimized for all \code{e_i}.
 }
 \examples{
-\dontrun{separate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)}
+separate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
 }

@@ -75,7 +75,7 @@ ggplot_breaks = function(...) {
 #'         with the minimum allowed distance between subsequent values.
 #' @export
 #'
-#' @examples \dontrun{separate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)}
+#' @examples separate_values(c(0.3,0.4,0.41), distance = 0.05, min = 0, max = 1)
 #' @importFrom limSolve lsei
 separate_values = function(X, distance = 0.05, min = 0, max = 1) {
   if (!is.vector(X) || !is.numeric(X))
@@ -89,8 +89,10 @@ separate_values = function(X, distance = 0.05, min = 0, max = 1) {
 
   N = length(X)
   if (length(distance) == 1) distance = rep(distance, N)
-  distance = distance[order(X)]
-  X = X[order(X)]
+
+  ord = order(X)
+  distance = distance[ord]
+  X = X[ord]
   distance = if(N>=2) pmax(distance[1:(N-1)], distance[2:N]) else numeric(0)
 
   if ((max - min) < sum(distance))
@@ -114,7 +116,7 @@ separate_values = function(X, distance = 0.05, min = 0, max = 1) {
   H = c(rep(c(min, -max), N), distance)  #solution vectors
 
   # constraint on limits, spacing and distance to original value
-  lsei(A = diag(N), B = X, G = rbind(upper, lower), H = H, type = 2)$X
+  lsei(A = diag(N), B = X, G = rbind(upper, lower), H = H, type = 2)$X[ord]
 }
 
 #' Specifies a square grid which fits N objects.

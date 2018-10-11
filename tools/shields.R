@@ -26,7 +26,7 @@ add_shields = function() {
   codecov = paste0("[![Codecov](https://img.shields.io/codecov/c/github/",github_pkg,".svg)](https://codecov.io/gh/",github_pkg,")")
   cran = paste0("[![CRAN](http://www.r-pkg.org/badges/version/",desc$Package,")](https://cran.r-project.org/package=",desc$Package,")")
 
-  badges = paste0(paste0(c(repo_status, cran, version, min_r),collapse="\n"),"  \n",
+  badges = paste0(paste0(c(repo_status, cran, version, min_r, last_update),collapse="\n"),"  \n",
                   paste0(c(travis, codecov),collapse="\n"),"\n---")
 
   readme = paste0(readLines("README.Rmd"),collapse = "\n")
@@ -38,18 +38,18 @@ add_shields = function() {
   writeLines(new_readme, "README.Rmd")
 }
 
-library(XML)
-library(magrittr)
-library(stringr)
-library(crayon)
-library(hgutils)
-url=c("https://api.travis-ci.org/hvdboorn/hgutils.svg",
-"https://img.shields.io/badge/version-v0.0.0.9007-blue.svg",
-"https://img.shields.io/badge/last%20update-07--07--2018-red.svg",
-"https://img.shields.io/cran/v/hgutils.svg",
-"https://img.shields.io/codecov/c/github/hvdboorn/hgutils.svg",
-"http://www.repostatus.org/badges/latest/wip.svg",
-"https://img.shields.io/badge/R-3.1+-blue.svg")
-
-badges = url %>% lapply(. %>% badge2text)
-do.call(cat, c(badges, sep="\n"))
+# library(XML)
+# library(magrittr)
+# library(stringr)
+# library(crayon)
+# library(hgutils)
+# url=c("https://api.travis-ci.org/hvdboorn/hgutils.svg",
+# "https://img.shields.io/badge/version-v0.0.0.9007-blue.svg",
+# "https://img.shields.io/badge/last%20update-07--07--2018-red.svg",
+# "https://img.shields.io/cran/v/hgutils.svg",
+# "https://img.shields.io/codecov/c/github/hvdboorn/hgutils.svg",
+# "http://www.repostatus.org/badges/latest/wip.svg",
+# "https://img.shields.io/badge/R-3.1+-blue.svg")
+#
+# badges = url %>% lapply(. %>% badge2text)
+# do.call(cat, c(badges, sep="\n"))
