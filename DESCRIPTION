@@ -1,6 +1,6 @@
 Package: hgutils
 Version: 0.2.3.9003
-Date: 2018-10-11
+Date: 2018-10-17
 Title: Collection of Utility Functions
 Authors@R: person("H.G.", "van den Boorn", email = "hvdboorn@gmail.com", role = c("aut", "cre"))
 Description:
