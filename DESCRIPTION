@@ -1,6 +1,6 @@
 Package: hgutils
 Version: 0.2.3.9003
-Date: 2018-10-17
+Date: 2018-10-18
 Title: Collection of Utility Functions
 Authors@R: person("H.G.", "van den Boorn", email = "hvdboorn@gmail.com", role = c("aut", "cre"))
 Description:
@@ -11,13 +11,12 @@ Description:
     creating nice breaks for plots, overview tables and many more handy utility functions.
 Depends: R (>= 3.1)
 Imports:
-    crayon,
-    grDevices,
-    limSolve,
-    magrittr,
-    stringr,
-    utils,
-    XML
+  crayon,
+  grDevices,
+  limSolve,
+  magrittr,
+  stringr,
+  utils
 Suggests:
     methods,
     testthat

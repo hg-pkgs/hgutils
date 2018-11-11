@@ -28,17 +28,20 @@ exclude_patients(flowchart, dataset, exclusion_criterium,
 \item{excluded_text}{The text of the exclusion node, must be a string which can be interpreted by 'sprintf'}
 }
 \value{
-A flowchart, or updated dataset. When excluding patients, the flowchart is updated 'behind the scenes' and is not returned.
+A flowchart (when creating the flowchart), or updated dataset (when excluding patients).
 }
 \description{
 Creates a patient flowchart which visualizes exclusions and updates the dataset.
+}
+\note{
+When excluding patients, the flowchart is updated 'behind the scenes' and is not returned.
 }
 \examples{
 \dontrun{
 dataset = survival::lung; dataset$sex = factor(dataset$sex,labels=c("male","female"))
 flowchart = inclusion_flowchart(dataset)
-dataset = exclude_patients(flowchart, dataset, status==1) #exclude all patients which did not die
-dataset = exclude_patients(flowchart, dataset, time<100) #exclude all patients with short follow-up
+dataset = exclude_patients(flowchart, dataset, status==1) #exclude all patients who did not die
+dataset = exclude_patients(flowchart, dataset, time<100) #exclude all patients with a short follow-up
 flowchart #print diagram
 }
 }

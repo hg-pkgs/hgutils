@@ -15,14 +15,19 @@
 #' @importFrom crayon red blue
 #' @importFrom grDevices graphics.off dev.list
 #' @family initialization functions
-startup = function(clean = TRUE, folder = NULL, verbose=TRUE) {
-  if (clean) {
+startup = function(removeObjects=TRUE, runGarbageCollection=TRUE, clearGraphics=TRUE, folder = NULL, verbose=TRUE) {
+  if (removeObjects) {
     objects = ls(pos = .GlobalEnv)
     rm(list = objects, envir = .GlobalEnv)
     if(verbose) cat(blue(" \u25ba"), "Removed",length(objects),
                     "objects from the global environment.\n")
-    gc()
+  }
 
+  if(runGarbageCollection) {
+    gc()
+  }
+
+  if(clearGraphics){
     n_devices = length(dev.list())
     if(n_devices > 0) {
       graphics.off()
