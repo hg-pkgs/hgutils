@@ -13,19 +13,19 @@ exclude_patients(flowchart, dataset, exclusion_criterium,
   node_text = "\%s eligable patients", excluded_text = "\%s excluded")
 }
 \arguments{
-\item{dataset}{The dataset, must be a data.frame}
+\item{dataset}{The dataset, must be a data.frame.}
 
-\item{node_text}{The text of the starting node, must be a string which can be interpreted by sprintf}
+\item{node_text}{The text of the starting node, must be a string which can be interpreted by sprintf.}
 
-\item{stratum}{An optional stratum, must be variable in dataset}
+\item{stratum}{An optional stratum, must be variable in dataset.}
 
-\item{flowchart}{The flowchart object}
+\item{flowchart}{The flowchart object.}
 
-\item{exclusion_criterium}{A boolean statement which is used to select patients to be discarded from the dataset}
+\item{exclusion_criterium}{A boolean statement which is used to select patients to be discarded from the dataset.}
 
-\item{reason}{An optional string to specify why patients were excluded. Defaults to the exclusion criterium}
+\item{reason}{An optional string to specify why patients were excluded. Defaults to the exclusion criterium.}
 
-\item{excluded_text}{The text of the exclusion node, must be a string which can be interpreted by 'sprintf'}
+\item{excluded_text}{The text of the exclusion node, must be a string which can be interpreted by \code{sprintf}.}
 }
 \value{
 A flowchart (when creating the flowchart), or updated dataset (when excluding patients).
@@ -41,7 +41,7 @@ When excluding patients, the flowchart is updated 'behind the scenes' and is not
 dataset = survival::lung; dataset$sex = factor(dataset$sex,labels=c("male","female"))
 flowchart = inclusion_flowchart(dataset)
 dataset = exclude_patients(flowchart, dataset, status==1) #exclude all patients who did not die
-dataset = exclude_patients(flowchart, dataset, time<100) #exclude all patients with a short follow-up
+dataset = exclude_patients(flowchart, dataset, time<100) #exclude patients with a short follow-up
 flowchart #print diagram
 }
 }

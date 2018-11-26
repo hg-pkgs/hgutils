@@ -9,7 +9,8 @@
 \title{Load and install packages}
 \usage{
 load_packages(..., install_packages = TRUE, force_install = FALSE,
-  upgrade = FALSE)
+  upgrade = FALSE, default_loading_method = FALSE,
+  return_library_statements = FALSE)
 
 list_package_collections()
 
@@ -29,6 +30,10 @@ load_common_packages(...)
 \item{force_install}{whether to install packages even if they are installed already.}
 
 \item{upgrade}{whether to upgrade outdated packages. Defaults to \code{FALSE}.}
+
+\item{default_loading_method}{load according to the default R method using only \code{library()}}
+
+\item{return_library_statements}{makes this function only return a string containing \code{library()} statements which can be paste into an R script.}
 
 \item{collection_name}{One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
 "grid","survival","processing","shiny","development"}.}

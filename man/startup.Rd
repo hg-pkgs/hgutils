@@ -8,12 +8,15 @@ startup(removeObjects = TRUE, runGarbageCollection = TRUE,
   clearGraphics = TRUE, folder = NULL, verbose = TRUE)
 }
 \arguments{
+\item{removeObjects}{whether to remove objects from the workspace.}
+
+\item{runGarbageCollection}{whether to run the garbage collection.}
+
+\item{clearGraphics}{whether to clear the graphics from the R studio plots screen.}
+
 \item{folder}{folder name to set the current working directory.}
 
 \item{verbose}{whether to print informative messages during cleaning.}
-
-\item{clean}{whether to remove objects in the global environment,
-run garbage collection and to clear graphics. Defaults to \code{TRUE}.}
 }
 \description{
 Clears workspace, deletes all objects from global environment,

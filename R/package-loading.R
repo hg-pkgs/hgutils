@@ -6,9 +6,11 @@
 #' @param install_packages whether to install the selected packages.
 #' @param force_install whether to install packages even if they are installed already.
 #' @param upgrade whether to upgrade outdated packages. Defaults to \code{FALSE}.
-#' @param ... list of additional package names.
+#' @param default_loading_method load according to the default R method using only \code{library()}
+#' @param return_library_statements makes this function only return a string containing \code{library()} statements which can be paste into an R script.
 #' @param collection_name One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
 #' "grid","survival","processing","shiny","development"}.
+#' @param ... list of additional package names.
 #'
 #' @details
 #' \code{load_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
@@ -43,7 +45,7 @@
 #' @importFrom utils install.packages old.packages update.packages compareVersion installed.packages
 #' @importFrom crayon underline
 #' @importFrom magrittr set_rownames
-load_packages = function(..., install_packages = TRUE, force_install = FALSE, upgrade=FALSE) {
+load_packages = function(..., install_packages = TRUE, force_install = FALSE, upgrade=FALSE, default_loading_method=FALSE, return_library_statements=FALSE) {
   oldw <- getOption("warn")
   options(warn = -1)
   start = Sys.time()
@@ -56,6 +58,17 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, up
   invalid_names = packages[!valid_pkgname(packages)]
   if(length(invalid_names) > 0)
     stop(sprintf("The argument '...' contains the following invalid package names: %s.", invalid_names))
+
+  if(return_library_statements || default_loading_method) {
+    text = paste0("library(",packages,")", collapse = "; ")
+    options(warn = oldw)
+    if (return_library_statements) {
+      return(text)
+    } else {
+      eval(parse(text = text))
+      return()
+    }
+  }
 
   #-- Define constants -------
   bull = .bullets()

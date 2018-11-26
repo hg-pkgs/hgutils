@@ -2,13 +2,13 @@
 #'
 #' @description Creates a patient flowchart which visualizes exclusions and updates the dataset.
 #'
-#' @param dataset The dataset, must be a data.frame
-#' @param node_text The text of the starting node, must be a string which can be interpreted by sprintf
-#' @param stratum An optional stratum, must be variable in dataset
-#' @param flowchart The flowchart object
-#' @param exclusion_criterium A boolean statement which is used to select patients to be discarded from the dataset
-#' @param reason An optional string to specify why patients were excluded. Defaults to the exclusion criterium
-#' @param excluded_text The text of the exclusion node, must be a string which can be interpreted by 'sprintf'
+#' @param dataset The dataset, must be a data.frame.
+#' @param node_text The text of the starting node, must be a string which can be interpreted by sprintf.
+#' @param stratum An optional stratum, must be variable in dataset.
+#' @param flowchart The flowchart object.
+#' @param exclusion_criterium A boolean statement which is used to select patients to be discarded from the dataset.
+#' @param reason An optional string to specify why patients were excluded. Defaults to the exclusion criterium.
+#' @param excluded_text The text of the exclusion node, must be a string which can be interpreted by \code{sprintf}.
 #'
 #' @note When excluding patients, the flowchart is updated 'behind the scenes' and is not returned.
 #' @return A flowchart (when creating the flowchart), or updated dataset (when excluding patients).
@@ -18,7 +18,7 @@
 #' dataset = survival::lung; dataset$sex = factor(dataset$sex,labels=c("male","female"))
 #' flowchart = inclusion_flowchart(dataset)
 #' dataset = exclude_patients(flowchart, dataset, status==1) #exclude all patients who did not die
-#' dataset = exclude_patients(flowchart, dataset, time<100) #exclude all patients with a short follow-up
+#' dataset = exclude_patients(flowchart, dataset, time<100) #exclude patients with a short follow-up
 #' flowchart #print diagram
 #' }
 inclusion_flowchart = function(dataset, node_text="%s eligable patients", stratum=NULL) {
