@@ -29,13 +29,13 @@ add_shields = function() {
   badges = paste0(paste0(c(repo_status, cran, version, min_r, last_update),collapse="\n"),"  \n",
                   paste0(c(travis, codecov),collapse="\n"),"\n---")
 
-  readme = paste0(readLines("README.Rmd"),collapse = "\n")
+  readme = paste0(readLines("README.md"),collapse = "\n")
   if(!(str_detect(readme,"<!-- START_HGUTILS -->") && str_detect(readme,"<!-- END_HGUTILS -->"))) {
     readme = paste0("<!-- START_HGUTILS --><!-- END_HGUTILS -->\n",readme)
   }
   pieces=str_split(readme,"(?s)(?<=<!-- START_HGUTILS -->).*(?=<!-- END_HGUTILS -->)")[[1]]
   new_readme = paste0(pieces[1],"\n",badges,"\n",pieces[2]) %>% str_split("\n") %>% .[[1]]
-  writeLines(new_readme, "README.Rmd")
+  writeLines(new_readme, "README.md")
 }
 
 # library(XML)
