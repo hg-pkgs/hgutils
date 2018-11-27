@@ -9,7 +9,7 @@ test_that("seperate_values: values are nicely seperated and in range", {
     y0 = runif(n=sample(c(2,2:max_n),1))
     res = separate_values(y0, space)
 
-    expect_equal(res >= 0 && res <= 1, TRUE, info = res)
+    expect_equal(all(res >= 0 & res <= 1), TRUE, info = res)
     expect_equal(all(sapply(1:length(res), function(x) abs(res[x] - res[-x])) >= space - 1e-04), TRUE)
     expect_error(separate_values(runif(max_n + 3), space))
   }
