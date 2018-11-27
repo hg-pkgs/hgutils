@@ -1,6 +1,3 @@
----
-output: github_document
----
 <!-- START_HGUTILS -->
 [![Project Status](http://www.repostatus.org/badges/latest/active.svg)](http://www.repostatus.org/#active)
 [![CRAN](http://www.r-pkg.org/badges/version/hgutils)](https://cran.r-project.org/package=hgutils)
@@ -11,6 +8,7 @@ output: github_document
 [![Codecov](https://img.shields.io/codecov/c/github/hvdboorn/hgutils.svg)](https://codecov.io/gh/hvdboorn/hgutils)
 ---
 <!-- END_HGUTILS -->
+---
 # hgutils
 
 The goal of hgutils is to aid in package development, plotting, scientific functions and more.
