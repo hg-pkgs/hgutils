@@ -4,9 +4,9 @@ context("test-plot-utils.R")
 
 test_that("seperate_values: values are nicely seperated and in range", {
   for (i in 1:50) {
-    space = runif(1, 0, 0.49)
-    max_n = floor(1/space)
-    y0 = runif(2 + round(runif(1) * (max_n - 2)))
+    space = runif(1, 0.01, 0.49)
+    max_n = round(1/space)
+    y0 = runif(n=sample(c(2,2:max_n),1))
     res = separate_values(y0, space)
 
     expect_equal(res >= 0 && res <= 1, TRUE, info = res)

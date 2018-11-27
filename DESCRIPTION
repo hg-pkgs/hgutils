@@ -1,6 +1,6 @@
 Package: hgutils
 Version: 0.2.5
-Date: 2018-11-26
+Date: 2018-11-27
 Title: Collection of Utility Functions
 Authors@R: person("H.G.", "van den Boorn", email = "hvdboorn@gmail.com", role = c("aut", "cre"))
 Description:
@@ -26,4 +26,4 @@ BugReports: https://github.com/hvdboorn/hgutils/issues
 Encoding: UTF-8
 LazyData: true
 Language: en-GB
-RoxygenNote: 6.1.0
+RoxygenNote: 6.1.1

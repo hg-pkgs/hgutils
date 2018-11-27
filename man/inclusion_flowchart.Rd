@@ -25,7 +25,7 @@ exclude_patients(flowchart, dataset, exclusion_criterium,
 
 \item{reason}{An optional string to specify why patients were excluded. Defaults to the exclusion criterium.}
 
-\item{excluded_text}{The text of the exclusion node, must be a string which can be interpreted by \code{sprintf}.}
+\item{excluded_text}{The text of the exclusion node, must be a string which can be interpreted by \code{\link[base]{sprintf}}.}
 }
 \value{
 A flowchart (when creating the flowchart), or updated dataset (when excluding patients).

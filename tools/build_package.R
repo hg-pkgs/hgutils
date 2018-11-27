@@ -9,7 +9,7 @@ source("tools/shields.R")
 hgutils::crossref_description(skip_prompt=TRUE, use_version_numbers=FALSE,
                               rversion="DEPENDENCIES_VERSION", update=TRUE)
 devtools::document()
-devtools::spell_check(dict="en_US")
+devtools::spell_check()
 devtools::run_examples(fresh=TRUE, run = FALSE)
 devtools::test()
 devtools::check()

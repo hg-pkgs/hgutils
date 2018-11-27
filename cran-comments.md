@@ -7,16 +7,17 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 0 notes
+-- R CMD check results -------------------------------------------------------------------------------------------------------------------------- hgutils 0.2.5 ----
+Duration: 23.6s
 
-* This is a new release.
+0 errors √ | 0 warnings √ | 0 notes √
 
 ## Additional info
 
-Uwe Ligges e-mailed me to elaborate more in the description file, so this submission is the same as previously but with a different description file.
+Since last submit, I fixed a bug in the tests which disqualified valid output.
 
 ## Reverse dependencies
 
-This is a new release, so there are no reverse dependencies.
+There are no reverse dependencies.
 
 ---

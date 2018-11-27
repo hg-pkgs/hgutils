@@ -8,7 +8,7 @@
 #' @param flowchart The flowchart object.
 #' @param exclusion_criterium A boolean statement which is used to select patients to be discarded from the dataset.
 #' @param reason An optional string to specify why patients were excluded. Defaults to the exclusion criterium.
-#' @param excluded_text The text of the exclusion node, must be a string which can be interpreted by \code{sprintf}.
+#' @param excluded_text The text of the exclusion node, must be a string which can be interpreted by \code{\link[base]{sprintf}}.
 #'
 #' @note When excluding patients, the flowchart is updated 'behind the scenes' and is not returned.
 #' @return A flowchart (when creating the flowchart), or updated dataset (when excluding patients).
