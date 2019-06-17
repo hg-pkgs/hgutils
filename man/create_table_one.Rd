@@ -6,14 +6,19 @@
 \alias{percentage_table}
 \title{Table one}
 \usage{
-create_table_one(df)
+create_table_one(df, numbers_as_categories = TRUE, deaths = NULL)
 
-create_contigency_table(df, x, max_size = 8, ...)
+create_contigency_table(df, x, max_size = 8,
+  numbers_as_categories = TRUE, ...)
 
 percentage_table(x, n_digits = 2)
 }
 \arguments{
 \item{df}{\code{data.frame}.}
+
+\item{numbers_as_categories}{Whether numbers should be categorized.}
+
+\item{deaths}{The number of deaths in the population.}
 
 \item{x}{column vector name in \code{df}.}
 

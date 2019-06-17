@@ -4,7 +4,7 @@
 \alias{format_duration}
 \title{Format time duration}
 \usage{
-format_duration(start, end)
+format_duration(start, end = Sys.time())
 }
 \arguments{
 \item{start, end}{date-time objects as obtained via \code{\link[base]{Sys.time}}}

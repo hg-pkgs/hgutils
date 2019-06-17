@@ -4,40 +4,56 @@
 #' @param x column vector name in \code{df}.
 #' @param max_size maximum size of unique elements in the numeric variable \code{x} before the values are clustered.
 #' @param n_digits The number of digits to which the percentages are rounded.
+#' @param numbers_as_categories Whether numbers should be categorized.
+#' @param deaths The number of deaths in the population.
 #' @inheritDotParams get_breaks
 #'
 #' @return A dataframe containing the contingency tables for each of the variables in \code{df}.
 #' @export
-create_table_one = function(df) {
-  do.call(rbind, lapply(names(df), function(x) create_contigency_table(df, x))) %>% as.data.frame
+create_table_one = function(df, numbers_as_categories=TRUE, deaths=NULL) {
+  t1 = do.call(rbind, lapply(names(df), function(x) create_contigency_table(df, x, numbers_as_categories=numbers_as_categories))) %>% as.data.frame %>% set_names(c("Variable", ""))
+
+  if(is.null(deaths)) {
+    rbind.data.frame(data.frame("n", nrow(df)) %>% set_names(names(t1)), t1)
+  } else {
+    rbind.data.frame(data.frame("n (deaths)", paste0(nrow(df), " (", deaths, ")")) %>% set_names(names(t1)), t1)
+  }
 }
 
 #' @return A matrix with distinct (factor) labels and corresponding counts and percentages.
 #' @export
+#' @importFrom stats sd
 #' @rdname create_table_one
-create_contigency_table = function(df, x, max_size = 8, ...) {
+create_contigency_table = function(df, x, max_size = 8, numbers_as_categories=TRUE, ...) {
   sub = df[,x]
-  if (is.numeric(sub)){
-    if (length(unique(sub)) <= max_size)
-      sub = factor(as.character(sub))
-    else
-      sub = discretize_numbers(sub, min_size=10, max_breaks = max_size, int_only=FALSE, ...)
+  if (is.numeric(sub) & !numbers_as_categories) {
+    m = mean(sub, na.rm = TRUE)
+    s = sd(sub, na.rm = TRUE)
+    matrix(c(paste0(x, " (mean (sd))"), paste0(round(m,1), " \\u00b1 ", round(s,1))), ncol = 2)
+  } else {
+    if(is.numeric(sub)) {
+      if (length(unique(sub)) <= max_size)
+        sub = factor(as.character(sub))
+      else
+        sub = discretize_numbers(sub, min_size=10, max_breaks = max_size, int_only=FALSE, ...)
+    }
+    if (is.character(sub) || is.logical(sub))
+      sub = factor(sub)
+    if (!is.factor(sub)) {
+      browser()
+      stop(sprintf("Column '%s' must be a factor, numeric, logical or character, but is of type %s.", x, frmt(class(sub))))
+    }
+
+    pct = percentage_table(sub)
+    pct_format = paste0(pct$frequencies," (",rnd_dbl(pct$percentages*100,digits = 1),"%)") %>%
+    {set_names(., names(pct$frequencies))} %>% {c(.[length(.)], .[-length(.)])}
+
+    nm = names(pct_format); nm[is.na(nm)] = "Missing"; names(pct_format) = nm
+
+    tbl = matrix(c(names(pct_format), pct_format), ncol = 2)
+    tbl[,1] = paste0("  ",tbl[,1])
+    rbind(c(x,NA),tbl)
   }
-  if (is.character(sub) || is.logical(sub))
-    sub = factor(sub)
-  if (!is.factor(sub))
-    stop(sprintf("Column '%s' must be a factor, numeric, logical or character, but is of type %s.", x, frmt(class(sub))))
-
-  pct = percentage_table(sub)
-  pct_format = paste0(pct$frequencies," (",rnd_dbl(pct$percentages*100,digits = 1),"%)") %>%
-  {set_names(., names(pct$frequencies))} %>% {c(.[length(.)], .[-length(.)])}
-
-  nm = names(pct_format); nm[is.na(nm)] = "Missing"; names(pct_format) = nm
-
-  tbl = matrix(c(names(pct_format), pct_format), ncol = 2)
-  tbl[,1] = paste0("  ",tbl[,1])
-
-  rbind(c(x,NA),tbl)
 }
 
 

@@ -2,28 +2,14 @@
 % Please edit documentation in R/package-loading.R
 \name{load_packages}
 \alias{load_packages}
-\alias{list_package_collections}
-\alias{load_package_collection}
-\alias{list_common_packages}
-\alias{load_common_packages}
 \title{Load and install packages}
 \usage{
 load_packages(..., install_packages = TRUE, force_install = FALSE,
   show_outdated_packages = TRUE, default_loading_method = FALSE,
   return_library_statements = FALSE)
-
-list_package_collections()
-
-
-  load_package_collection(collection_name = names(list_package_collections()),
-  ...)
-
-list_common_packages()
-
-load_common_packages(...)
 }
 \arguments{
-\item{...}{list of additional package names.}
+\item{...}{list of package names, may be quoted or unqoated.}
 
 \item{install_packages}{whether to install the selected packages.}
 
@@ -34,9 +20,6 @@ load_common_packages(...)
 \item{default_loading_method}{load according to the default R method using only \code{library()}}
 
 \item{return_library_statements}{makes this function only return a string containing \code{library()} statements which can be paste into an R script.}
-
-\item{collection_name}{One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
-"grid","survival","processing","shiny","development"}.}
 }
 \value{
 Returns invisibly a list with additional package information and results of installing/upgrading and loading.
@@ -47,28 +30,19 @@ packages are installed (if necessary) and loaded. Upgradeable packages are shown
 }
 \details{
 \code{load_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
-\code{use_common_packages} is a convenient utility which does the same for a prespecified list of common package names
-defined in \code{list_common_packages}. The dots parameter is passed on to \code{load_packages}.
-
-\code{load_package_collection} loads a collection of useful packages, identified by a collection name. This is used to
-load similar packages for specific programming tasks. The possible collections are stated in \code{list_package_collections}
 }
 \examples{
 \dontrun{
-# Package names can be given as a vector or one-by-one
-load_packages(c('magrittr','dplyr'))
-load_packages('magrittr','dplyr',install_packages=FALSE)
+# Package names given one-by-one
+load_packages('magrittr', 'dplyr')
 
-# These are equivalent
-load_common_packages()
-load_packages(list_common_packages())
+# Package names may be unquoted
+load_packages(magrittr, dplyr)
+load_packages('magrittr','dplyr', install_packages=FALSE)
+}
 
-#load package collection "processing"
-#installs/loads dplyr, lubridate, magrittr, mice, stringr, tibble and utils
-load_package_collection("processing")}
 }
 \seealso{
-\code{\link{load_package_collection}} for loading packages collections.
 \code{\link[utils]{install.packages}} for installation of new packages,
 \code{\link[utils]{update.packages}} for updating outdated packages,
 \code{\link[base]{library}} for load and attaching packages.

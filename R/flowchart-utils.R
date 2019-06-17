@@ -87,13 +87,25 @@ exclude_patients = function(flowchart, dataset, exclusion_criterium, reason=depa
 #' @export
 #' @return NULL
 print.patient_flowchart = function(x, length=7, ...) {
+  cat(as.character.patient_flowchart(x))
+}
+
+#' Text representation of patient inclusion flowchart
+#'
+#' @inheritParams base::as.character
+#' @param length Length of the arrows (to the right)
+#'
+#' @export
+#' @return NULL
+as.character.patient_flowchart = function(x, length=7, ...) {
+  res = ""
   for(i in 1:length(x)) {
     element = x[[i]]
 
     if (attr(element,"type") == "patient_flowchart_node") {
-      cat(str_wrap(element[[1]], width=80),"\n")
+      res = paste0(res, str_wrap(element[[1]], width=80),"\n")
     } else {
-      txt =  str_wrap(element[[1]], width=80-length, indent=0, exdent = 0) %>% str_split("\n") %>% .[[1]]
+      txt = str_wrap(element[[1]], width=80-length, indent=0, exdent = 0) %>% str_split("\n") %>% .[[1]]
       middle = floor(length(txt)/2)+1
 
       acc = paste0(paste0(" |",paste0(rep(" ", length), collapse = ""), collapse = ""),
@@ -102,8 +114,9 @@ print.patient_flowchart = function(x, length=7, ...) {
       acc %<>% paste0("\n", paste0(" |",paste0(rep(" ",length),collapse = ""),
                                    txt[seq(from=middle+1,length.out = length(txt)-middle)], collapse = "\n"), collapse = "")
 
-      cat(c(acc," V"),sep = "\n")
+      res = paste0(res, acc,"\n V\n")
     }
   }
+  res
 }
 

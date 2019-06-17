@@ -1,9 +1,10 @@
 #setwd("C:/Users/hgvandenboorn/Dropbox")
 library(hgutils)
 startup()
-load_packages("magrittr","stringr")
+load_packages("magrittr","stringr","crayon")
+
 pkgs = c('grid','gridExtra','htmltools','plotly','rms','shinyBS','shinydashboard','shinyjs','shinyWidgets','survival', 'ggplot2', 'scales')
-pkgs = c('grid','gridExtra','htmltools')
+pkgs = c("purrr", "tidyr","mvtnorm", "digest", "openssl")
 
 print("Checking duplicate packages...")
 dups = unique(pkgs[duplicated(pkgs)])
@@ -25,12 +26,12 @@ intToUtf8(9588:9599) #single lines, halve
 intToUtf8(c(9609,9600,9604)) # blocks
 intToUtf8(as.hexmode(c(9776,9781,9783)))
 {
-  files = list.files("../../source_webinterface/dev/",pattern = ".*\\.[Rr]$", recursive = TRUE, full.names = TRUE)
+  files = list.files("../../SOURCE/source_webinterface/source/",pattern = ".*\\.[Rr]$", recursive = TRUE, full.names = TRUE)
   content = paste0(sapply(files, function(x) paste0(readLines(x), collapse = "\n")), collapse = "\n")
   used_pkgs = c()
   n_functions = sum(sapply(pkgs, function(pkg) length(ls(sprintf("package:%s",pkg)))))
   function_index = 1
-  loading_bar = create_progressbar(format="\u25ba[\u2589][\u2580\u2584][\u3000]\u25c4",update_speed = 150)
+  loading_bar = hgutils::progressbar(format="\u25ba[\u2589][\u2580\u2584][\u3000]\u25c4")
   function_usage = c()
   blue = make_style("dodgerblue4")
   for (pkg in pkgs)
@@ -38,8 +39,8 @@ intToUtf8(as.hexmode(c(9776,9781,9783)))
     functions = ls(sprintf("package:%s",pkg))
     res = c()
     for(x in functions) {
-      loading_bar = update(loading_bar, function_index/n_functions)
-      cat(blue(sprintf("\r%s Processing: %s%s", render(loading_bar), paste0(pkg), paste0(rep(" ",20), collapse = ""))))
+      #loading_bar = update(loading_bar, )
+      cat(blue(sprintf("\r%s Processing: %s%s", render(loading_bar, function_index/n_functions), paste0(pkg), paste0(rep(" ",20), collapse = ""))))
       if(str_detect(content,paste0("\n[^#]*?\\b",pkg,"::[:]?(\\Q",x,"\\E)|\n[^#]*?\\b(\\Q",x,"\\E)\\("))) res=c(res,x)
       function_index = function_index+1
     }

@@ -19,8 +19,9 @@ startup = function(removeObjects=TRUE, runGarbageCollection=TRUE, clearGraphics=
   if (removeObjects) {
     objects = ls(pos = .GlobalEnv)
     rm(list = objects, envir = .GlobalEnv)
-    if(verbose) cat(blue(" \u25ba"), "Removed",length(objects),
-                    "objects from the global environment.\n")
+    if(verbose) cat(blue(" \u25ba"), "Removed", length(objects),
+                    ifelse(length(objects)==1, "object", "objects"),
+                    "from the global environment.\n")
   }
 
   if(runGarbageCollection) {
@@ -64,8 +65,8 @@ rnd_dbl = function(dbl, digits = 3) {
 #' @export
 #'
 #' @importFrom magrittr multiply_by
-format_duration = function(start, end) {
-  ms = difftime(end,start,units="secs") %>% as.double %>% multiply_by(1000) %>% round
+format_duration = function(start, end=Sys.time()) {
+  ms = difftime(end, start, units="secs") %>% as.double %>% multiply_by(1000) %>% round
   if (ms < 1000) return(sprintf("[%s ms.]", rnd_dbl(ms, 0)))
   if (ms < 60000) return(sprintf("[%s sec.]", rnd_dbl(ms/1000, 2)))
   if (ms < 86400000) return(sprintf("[~%s min.]", rnd_dbl(ms/60000, 1)))

@@ -3,42 +3,33 @@
 #' @description Utility function to load and optionally install packages if they are missing. When the function terminates,
 #' packages are installed (if necessary) and loaded. Upgradeable packages are shown.
 #'
+#' @param ... list of package names, may be quoted or unqoated.
 #' @param install_packages whether to install the selected packages.
 #' @param force_install whether to install packages even if they are installed already.
 #' @param show_outdated_packages whether to show a list of packages which are outdated.
 #' @param default_loading_method load according to the default R method using only \code{library()}
 #' @param return_library_statements makes this function only return a string containing \code{library()} statements which can be paste into an R script.
-#' @param collection_name One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
-#' "grid","survival","processing","shiny","development"}.
-#' @param ... list of additional package names.
 #'
 #' @details
 #' \code{load_packages} optionally installs, upgrades and attaches packages to the work space for a list of specified packages.
-#' \code{use_common_packages} is a convenient utility which does the same for a prespecified list of common package names
-#' defined in \code{list_common_packages}. The dots parameter is passed on to \code{load_packages}.
-#'
-#' \code{load_package_collection} loads a collection of useful packages, identified by a collection name. This is used to
-#' load similar packages for specific programming tasks. The possible collections are stated in \code{list_package_collections}
 #'
 #'
 #' @return Returns invisibly a list with additional package information and results of installing/upgrading and loading.
-#' @seealso \code{\link{load_package_collection}} for loading packages collections.
+#' @seealso
 #' \code{\link[utils]{install.packages}} for installation of new packages,
 #' \code{\link[utils]{update.packages}} for updating outdated packages,
 #' \code{\link[base]{library}} for load and attaching packages.
 #'
 #' @examples \dontrun{
-#' # Package names can be given as a vector or one-by-one
-#' load_packages(c('magrittr','dplyr'))
-#' load_packages('magrittr','dplyr',install_packages=FALSE)
+#' # Package names given one-by-one or in a vector
+#' load_packages(c('magrittr', 'dplyr'))
+#' load_packages('magrittr', 'dplyr')
 #'
-#' # These are equivalent
-#' load_common_packages()
-#' load_packages(list_common_packages())
+#' # Package names may be unquoted
+#' load_packages(magrittr, dplyr)
+#' load_packages('magrittr','dplyr', install_packages=FALSE)
+#' }
 #'
-#' #load package collection "processing"
-#' #installs/loads dplyr, lubridate, magrittr, mice, stringr, tibble and utils
-#' load_package_collection("processing")}
 #' @export
 #' @family developer functions
 #'
@@ -196,10 +187,24 @@ load_packages = function(..., install_packages = TRUE, force_install = FALSE, sh
   options(warn=oldw)
 }
 
+#' @param ... list of package names.
+#' @param collection_name One or multiple collection names. Must be in \code{"data_import","image_import","ggplot",
+#' "grid","survival","processing","shiny","development"}.
+#' @export
+load_package_collection = function(collection_name = names(list_package_collections()), ...) {
+  .Deprecated("load_packages")
+  col_names = unique(match.arg(collection_name, several.ok = TRUE))
+  pkg_cols = list_package_collections()
+  pkgs = sapply(col_names,function(x) pkg_cols[x]) %>% unlist %>% unique %>% sort
+
+  load_packages(pkgs, ...)
+}
+
 #' List package collections
 #' @export
-#' @rdname load_packages
+#' @rdname load_package_collection
 list_package_collections = function() {
+  .Deprecated("load_packages")
   list(
     "data_import" = c("readxl","writexl","foreign","utils","haven","sas7bdat","Hmisc"),
     "image_import" = c("png","bmp","rtiff","rgdal"),
@@ -213,26 +218,16 @@ list_package_collections = function() {
 }
 
 #' @export
-#' @rdname load_packages
-load_package_collection = function(collection_name = names(list_package_collections()), ...)
-{
-  col_names = unique(match.arg(collection_name, several.ok = TRUE))
-  pkg_cols = list_package_collections()
-  pkgs = sapply(col_names,function(x) pkg_cols[x]) %>% unlist %>% unique %>% sort
-
-  load_packages(pkgs, ...)
-}
-
-#' @export
-#' @rdname load_packages
-list_common_packages = function()
-{
+#' @rdname load_package_collection
+list_common_packages = function() {
+  .Deprecated("load_packages")
   c("devtools", "utils", "readxl", "writexl", "gridExtra", "gridGraphics",
     "reshape2", "scales", "ggplot2", "stringr", "formatR", "tibble", "magrittr","dplyr","roxygen2")
 }
 
 #' @export
-#' @rdname load_packages
+#' @rdname load_package_collection
 load_common_packages = function(...) {
+  .Deprecated("load_packages")
   load_packages(list_common_packages(), ...)
 }
