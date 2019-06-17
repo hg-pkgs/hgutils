@@ -37,6 +37,9 @@ The 'Depends', 'Imports' and 'Suggests' fields are sorted before writing the DES
 \dontrun{
 description = read.description()
 write.description(read.description())
+
+#update date in description file
+update_description("Date", format(Sys.Date(), "\%Y\%-\%m-\%d"))
 }
 
 }

@@ -11,12 +11,13 @@ Description:
     creating nice breaks for plots, overview tables and many more handy utility functions.
 Depends: R (>= 3.1)
 Imports:
+    crayon,
     grDevices,
     limSolve,
     magrittr,
+    stats,
     stringr,
-    utils,
-    crayon,
+    utils
 Suggests:
     methods,
     testthat

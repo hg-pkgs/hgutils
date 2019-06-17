@@ -3,7 +3,7 @@
 #' @description Utility function to load and optionally install packages if they are missing. When the function terminates,
 #' packages are installed (if necessary) and loaded. Upgradeable packages are shown.
 #'
-#' @param ... list of package names, may be quoted or unqoated.
+#' @param ... list of package names.
 #' @param install_packages whether to install the selected packages.
 #' @param force_install whether to install packages even if they are installed already.
 #' @param show_outdated_packages whether to show a list of packages which are outdated.

@@ -9,7 +9,7 @@ load_packages(..., install_packages = TRUE, force_install = FALSE,
   return_library_statements = FALSE)
 }
 \arguments{
-\item{...}{list of package names, may be quoted or unqoated.}
+\item{...}{list of package names.}
 
 \item{install_packages}{whether to install the selected packages.}
 
@@ -33,7 +33,8 @@ packages are installed (if necessary) and loaded. Upgradeable packages are shown
 }
 \examples{
 \dontrun{
-# Package names given one-by-one
+# Package names given one-by-one or in a vector
+load_packages(c('magrittr', 'dplyr'))
 load_packages('magrittr', 'dplyr')
 
 # Package names may be unquoted
