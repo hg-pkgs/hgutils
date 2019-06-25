@@ -98,7 +98,7 @@ update_description = function(fieldname, value, after = NULL) {
 #'
 #' @export
 #'
-#' @importFrom stringr str_detect str_extract
+#' @importFrom stringr str_detect str_extract str_match
 #' @examples \dontrun{
 #' add_badges("hvdboorn/hgutils")
 #' }
@@ -108,7 +108,7 @@ add_badges = function(github_pkg, states=c("active", "abandoned", "concept", "in
                        show_min_r=TRUE, show_last_update=TRUE,
                        show_travis=TRUE, show_code_coverage=TRUE) {
   if(!str_detect(github_pkg, "^[^/]+/[^/]+$")) {
-    stop("Argument github_pkg must be string of the following form: 'username/package'")
+    stop("Argument github_pkg must be a string of the following form: 'username/package'")
   }
   desc = read.description()
   states = match.arg(states)
