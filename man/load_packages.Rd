@@ -5,7 +5,7 @@
 \title{Load and install packages}
 \usage{
 load_packages(..., install_packages = TRUE, force_install = FALSE,
-  show_outdated_packages = TRUE, default_loading_method = FALSE,
+  show_outdated_packages = FALSE, default_loading_method = FALSE,
   return_library_statements = FALSE)
 }
 \arguments{

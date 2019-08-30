@@ -4,13 +4,14 @@
 \alias{analyze_package_imports}
 \title{Analyze package imports}
 \usage{
-analyze_package_imports(files)
+analyze_package_imports(files = list.files(pattern = "\\\\.[rR]$",
+  recursive = TRUE))
 }
 \arguments{
 \item{files}{A vector of filenames of R source files. Typically this is created by \code{list.files(folder, pattern="\\\.[rR]$")}}
 }
 \value{
-a named list of results (invisibly). This list contains all import statments, a list of duplicated imports,
+a named list of results (invisibly). This list contains all import statements, a list of duplicated imports,
 a list of redundant imports, all function calls in the files with the corresponding imports and a list of packages with the number of function calls.
 }
 \description{

@@ -36,7 +36,7 @@
 #' @importFrom utils install.packages old.packages update.packages compareVersion installed.packages
 #' @importFrom crayon underline
 #' @importFrom magrittr set_rownames
-load_packages = function(..., install_packages = TRUE, force_install = FALSE, show_outdated_packages=TRUE,
+load_packages = function(..., install_packages = TRUE, force_install = FALSE, show_outdated_packages=FALSE,
                          default_loading_method=FALSE, return_library_statements=FALSE) {
   oldw <- getOption("warn")
   options(warn = -1)
@@ -237,7 +237,7 @@ load_common_packages = function(...) {
 #' @description Analyzes the package imports via \code{library()} and \code{load_packages()} in a list of filenames.
 #' @param files A vector of filenames of R source files. Typically this is created by \code{list.files(folder, pattern="\\\.[rR]$")}
 #'
-#' @return a named list of results (invisibly). This list contains all import statments, a list of duplicated imports,
+#' @return a named list of results (invisibly). This list contains all import statements, a list of duplicated imports,
 #' a list of redundant imports, all function calls in the files with the corresponding imports and a list of packages with the number of function calls.
 #' @export
 #'
@@ -249,7 +249,7 @@ load_common_packages = function(...) {
 #' @importFrom dplyr filter group_by summarise n arrange desc select
 #' @importFrom magrittr set_colnames
 #' @importFrom crayon red
-analyze_package_imports = function(files) {
+analyze_package_imports = function(files=list.files(pattern="\\.[rR]$", recursive=TRUE)) {
   if(length(files) == 0 || !(str_detect(files, "\\.[rR]$") %>% all)) {
     stop("Argument files must contain filenames of R files ending in .r or .R")
   }

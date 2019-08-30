@@ -1,6 +1,6 @@
 Package: hgutils
 Version: 0.2.7
-Date: 2019-06-25
+Date: 2019-08-30
 Title: Collection of Utility Functions
 Authors@R: person("H.G.", "van den Boorn", email = "hvdboorn@gmail.com", role = c("aut", "cre"))
 Description:
@@ -9,7 +9,7 @@ Description:
     analysis of redundant package imports, editing of the description file and the creation of package badges for GitHub.
     Some of the other functionalities include automatic package installation and loading, plotting points without overlap,
     creating nice breaks for plots, overview tables and many more handy utility functions.
-Depends: R (>= 3.1.2)
+Depends: R (>= 3.2.0)
 Imports:
     crayon,
     dplyr,
@@ -27,5 +27,5 @@ URL: https://github.com/hvdboorn/hgutils
 BugReports: https://github.com/hvdboorn/hgutils/issues
 Encoding: UTF-8
 LazyData: true
-Language: en-US
+Language: en-GB
 RoxygenNote: 6.1.1

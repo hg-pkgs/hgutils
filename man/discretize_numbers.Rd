@@ -29,7 +29,7 @@ Discretize continuous numbers
 \details{
 The function \code{get_breaks} is called to create the boundaries between groups.
 It is called on default with \code{limits = range(x)} and with \code{include_bounds = FALSE}.
-This behavior may be overridden with the \code{...} argument, although it is advised not to do so to avoid empty groups.
+This behaviour may be overridden with the \code{...} argument, although it is advised not to do so to avoid empty groups.
 
 \code{NA} values are preserved in the result.
 }
