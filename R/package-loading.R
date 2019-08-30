@@ -254,6 +254,8 @@ analyze_package_imports = function(files=list.files(pattern="\\.[rR]$", recursiv
     stop("Argument files must contain filenames of R files ending in .r or .R")
   }
 
+  token = package = line = full_location = text = NULL
+
   cat("Analyzing imports...                 \r")
   imports = lapply(files, function(f) {
     short_fname = str_match(f,"^.*/([^/]+)$")[-1]
