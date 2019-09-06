@@ -1,24 +1,36 @@
 ## Test environments
-* local OS X install, R 3.5.1
-* ubuntu 12.04 (on travis-ci), R 3.5.1
 * win-builder (devel and release)
-* windows (R 3.5.1)
+* windows (R 3.6.1)
+* Windows Server 2008 R2 SP1 (devel)
+* Ubuntu Linux 16.04 LTS (release)
+* Fedora Linux (devel)
 * Travis Linux (R 3.2, 3.3, 3.4, 3.4, release, devel; results: https://travis-ci.org/hvdboorn/hgutils)
 
 ## R CMD check results
 
 -- R CMD check results ------------------------------------------------------------------------------------------------------------------------------------------------------------------- hgutils 0.2.7 ----
-Duration: 32.6s
+Duration: 34.6s
 
 0 errors √ | 0 warnings √ | 0 notes √
 
-  Build ID:   hgutils_0.2.5.tar.gz-ad64186bdd014c3ba1f6d2072055c462
+  Build ID:   hgutils_0.2.7.tar.gz-a5455138d93c4adf86713301e681d5aa
   Platform:   Windows Server 2008 R2 SP1, R-devel, 32/64 bit
-  Submitted:  2.9s ago
-  Build time: 2m 47.7s
+  Build time: 3m 22.4s
 
 0 errors √ | 0 warnings √ | 0 notes √
 
+  Build ID:   hgutils_0.2.7.tar.gz-86d41f73d2644f55a729437554e99e44
+  Platform:   Ubuntu Linux 16.04 LTS, R-release, GCC
+  Build time:
+  
+0 errors √ | 0 warnings √ | 0 notes √
+  
+  Build ID:   hgutils_0.2.7.tar.gz-9cfea5fb10114029b5d7f3509486a085
+  Platform:   Fedora Linux, R-devel, clang, gfortran
+  Build time:
+  
+0 errors √ | 0 warnings √ | 0 notes √
+  
 ## Additional info
 
 -
