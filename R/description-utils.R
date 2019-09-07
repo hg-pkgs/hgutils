@@ -93,8 +93,8 @@ update_description = function(fieldname, value, after = NULL) {
 #' @param show_package_version Whether to show the package version as a badge
 #' @param show_min_r Whether to show the minimal R version as a badge
 #' @param show_last_update Whether to show the last update date as a badge
-#' @param show_travis Whether to show the Travis test results as a badge (see \url{http://travis-ci.org})
-#' @param show_code_coverage Whether to show the code coverage as a badge (see \url{http://codecov.io})
+#' @param show_travis Whether to show the Travis test results as a badge (see \url{https://travis-ci.org})
+#' @param show_code_coverage Whether to show the code coverage as a badge (see \url{https://codecov.io})
 #'
 #' @export
 #'
@@ -118,10 +118,10 @@ add_badges = function(github_pkg, states=c("active", "abandoned", "concept", "in
   status = states[1]
   dformat = "%Y%-%m-%d"
 
-  version = ifelse(show_package_version, paste0("[![Package version](https://img.shields.io/badge/GitHub-",desc$Version,"-orange.svg)](www.github.com/",github_pkg,")"),"")
+  version = ifelse(show_package_version, paste0("[![Package version](https://img.shields.io/badge/GitHub-",desc$Version,"-orange.svg)](https://www.github.com/",github_pkg,")"),"")
   min_r = ifelse(show_min_r, paste0("[![minimal R version](https://img.shields.io/badge/R-v",rvers,"+-blue.svg)](https://cran.r-project.org/)"), "")
   last_update = ifelse(show_last_update, paste0("[![last_update](https://img.shields.io/badge/last%20update-",
-                                                desc$Date %>% str_replace_all("-","--"),"-blue.svg)](www.github.com/",github_pkg,")"), "")
+                                                desc$Date %>% str_replace_all("-","--"),"-blue.svg)](https://www.github.com/",github_pkg,")"), "")
 
   travis = ifelse(show_travis, paste0("[![Travis](https://travis-ci.org/",github_pkg,".svg)](https://travis-ci.org/",github_pkg,")"), "")
   repo_status = ifelse(show_repo_status, paste0("[![Project Status](http://www.repostatus.org/badges/latest/",status,".svg)](http://www.repostatus.org/#",status,")"), "")

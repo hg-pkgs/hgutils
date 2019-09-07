@@ -33,7 +33,7 @@ Duration: 34.6s
   
 ## Additional info
 
--
+- 2019-09-07: fixed minor issue with CRAN link checking (added https:// before URLs).
 
 ## Reverse dependencies
 

@@ -28,9 +28,9 @@ add_badges(github_pkg, states = c("active", "abandoned", "concept",
 
 \item{show_last_update}{Whether to show the last update date as a badge}
 
-\item{show_travis}{Whether to show the Travis test results as a badge (see \url{http://travis-ci.org})}
+\item{show_travis}{Whether to show the Travis test results as a badge (see \url{https://travis-ci.org})}
 
-\item{show_code_coverage}{Whether to show the code coverage as a badge (see \url{http://codecov.io})}
+\item{show_code_coverage}{Whether to show the code coverage as a badge (see \url{https://codecov.io})}
 }
 \description{
 Add badges to the README file for use on Github
